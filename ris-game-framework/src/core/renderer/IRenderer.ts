@@ -1,4 +1,5 @@
 import type { Color } from "../math/color";
+import type { RenderingLimits } from "./RenderingLimits";
 
 /**
  * The interface for renderers.
@@ -9,6 +10,11 @@ export interface IRenderer {
      * The clear color used by the renderer.
      */
     clearColor: Color
+
+    /**
+     * The rendering limits of the renderer.
+     */
+    limits: RenderingLimits | null;
 
     /**
      * Initializes the renderer.

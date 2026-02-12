@@ -1,3 +1,4 @@
+import { Culling } from "../../core/renderer/enums";
 import { BlendFactor, BlendOperation } from "../common/blend-state";
 
 export class WebGLConverter {
@@ -52,6 +53,25 @@ export class WebGLConverter {
                 return gl.DST_ALPHA;
             case BlendFactor.OneMinusDstAlpha:
                 return gl.ONE_MINUS_DST_ALPHA;
+            default:
+                throw new Error("NotImplementedException");
+        }
+    }
+
+    /**
+     * Converts Culling to WebGL enum.
+     * @param gl The WebGL2RenderingContext.
+     * @param culling The Culling.
+     * @returns The WebGL enum.
+     */
+    public static convertCulling(gl: WebGL2RenderingContext, culling: Culling): number {
+        switch (culling) {
+            case Culling.Front:
+                return gl.FRONT;
+            case Culling.Back:
+                return gl.BACK;
+            case Culling.None:
+                return gl.NONE;
             default:
                 throw new Error("NotImplementedException");
         }

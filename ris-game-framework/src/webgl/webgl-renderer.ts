@@ -1,6 +1,8 @@
 import type { IFramework } from "../core/framework-interface";
 import { Color } from "../core/math/color";
+import { Culling } from "../core/renderer/enums";
 import type { IRenderer } from "../core/renderer/IRenderer";
+import { RenderingLimits } from "../core/renderer/RenderingLimits";
 import { BlendState } from "../utilities/common/blend-state";
 import { WebGLUtilities } from "../utilities/webgl/webgl-utilities";
 
@@ -8,10 +10,11 @@ import { WebGLUtilities } from "../utilities/webgl/webgl-utilities";
  * The WebGL implementation of the IRenderer interface.
  */
 export class WebGLRenderer implements IRenderer {
-
   private _canvas: HTMLCanvasElement | undefined;
   private _gl: WebGL2RenderingContext | undefined;
   private _blendState: BlendState = new BlendState();
+  private _culling = Culling.Back;
+  private _limits: RenderingLimits | null = null;
 
   /**
    * The constructor.
@@ -25,8 +28,12 @@ export class WebGLRenderer implements IRenderer {
   clearColor: Color;
 
   /** @inheritdoc */
-  initialize(): void {
+  public get limits(): RenderingLimits | null {
+    return this._limits;
+  }
 
+  /** @inheritdoc */
+  initialize(): void {
     this._canvas = this._framework.windowManager.canvas;
 
     const contextOptions: WebGLContextAttributes = {
@@ -34,7 +41,10 @@ export class WebGLRenderer implements IRenderer {
       powerPreference: "high-performance", // TODO: Make configurable.
     };
 
-    this._gl = this._canvas.getContext("webgl2", contextOptions) as WebGL2RenderingContext;
+    this._gl = this._canvas.getContext(
+      "webgl2",
+      contextOptions,
+    ) as WebGL2RenderingContext;
 
     // If not supported, throw an error.
     if (!this._gl) {
@@ -56,9 +66,17 @@ export class WebGLRenderer implements IRenderer {
     // Enable blending.
     WebGLUtilities.blending.setBlend(gl, this._blendState);
 
-    // QueryLimits();
+    this._queryLimits();
 
-    // WebGLUtilities.Culling.SetCulling(gl, culling);
+    WebGLUtilities.culling.setCulling(gl, this._culling);
+  }
+
+  private _queryLimits(): void {
+    const gl = this._gl!;
+
+    const maxAnisotropy = WebGLUtilities.anisotropy.getMaxAnisotropy(gl);
+
+    this._limits = new RenderingLimits(maxAnisotropy);
   }
 
   /** @inheritdoc */
