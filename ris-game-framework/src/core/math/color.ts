@@ -29,4 +29,21 @@ export class Color {
     public static red(): Color {
         return new Color(1.0, 0.0, 0.0, 1.0);
     }
+
+    /**
+     * Gets a Color instance representing black color.
+     * @returns The Color instance with black color.
+     */
+    public static black(): Color {
+        return new Color(0.0, 0.0, 0.0, 1.0);
+    }
+
+    /**
+     * Compares this color with another color for equality.
+     * @param other The other color to compare with.
+     * @returns True if the colors are equal; otherwise, false.
+     */
+    public equals(other: Color): boolean {
+        return this.r === other.r && this.g === other.g && this.b === other.b && this.a === other.a;
+    }
 }

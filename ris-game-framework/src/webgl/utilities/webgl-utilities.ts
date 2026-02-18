@@ -1,6 +1,7 @@
 import { WebGLBlendingUtilities } from "./webgl-blending-utilities";
 import { WebGLCullingUtilities } from "./webgl-culling-utilities";
 import { WebGLFilterAnisotropicUtilities } from "./webgl-filter-anisotropic-utilities";
+import { WebGLTextureUtilities } from "./webgl-texture-utilities";
 
 /**
  * The utility class for WebGL operations.
@@ -21,4 +22,9 @@ export class WebGLUtilities {
      * The WebGL culling utilities.
      */
     public static readonly culling = new WebGLCullingUtilities();
+
+    /**
+     * The WebGL texture utilities.
+     */
+    public static readonly texture = new WebGLTextureUtilities();
 }

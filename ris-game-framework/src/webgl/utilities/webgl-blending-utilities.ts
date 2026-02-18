@@ -1,4 +1,4 @@
-import type { BlendState } from "../common/blend-state";
+import type { BlendState } from "../../common/blend-state";
 import { WebGLConverter } from "./webgl-converter";
 
 /**

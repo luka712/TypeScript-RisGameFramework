@@ -3,12 +3,16 @@ import { Color } from "../core/math/color";
 import { Culling } from "../core/renderer/enums";
 import type { IRenderer } from "../core/renderer/IRenderer";
 import { RenderingLimits } from "../core/renderer/RenderingLimits";
-import { BlendState } from "../utilities/common/blend-state";
-import { WebGLUtilities } from "../utilities/webgl/webgl-utilities";
+import { BlendState } from "../common/blend-state";
+import { WebGLUtilities } from "./utilities/webgl-utilities";
+import { inject, injectable } from "tsyringe";
+import { IFrameworkSymbol } from "../core/dependency-injection/register-services-interface";
+import { TextureFormat } from "../common/texture-enums";
 
 /**
  * The WebGL implementation of the IRenderer interface.
  */
+@injectable()
 export class WebGLRenderer implements IRenderer {
   private _canvas: HTMLCanvasElement | undefined;
   private _gl: WebGL2RenderingContext | undefined;
@@ -20,12 +24,24 @@ export class WebGLRenderer implements IRenderer {
    * The constructor.
    * @param _framework The framework.
    */
-  constructor(private readonly _framework: IFramework) {
+  constructor(@inject(IFrameworkSymbol) private readonly _framework: IFramework) {
     this.clearColor = Color.lightPink();
+  }
+
+  /**
+   * The WebGL rendering context. This is undefined until the renderer is initialized.
+   */
+  public get gl(): WebGL2RenderingContext | undefined {
+    return this._gl;
   }
 
   /** @inheritdoc */
   clearColor: Color;
+
+   /** @inheritdoc */
+  public get preferredTextureFormat(): TextureFormat {
+    return TextureFormat.RGBA_8_Unorm;
+  }
 
   /** @inheritdoc */
   public get limits(): RenderingLimits | null {
