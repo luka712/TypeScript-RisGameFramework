@@ -1,13 +1,16 @@
 import type { IFramework } from "../core/framework-interface";
 import { Color } from "../core/math/color";
 import { Culling } from "../core/renderer/enums";
-import type { IRenderer } from "../core/renderer/IRenderer";
+import { RenderConfigurationSymbol, type IRenderer, type RenderConfiguration } from "../core/renderer/renderer-interface";
 import { RenderingLimits } from "../core/renderer/RenderingLimits";
 import { BlendState } from "../common/blend-state";
 import { WebGLUtilities } from "./utilities/webgl-utilities";
 import { inject, injectable } from "tsyringe";
 import { IFrameworkSymbol } from "../core/dependency-injection/register-services-interface";
 import { TextureFormat } from "../common/texture-enums";
+import type { WebGLRenderTarget2D } from "./render-target/webgl-render-target-2d";
+import { vec2 } from "gl-matrix";
+import { asWebGLRenderTarget2D } from "./cast/cast";
 
 /**
  * The WebGL implementation of the IRenderer interface.
@@ -19,14 +22,23 @@ export class WebGLRenderer implements IRenderer {
   private _blendState: BlendState = new BlendState();
   private _culling = Culling.Back;
   private _limits: RenderingLimits | null = null;
+  private _mainFramebuffer: WebGLRenderTarget2D = null!;
+  private _frameBufferSize: vec2 = vec2.create();
 
   /**
    * The constructor.
    * @param _framework The framework.
+   * @param renderConfiguration The render configuration. This is used to initialize the renderer.
    */
-  constructor(@inject(IFrameworkSymbol) private readonly _framework: IFramework) {
+  constructor(
+    @inject(IFrameworkSymbol) private readonly _framework: IFramework, 
+    @inject(RenderConfigurationSymbol) renderConfiguration: RenderConfiguration) {
     this.clearColor = Color.lightPink();
+    this._frameBufferSize = renderConfiguration.frameBufferSize;
+
   }
+
+
 
   /**
    * The WebGL rendering context. This is undefined until the renderer is initialized.
@@ -38,9 +50,14 @@ export class WebGLRenderer implements IRenderer {
   /** @inheritdoc */
   clearColor: Color;
 
-   /** @inheritdoc */
+  /** @inheritdoc */
   public get preferredTextureFormat(): TextureFormat {
     return TextureFormat.RGBA_8_Unorm;
+  }
+
+  /** @inheritdoc */
+  public get preferredDepthStencilFormat(): TextureFormat {
+    return TextureFormat.Depth_24_Stencil_8;
   }
 
   /** @inheritdoc */
@@ -85,8 +102,11 @@ export class WebGLRenderer implements IRenderer {
     this._queryLimits();
 
     WebGLUtilities.culling.setCulling(gl, this._culling);
-  }
 
+    this._mainFramebuffer =  asWebGLRenderTarget2D(this._framework.renderTargetFactory.createRenderTarget2D(
+      this._frameBufferSize, this._frameBufferSize));
+    };
+  
   private _queryLimits(): void {
     const gl = this._gl!;
 

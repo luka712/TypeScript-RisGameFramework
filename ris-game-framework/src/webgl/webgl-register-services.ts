@@ -11,5 +11,6 @@ export class WebGLRegisterServices implements IRegisterServices {
         container.registerSingleton(IRendererSymbol, WebGLRenderer);
         container.registerSingleton(IRenderTargetFactorySymbol, WebGLRenderTargetFactory);
         container.registerSingleton(ITextureFactorySymbol, WebGLTextureFactory);
+        container.registerSingleton(IRenderTargetFactorySymbol, WebGLRenderTargetFactory);
     }
 }

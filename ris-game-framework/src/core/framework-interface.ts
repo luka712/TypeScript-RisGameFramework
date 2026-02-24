@@ -1,5 +1,6 @@
 import type { TextureFormat } from "../common/texture-enums";
-import type { IRenderer } from "./renderer/IRenderer";
+import type { IRenderTargetFactory } from "../render-target/render-target-factory";
+import type { IRenderer } from "./renderer/renderer-interface";
 import type { ITextureFactory } from "./texture/texture-factory";
 import type { IWindowManager } from "./window/window-manager-interface";
 
@@ -22,6 +23,12 @@ export interface IFramework {
      * @returns The ITextureFactory instance.
      */
     get textureFactory(): ITextureFactory;
+
+    /**
+     * The render target factory associated with this framework. This is used to create render targets for the renderer.
+     * @return The IRenderTargetFactory instance.
+     */
+    get renderTargetFactory(): IRenderTargetFactory;
 
     /**
      * Initializes the framework.

@@ -47,12 +47,12 @@ export interface ITextureFactory {
      */
     createEmpty(
         width: number, height: number,
-        color?: Color | null,
-        minFilter?: SamplerMinFilter | null,
-        magFilter?: SamplerMagFilter | null,
-        textureUsage?: TextureUsage | null,
-        textureFormat?: TextureFormat | null,
-        compareFunction?: SamplerCompareFunction | null,
-        label?: string | null,
-        useMipmap?: boolean): ITexture2D;
+        color: Color | null,
+        minFilter: SamplerMinFilter,
+        magFilter: SamplerMagFilter,
+        textureUsage: TextureUsage,
+        textureFormat: TextureFormat,
+        compareFunction: SamplerCompareFunction,
+        label: string | null | undefined,
+        useMipmap: boolean): ITexture2D;
 }

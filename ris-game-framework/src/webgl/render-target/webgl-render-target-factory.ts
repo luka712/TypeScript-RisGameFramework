@@ -4,7 +4,8 @@ import { WebGLRenderTarget2D } from "./webgl-render-target-2d";
 import { inject, injectable } from "tsyringe";
 import type { IFramework } from "../../core/framework-interface";
 import { IFrameworkSymbol } from "../../core/dependency-injection/register-services-interface";
-import type { WebGLTexture2D } from "../texture/webgl-texture-2d";
+import { TextureUsage } from "../../common/texture-enums";
+import type { IRenderTargetFactory } from "../../render-target/render-target-factory";
 
 @injectable()
 export class WebGLRenderTargetFactory implements IRenderTargetFactory {
@@ -22,18 +23,14 @@ export class WebGLRenderTargetFactory implements IRenderTargetFactory {
     /** @inheritdoc */
     createRenderTarget2D(renderTargetSize: vec2, depthBufferSize?: vec2, label?: string, depthStencilLabel?: string): IRenderTarget2D {
         const renderTarget2D = new WebGLRenderTarget2D(
-            _framework,
-            renderTargetSize: renderTargetSize,
-            depthBufferSize: depthBufferSize,
-            colorAttachmentFormat0: _framework.Renderer.PreferredTextureFormat,
-            depthStencilFormat: _framework.Renderer.PreferredDepthStencilFormat,
-            depthTextureUsage: TextureUsage.RenderAttachment,
-            colorAttachmentLabel: label,
-            depthStencilAttachmentLabel: depthStencilLabel);
+            this._framework, renderTargetSize, depthBufferSize,
+            this._framework.renderer.preferredTextureFormat,
+            this._framework.renderer.preferredDepthStencilFormat,
+            TextureUsage.RenderAttachment,
+            label,
+            depthStencilLabel);
 
-        renderTarget2D.Initialize();
+        renderTarget2D.initialize();
         return renderTarget2D;
-        renderTarget.initialize();
-        return renderTarget;
     }
 }

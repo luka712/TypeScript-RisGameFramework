@@ -144,7 +144,7 @@ export class WebGLConverter {
             case SamplerMinFilter.Linear:
                 return gl.LINEAR;
             default:
-                throw new Error("NotImplementedException");
+                throw new Error("Cannot convert min filter " + minFilter);
         }
     }
 

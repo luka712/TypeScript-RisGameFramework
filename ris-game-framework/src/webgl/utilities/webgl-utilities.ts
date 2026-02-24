@@ -1,6 +1,8 @@
 import { WebGLBlendingUtilities } from "./webgl-blending-utilities";
 import { WebGLCullingUtilities } from "./webgl-culling-utilities";
 import { WebGLFilterAnisotropicUtilities } from "./webgl-filter-anisotropic-utilities";
+import { WebGLFrameBufferUtilities } from "./webgl-framebuffer-utilities";
+import { WebGLRenderbufferUtilities } from "./webgl-renderbuffer-utilities";
 import { WebGLTextureUtilities } from "./webgl-texture-utilities";
 
 /**
@@ -27,4 +29,14 @@ export class WebGLUtilities {
      * The WebGL texture utilities.
      */
     public static readonly texture = new WebGLTextureUtilities();
+
+    /**
+     * The WebGL framebuffer utilities.
+     */
+    public static readonly framebuffer = new WebGLFrameBufferUtilities();
+
+    /**
+     * The WebGL render buffer utilities.
+     */
+    public static readonly renderbuffer = new WebGLRenderbufferUtilities();
 }

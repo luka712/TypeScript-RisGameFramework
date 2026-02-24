@@ -1,4 +1,6 @@
 import type { IDisposable } from "../common/disposable";
+import type { TextureFormat } from "../common/texture-enums";
+import type { WebGLTexture2D } from "../webgl/texture/webgl-texture-2d";
 
 /**
  * This file defines the IRenderTarget2D interface, which represents a 2D render target in the rendering system. 
@@ -21,12 +23,22 @@ export interface IRenderTarget2D extends IDisposable {
     /**
      * The label of the color attachment 0.
      */
-    colorAttachment0Label: string | undefined;
+    colorAttachment0Label: string | null | undefined;
+
+    /**
+     * The format of the color attachment 0.
+     */
+    colorAttachment0Format: TextureFormat;
 
     /**
      * The label of the depth stencil attachment.
      */
-    depthStencilLabel : string | undefined;
+    depthStencilLabel : string | null | undefined;
+
+    /**
+     * The WebGL texture attachment for d
+     */
+    depthStencilTextureAttachment?: WebGLTexture2D;
 
 /**
  * Initializes the render target, creating necessary resources and setting up the rendering context.

@@ -79,4 +79,9 @@ export enum TextureUsage {
      * The texture can be used as a render target attachment and a shader resource.
      */
     TextureBinding_RenderTarget,
+
+    /**
+     * The texture can be used as a copy destination, a render target attachment and a shader resource.
+     */
+    CopyDst_TextureBinding_RenderTarget
 }

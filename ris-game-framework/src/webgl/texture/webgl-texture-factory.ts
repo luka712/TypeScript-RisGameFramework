@@ -26,7 +26,7 @@ export class WebGLTextureFactory implements ITextureFactory {
         width: number, height: number, channels: number,
         minFilter = SamplerMinFilter.Linear,
         magFilter = SamplerMagFilter.Linear,
-        label = null,   
+        label: string | null | undefined = null,
         useMipMaps = false,
         textureUsage = TextureUsage.CopyDst_TextureBinding): ITexture2D {
 
@@ -72,7 +72,7 @@ export class WebGLTextureFactory implements ITextureFactory {
         textureUsage = TextureUsage.CopyDst_TextureBinding,
         textureFormat = TextureFormat.Undefined,
         compareFunction = SamplerCompareFunction.Never,
-        label = null,
+        label: string | null = null,
         useMipmap = false): ITexture2D {
 
         if (width == 0 || height == 0) {

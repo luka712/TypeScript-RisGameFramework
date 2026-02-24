@@ -1,5 +1,7 @@
-import type { IRenderer } from "../../core/renderer/IRenderer";
+import type { IRenderer } from "../../core/renderer/renderer-interface";
 import type { ITexture2D } from "../../core/texture/texture";
+import type { IRenderTarget2D } from "../../render-target/render-target-2d";
+import { WebGLRenderTarget2D } from "../render-target/webgl-render-target-2d";
 import { WebGLTexture2D } from "../texture/webgl-texture-2d";
 import { WebGLRenderer } from "../webgl-renderer";
 
@@ -26,5 +28,18 @@ export function asWebGLTexture2D(texture: ITexture2D): WebGLTexture2D {
         return texture;
     } else {
         throw new Error("Texture is not a WebGLTexture2D.");
+    }
+}
+
+/**
+ * Casts the given render target to a WebGLRenderTarget2D. If the render target is not a WebGLRenderTarget2D, an error is thrown.
+ * @param renderTarget The render target to cast.
+ * @returns The given render target casted to a WebGLRenderTarget2D.
+ */
+export function asWebGLRenderTarget2D(renderTarget: IRenderTarget2D): WebGLRenderTarget2D {
+    if (renderTarget instanceof WebGLRenderTarget2D) {
+        return renderTarget;
+    } else {
+        throw new Error("Render target is not a WebGLRenderTarget2D.");
     }
 }
