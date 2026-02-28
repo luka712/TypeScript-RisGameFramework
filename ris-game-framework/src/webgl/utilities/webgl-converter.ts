@@ -1,6 +1,7 @@
 import { BlendFactor, BlendOperation } from "../../common/blend-state";
 import { SamplerMagFilter, SamplerMinFilter } from "../../common/sampler-enums";
 import { TextureFormat } from "../../common/texture-enums";
+import { VertexFormat } from "../../common/vertex-format";
 import { Culling } from "../../core/renderer/enums";
 
 export class WebGLConverter {
@@ -160,6 +161,28 @@ export class WebGLConverter {
                 return gl.NEAREST;
             case SamplerMagFilter.Linear:
                 return gl.LINEAR;
+            default:
+                throw new Error("NotImplementedException");
+        }
+    }
+
+    /**
+     * Converts VertexFormat to the number of components for WebGL vertex attribute pointer.
+     * @param vertexFormat The VertexFormat.
+     * @returns The number of components for WebGL vertex attribute pointer.
+     */
+    public static convertVertexFormat(vertexFormat: VertexFormat): number {
+        switch (vertexFormat) {
+            case VertexFormat.Float32:
+                return 1;
+            case VertexFormat.Float32x2:
+                return 2;
+            case VertexFormat.Float32x3:
+                return 3;
+            case VertexFormat.Float32x4:
+                return 4;
+            case VertexFormat.Float32x16:
+                return 16;
             default:
                 throw new Error("NotImplementedException");
         }
