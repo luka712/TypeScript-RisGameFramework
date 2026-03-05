@@ -9,6 +9,7 @@ import { IFrameworkSymbol, IRendererSymbol, IRenderTargetFactorySymbol, ITexture
 import { RenderConfiguration, RenderConfigurationSymbol, type IRenderer } from "../core/renderer/renderer-interface";
 import type { ITextureFactory } from "../core/texture/texture-factory";
 import type { IRenderTargetFactory } from "../render-target/render-target-factory";
+import { IBuffersFactorySymbol, type IBuffersFactory } from "../core/buffers/buffers-factory-interface";
 
 export class Framework implements IFramework {
 
@@ -17,6 +18,7 @@ export class Framework implements IFramework {
   private readonly _renderer: IRenderer;
   private readonly _textureFactory: ITextureFactory;
   private readonly _renderTargetFactory: IRenderTargetFactory;
+  private readonly _buffersFactory: IBuffersFactory;
 
   /**
    * The constructor for the Framework class.
@@ -35,6 +37,7 @@ export class Framework implements IFramework {
     this._renderer = this._container.resolve(IRendererSymbol);
     this._textureFactory = this._container.resolve(ITextureFactorySymbol);
     this._renderTargetFactory = this._container.resolve(IRenderTargetFactorySymbol);
+    this._buffersFactory = this._container.resolve(IBuffersFactorySymbol);
   }
 
   /** @inheritdoc */
@@ -52,7 +55,12 @@ export class Framework implements IFramework {
     return this._textureFactory;
   }
 
-   /** @inheritdoc */
+  /** @inheritdoc */
+  public get buffersFactory(): IBuffersFactory {
+    return this._buffersFactory;
+  }
+
+  /** @inheritdoc */
   public get renderTargetFactory(): IRenderTargetFactory {
     return this._renderTargetFactory;
   }

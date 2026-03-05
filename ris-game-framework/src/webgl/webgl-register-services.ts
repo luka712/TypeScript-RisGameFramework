@@ -3,6 +3,8 @@ import { IRendererSymbol, IRenderTargetFactorySymbol, ITextureFactorySymbol, typ
 import { WebGLRenderer } from "./webgl-renderer";
 import { WebGLRenderTargetFactory } from "./render-target/webgl-render-target-factory";
 import { WebGLTextureFactory } from "./texture/webgl-texture-factory";
+import { IBuffersFactorySymbol } from "../core/buffers/buffers-factory-interface";
+import { WebGLBuffersFactory } from "./buffers/webgl-buffers-factory";
 
 export class WebGLRegisterServices implements IRegisterServices {
 
@@ -12,5 +14,6 @@ export class WebGLRegisterServices implements IRegisterServices {
         container.registerSingleton(IRenderTargetFactorySymbol, WebGLRenderTargetFactory);
         container.registerSingleton(ITextureFactorySymbol, WebGLTextureFactory);
         container.registerSingleton(IRenderTargetFactorySymbol, WebGLRenderTargetFactory);
+        container.registerSingleton(IBuffersFactorySymbol, WebGLBuffersFactory);
     }
 }

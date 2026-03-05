@@ -1,4 +1,5 @@
 import { WebGLBlendingUtilities } from "./webgl-blending-utilities";
+import { WebGLBufferUtilities } from "./webgl-buffer-utilities";
 import { WebGLCullingUtilities } from "./webgl-culling-utilities";
 import { WebGLFilterAnisotropicUtilities } from "./webgl-filter-anisotropic-utilities";
 import { WebGLFrameBufferUtilities } from "./webgl-framebuffer-utilities";
@@ -39,4 +40,9 @@ export class WebGLUtilities {
      * The WebGL render buffer utilities.
      */
     public static readonly renderbuffer = new WebGLRenderbufferUtilities();
+
+    /**
+     * The WebGL buffer utilities.
+     */
+    public static readonly buffer = new WebGLBufferUtilities();
 }

@@ -3,8 +3,23 @@ import { SamplerMagFilter, SamplerMinFilter } from "../../common/sampler-enums";
 import { TextureFormat } from "../../common/texture-enums";
 import { VertexFormat } from "../../common/vertex-format";
 import { Culling } from "../../core/renderer/enums";
+import { BufferUsage } from "../../core/rendering/enums";
 
 export class WebGLConverter {
+
+    /**
+     * Converts BufferUsage to WebGL enum.
+     * @param usage The BufferUsage.
+     * @return The WebGL enum.
+     */
+    public static convertBufferUsage(usage: BufferUsage) : GLenum {
+        switch (usage) {
+            case BufferUsage.Vertex:
+                return WebGL2RenderingContext.STATIC_DRAW;
+            default:
+                throw new Error("NotImplementedException");
+        }
+    }
     /**
      * Conversts BlendOperation to WebGL enum.
      * @parma gl The WebGL2RenderingContext.
@@ -14,7 +29,7 @@ export class WebGLConverter {
     public static convertBlendOperation(
         gl: WebGL2RenderingContext,
         blendOperation: BlendOperation,
-    ): number {
+    ): GLenum {
         switch (blendOperation) {
             case BlendOperation.Add:
                 return gl.FUNC_ADD;
