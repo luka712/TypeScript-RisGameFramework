@@ -29,4 +29,26 @@ export class WebGLBufferUtilities {
         }
         return buffer;
     }
+
+    /**
+     * Creates an index buffer in WebGL with the given data and usage.
+     * @param gl The WebGL2RenderingContext to use for creating the buffer.
+     * @param dataOrByteSize The data to upload to the index buffer, typically a Uint16Array or Uint32Array containing index data, or a number representing the byte size of the buffer to create.
+     * @param usage The intended usage of the buffer, which can affect how the buffer is created and optimized by the graphics API. For example, an index buffer may be optimized for use as an index buffer in rendering operations.
+     * @returns The created WebGLBuffer object that represents the index buffer in WebGL.
+     */
+    public createIndexBuffer(gl: WebGL2RenderingContext, dataOrByteSize: Uint16Array | Uint32Array | number, usage: BufferUsage): WebGLBuffer {
+        const buffer = gl.createBuffer();
+        if (!buffer) {
+            throw new Error("Failed to create index buffer.");
+        }
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffer);
+        if (typeof dataOrByteSize === "number") {
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, dataOrByteSize, WebGLConverter.convertBufferUsage(usage));
+        } else {
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, dataOrByteSize, WebGLConverter.convertBufferUsage(usage));
+        }
+        return buffer;
+    }
 }

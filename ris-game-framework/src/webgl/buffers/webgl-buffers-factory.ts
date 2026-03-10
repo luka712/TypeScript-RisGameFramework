@@ -5,6 +5,8 @@ import { IFrameworkSymbol } from "../../core/dependency-injection/register-servi
 import type { IFramework } from "../../core/framework-interface";
 import { BufferUsage } from "../../core/rendering/enums";
 import { WebGLVertexBuffer } from "./webgl-vertex-buffer";
+import type { IIndexBuffer } from "../../core/buffers/index-buffer-interface";
+import { WebGLIndexBuffer } from "./webgl-index-buffer";
 
 export class WebGLBuffersFactory implements IBuffersFactory {
 
@@ -13,6 +15,13 @@ export class WebGLBuffersFactory implements IBuffersFactory {
      * @param _framework The framework instance to use for creating buffers.
      */
     constructor(@inject(IFrameworkSymbol) private readonly _framework: IFramework) {
+    }
+
+    /** @inheritdoc */
+    createIndexBuffer(data: Uint16Array | Uint32Array, label: string | null): IIndexBuffer {
+        const indexBuffer = new WebGLIndexBuffer(this._framework, label);
+        indexBuffer.initialize(data);
+        return indexBuffer;
     }
 
     /** @inheritdoc */

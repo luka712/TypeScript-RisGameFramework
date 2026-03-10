@@ -1,4 +1,5 @@
 import type { BufferUsage } from "../rendering/enums";
+import type { IIndexBuffer } from "./index-buffer-interface";
 import type { IVertexBuffer } from "./vertex-buffer-interface";
 
 export const IBuffersFactorySymbol = Symbol("IBuffersFactory");
@@ -23,4 +24,12 @@ export interface IBuffersFactory {
         vertexCount: number,
         bufferUsage: BufferUsage,
         label: string | null): IVertexBuffer;
+
+    /**
+     * Creates an index buffer.
+     * @param data The index data to initialize the buffer with, which can be either a Uint16Array or a Uint32Array depending on the size of the indices.
+     * @param label The label for the buffer, which can be used for debugging purposes to identify the buffer in graphics debugging tools.
+     * @return The created index buffer.
+     */
+    createIndexBuffer(data: Uint16Array | Uint32Array, label: string | null): IIndexBuffer;
 }
