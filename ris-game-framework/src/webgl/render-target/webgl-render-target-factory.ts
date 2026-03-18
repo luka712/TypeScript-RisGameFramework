@@ -1,16 +1,14 @@
 import type { vec2 } from "gl-matrix";
-import type { IRenderTarget2D } from "../../render-target/render-target-2d";
 import { WebGLRenderTarget2D } from "./webgl-render-target-2d";
 import { inject, injectable } from "tsyringe";
 import type { IFramework } from "../../core/framework-interface";
 import { IFrameworkSymbol } from "../../core/dependency-injection/register-services-interface";
 import { TextureUsage } from "../../common/texture-enums";
-import type { IRenderTargetFactory } from "../../render-target/render-target-factory";
+import type { IRenderTarget2D } from "../../core/render-target/render-target-2d";
+import type { IRenderTargetFactory } from "../../core/render-target/render-target-factory";
 
 @injectable()
 export class WebGLRenderTargetFactory implements IRenderTargetFactory {
-
-  
 
     /**
      * The constructor for the WebGLRenderTargetFactory class.

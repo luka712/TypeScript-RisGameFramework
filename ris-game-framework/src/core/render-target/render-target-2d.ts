@@ -1,6 +1,6 @@
-import type { IDisposable } from "../common/disposable";
-import type { TextureFormat } from "../common/texture-enums";
-import type { WebGLTexture2D } from "../webgl/texture/webgl-texture-2d";
+import type { IDisposable } from "../../common/disposable";
+import type { TextureFormat } from "../../common/texture-enums";
+import type { ITexture2D } from "../texture/texture";
 
 /**
  * This file defines the IRenderTarget2D interface, which represents a 2D render target in the rendering system. 
@@ -38,7 +38,7 @@ export interface IRenderTarget2D extends IDisposable {
     /**
      * The WebGL texture attachment for d
      */
-    depthStencilTextureAttachment?: WebGLTexture2D;
+    depthStencilTextureAttachment?: ITexture2D;
 
 /**
  * Initializes the render target, creating necessary resources and setting up the rendering context.

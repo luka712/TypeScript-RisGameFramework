@@ -1,8 +1,9 @@
-import type { IRenderTargetFactory } from "../render-target/render-target-factory";
 import type { IBuffersFactory } from "./buffers/buffers-factory-interface";
 import type { IRenderer } from "./renderer/renderer-interface";
 import type { ITextureFactory } from "./texture/texture-factory";
 import type { IWindowManager } from "./window/window-manager-interface";
+import type { IGeometryBuilder } from "./geometry/geometry-builder-interface";
+import type { IRenderTargetFactory } from "./render-target/render-target-factory";
 
 export interface IFramework {
 
@@ -35,6 +36,12 @@ export interface IFramework {
      * @return The IRenderTargetFactory instance.
      */
     get renderTargetFactory(): IRenderTargetFactory;
+
+    /**
+     * Gets the geometry builder associated with this framework. This is used to create geometries for the renderer.
+     * @return The IGeometryBuilder instance.
+     */
+    get geometryBuilder(): IGeometryBuilder
 
     /**
      * Initializes the framework.

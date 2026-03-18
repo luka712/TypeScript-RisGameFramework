@@ -8,8 +8,10 @@ import { FrameworkOptions } from "./framework-options";
 import { IFrameworkSymbol, IRendererSymbol, IRenderTargetFactorySymbol, ITextureFactorySymbol } from "../core/dependency-injection/register-services-interface";
 import { RenderConfiguration, RenderConfigurationSymbol, type IRenderer } from "../core/renderer/renderer-interface";
 import type { ITextureFactory } from "../core/texture/texture-factory";
-import type { IRenderTargetFactory } from "../render-target/render-target-factory";
 import { IBuffersFactorySymbol, type IBuffersFactory } from "../core/buffers/buffers-factory-interface";
+import type { IRenderTargetFactory } from "../core/render-target/render-target-factory";
+import { IGeometryBuilderSymbol, type IGeometryBuilder } from "../core/geometry/geometry-builder-interface";
+import { GeometryBuilder } from "../core/geometry/geometry-builder";
 
 export class Framework implements IFramework {
 
@@ -19,6 +21,7 @@ export class Framework implements IFramework {
   private readonly _textureFactory: ITextureFactory;
   private readonly _renderTargetFactory: IRenderTargetFactory;
   private readonly _buffersFactory: IBuffersFactory;
+  private readonly _geometryBuilder: IGeometryBuilder;
 
   /**
    * The constructor for the Framework class.
@@ -33,11 +36,16 @@ export class Framework implements IFramework {
     // Setup container.
     this._container.registerInstance(IFrameworkSymbol, this);
     this._container.registerInstance(RenderConfigurationSymbol, new RenderConfiguration());
+    this._container.registerInstance(IGeometryBuilderSymbol, new GeometryBuilder());
     (new WebGLRegisterServices).register(this._container);
     this._renderer = this._container.resolve(IRendererSymbol);
     this._textureFactory = this._container.resolve(ITextureFactorySymbol);
     this._renderTargetFactory = this._container.resolve(IRenderTargetFactorySymbol);
     this._buffersFactory = this._container.resolve(IBuffersFactorySymbol);
+    this._geometryBuilder = this._container.resolve(IGeometryBuilderSymbol);
+  }
+  get geometryBuilder(): IGeometryBuilder {
+    throw new Error("Method not implemented.");
   }
 
   /** @inheritdoc */

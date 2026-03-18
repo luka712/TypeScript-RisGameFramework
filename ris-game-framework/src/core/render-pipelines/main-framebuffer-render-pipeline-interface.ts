@@ -1,5 +1,4 @@
-import type { IDisposable } from "../../common/disposable";
-import type { IRenderTarget2D } from "../../render-target/render-target-2d";
+import type { IRenderTarget2D } from "../render-target/render-target-2d";
 import type { IRenderPipeline } from "./render-pipeline-interface";
 
 /**

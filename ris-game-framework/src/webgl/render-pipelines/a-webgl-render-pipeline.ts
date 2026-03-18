@@ -8,7 +8,8 @@ import { asWebGLRenderer } from '../cast/cast';
  */
 export abstract class AWebGLRenderPipeline implements IRenderPipeline {
 
-    private readonly _framework: IFramework;
+    /** The framework instance. */
+    protected readonly _framework: IFramework;
     private readonly _gl: WebGL2RenderingContext;
 
     protected _vertexArrayObject: WebGLVertexArrayObject | null = null;

@@ -1,12 +1,12 @@
 import type { vec2 } from "gl-matrix";
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import type { IFramework } from "../../core/framework-interface";
-import type { IRenderTarget2D } from "../../render-target/render-target-2d";
 import { asWebGLRenderer, asWebGLTexture2D } from '../cast/cast';
 import type { WebGLTexture2D } from "../texture/webgl-texture-2d";
 import { Color } from "../../core/math/color";
 import { SamplerCompareFunction, SamplerMagFilter, SamplerMinFilter } from "../../common/sampler-enums";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
+import type { IRenderTarget2D } from "../../core/render-target/render-target-2d";
 
 export class WebGLRenderTarget2D implements IRenderTarget2D {
 
