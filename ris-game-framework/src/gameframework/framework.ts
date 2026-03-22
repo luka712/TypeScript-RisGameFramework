@@ -5,13 +5,13 @@ import type { IWindowManager } from "../core/window/window-manager-interface";
 import { WebGLRegisterServices } from "../webgl/webgl-register-services";
 import { FrameworkOptions } from "./framework-options";
 
-import { IFrameworkSymbol, IRendererSymbol, IRenderTargetFactorySymbol, ITextureFactorySymbol } from "../core/dependency-injection/register-services-interface";
+import { IBuffersFactorySymbol, IFrameworkSymbol, IRendererSymbol, IRenderTargetFactorySymbol, ITextureFactorySymbol } from "../core/dependency-injection/register-services-interface";
 import { RenderConfiguration, RenderConfigurationSymbol, type IRenderer } from "../core/renderer/renderer-interface";
 import type { ITextureFactory } from "../core/texture/texture-factory";
-import { IBuffersFactorySymbol, type IBuffersFactory } from "../core/buffers/buffers-factory-interface";
 import type { IRenderTargetFactory } from "../core/render-target/render-target-factory";
 import { IGeometryBuilderSymbol, type IGeometryBuilder } from "../core/geometry/geometry-builder-interface";
 import { GeometryBuilder } from "../core/geometry/geometry-builder";
+import type { IBuffersFactory } from "../core/buffers/buffers-factory-interface";
 
 export class Framework implements IFramework {
 
@@ -44,8 +44,10 @@ export class Framework implements IFramework {
     this._buffersFactory = this._container.resolve(IBuffersFactorySymbol);
     this._geometryBuilder = this._container.resolve(IGeometryBuilderSymbol);
   }
+
+  /** @inheritdoc */
   get geometryBuilder(): IGeometryBuilder {
-    throw new Error("Method not implemented.");
+    return this._geometryBuilder;
   }
 
   /** @inheritdoc */

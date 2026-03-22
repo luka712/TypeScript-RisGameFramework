@@ -1,4 +1,4 @@
-import { inject } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import type { IBuffersFactory } from "../../core/buffers/buffers-factory-interface";
 import type { IVertexBuffer } from "../../core/buffers/vertex-buffer-interface";
 import { IFrameworkSymbol } from "../../core/dependency-injection/register-services-interface";
@@ -8,6 +8,7 @@ import { WebGLVertexBuffer } from "./webgl-vertex-buffer";
 import type { IIndexBuffer } from "../../core/buffers/index-buffer-interface";
 import { WebGLIndexBuffer } from "./webgl-index-buffer";
 
+@injectable()
 export class WebGLBuffersFactory implements IBuffersFactory {
 
     /**

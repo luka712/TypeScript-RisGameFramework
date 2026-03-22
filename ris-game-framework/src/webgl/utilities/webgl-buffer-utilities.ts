@@ -27,6 +27,8 @@ export class WebGLBufferUtilities {
         } else {
             gl.bufferData(gl.ARRAY_BUFFER, dataOrByteSize, WebGLConverter.convertBufferUsage(usage));
         }
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
         return buffer;
     }
 
@@ -49,6 +51,8 @@ export class WebGLBufferUtilities {
         } else {
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, dataOrByteSize, WebGLConverter.convertBufferUsage(usage));
         }
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
         return buffer;
     }
 }

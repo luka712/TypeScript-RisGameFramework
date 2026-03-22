@@ -26,5 +26,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
 
-var framework = new Framework();
+var framework = new Framework({
+  canvas: document.getElementById("game-canvas") as HTMLCanvasElement
+});
 framework.initalize();

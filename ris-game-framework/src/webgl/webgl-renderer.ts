@@ -31,14 +31,12 @@ export class WebGLRenderer implements IRenderer {
    * @param renderConfiguration The render configuration. This is used to initialize the renderer.
    */
   constructor(
-    @inject(IFrameworkSymbol) private readonly _framework: IFramework, 
+    @inject(IFrameworkSymbol) private readonly _framework: IFramework,
     @inject(RenderConfigurationSymbol) renderConfiguration: RenderConfiguration) {
     this.clearColor = Color.lightPink();
+    debugger;
     this._frameBufferSize = renderConfiguration.frameBufferSize;
-
   }
-
-
 
   /**
    * The WebGL rendering context. This is undefined until the renderer is initialized.
@@ -103,10 +101,10 @@ export class WebGLRenderer implements IRenderer {
 
     WebGLUtilities.culling.setCulling(gl, this._culling);
 
-    this._mainFramebuffer =  asWebGLRenderTarget2D(this._framework.renderTargetFactory.createRenderTarget2D(
+    this._mainFramebuffer = asWebGLRenderTarget2D(this._framework.renderTargetFactory.createRenderTarget2D(
       this._frameBufferSize, this._frameBufferSize));
-    };
-  
+  };
+
   private _queryLimits(): void {
     const gl = this._gl!;
 
@@ -118,17 +116,20 @@ export class WebGLRenderer implements IRenderer {
   /** @inheritdoc */
   beginRenderPass(): void {
     var gl = this._gl!;
+
+    gl.viewport(0, 0, this._frameBufferSize[0], this._frameBufferSize[1]);
     gl.clearColor(
       this.clearColor.r,
       this.clearColor.g,
       this.clearColor.b,
       this.clearColor.a,
     );
-    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
   }
 
   /** @inheritdoc */
   endRenderPass(): void {
-    console.log("WebGLRenderer ended render pass.");
+
   }
 }

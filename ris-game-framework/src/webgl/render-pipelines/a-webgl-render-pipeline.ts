@@ -1,7 +1,8 @@
 import type { IFramework } from '../../core/framework-interface';
 import type { IRenderPipeline } from '../../core/render-pipelines/render-pipeline-interface';
-import type { AVertexBufferLayout } from '../../core/rendering/a-vertex-buffer-layout';
+import type { VertexBufferLayout } from '../../core/rendering/vertex-buffer-layout';
 import { asWebGLRenderer } from '../cast/cast';
+import { WebGLConverter } from '../utilities/webgl-converter';
 
 /**
  * The base class for WebGL render pipelines. This class provides common functionality for all WebGL render pipelines.
@@ -14,6 +15,8 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
 
     protected _vertexArrayObject: WebGLVertexArrayObject | null = null;
 
+    protected _vertexBufferLayouts: VertexBufferLayout[] = [];
+
     /**
      * The constructor.
      * @param framework The framework.
@@ -24,7 +27,45 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
     }
 
     /** @inheritDoc */
-    vertexBufferLayouts: AVertexBufferLayout[] = null!;
+    public get vertexBufferLayouts(): VertexBufferLayout[] {
+        return this._vertexBufferLayouts;
+    }
+
+    /**
+     * Provide WebGL buffers for the render pipeline. 
+     * This method should be implemented by subclasses to provide the necessary buffers
+     * for creatine the vertex array object.
+     * @returns An array of WebGLBuffer objects to be used in the vertex array object.
+     */
+    protected abstract _provideBuffers(): WebGLBuffer[];
+
+    /**
+     * Creates the vertex array object for the render pipeline.
+     *  This method binds the provided buffers and sets up the vertex attribute pointers based on the vertex buffer layouts.
+     */
+    protected _createVertexArrayObject(): void {
+       this._vertexArrayObject = this._gl.createVertexArray();
+       const buffers = this._provideBuffers();
+
+       for(let i = 0; i < this._vertexBufferLayouts.length; i++) {
+            const layout = this._vertexBufferLayouts[i];
+            const buffer = buffers[i];
+
+            this._gl.bindVertexArray(this._vertexArrayObject);
+            this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buffer);
+
+            const stride = layout.arrayStride;
+            for(const attribute of layout.attributes) {
+
+                const size = WebGLConverter.convertVertexFormat(attribute.format);
+                const index = attribute.shaderLocation;
+                const offset = attribute.offset;
+
+                this._gl.enableVertexAttribArray(index);
+                this._gl.vertexAttribPointer(index, size, this._gl.FLOAT, false, stride, offset);
+            }
+       }
+    }
 
     /** @inheritDoc */
     initialize(): void {
@@ -33,13 +74,7 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
             throw new Error('At least one vertex buffer layout must be provided for the render pipeline.');
         }
 
-        this._vertexArrayObject = this._gl.createVertexArray();
-        this._gl.bindVertexArray(this._vertexArrayObject);
-
-        for(const vertexBufferLayout of this.vertexBufferLayouts) {
-            vertexBufferLayout.initialize();
-        }
-
+        this._createVertexArrayObject();
     }
 
     /** @inheritDoc */

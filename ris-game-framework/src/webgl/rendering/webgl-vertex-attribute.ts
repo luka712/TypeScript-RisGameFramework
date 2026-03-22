@@ -1,4 +1,4 @@
-import { AVertexAttribute } from "../../core/rendering/a-vertex-attribute";
+import { AVertexAttribute } from "../../core/rendering/vertex-attribute";
 
 /**
  * The WebGL implementation of a vertex attribute.

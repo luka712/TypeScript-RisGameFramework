@@ -2,7 +2,6 @@ import type { BufferUsage } from "../rendering/enums";
 import type { IIndexBuffer } from "./index-buffer-interface";
 import type { IVertexBuffer } from "./vertex-buffer-interface";
 
-export const IBuffersFactorySymbol = Symbol("IBuffersFactory");
 
 /**
  * The interface for the buffers factory, which is responsible for creating vertex buffers.

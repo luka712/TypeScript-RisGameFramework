@@ -1,4 +1,4 @@
-import { AVertexBufferLayout } from "../../core/rendering/a-vertex-buffer-layout";
+import { AVertexBufferLayout } from "../../core/rendering/vertex-buffer-layout";
 import { WebGLConverter } from "../utilities/webgl-converter";
 
 /**

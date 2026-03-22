@@ -1,9 +1,8 @@
 import type { DependencyContainer } from "tsyringe";
-import { IRendererSymbol, IRenderTargetFactorySymbol, ITextureFactorySymbol, type IRegisterServices } from "../core/dependency-injection/register-services-interface";
+import { IBuffersFactorySymbol, IRendererSymbol, IRenderTargetFactorySymbol, ITextureFactorySymbol, type IRegisterServices } from "../core/dependency-injection/register-services-interface";
 import { WebGLRenderer } from "./webgl-renderer";
 import { WebGLRenderTargetFactory } from "./render-target/webgl-render-target-factory";
 import { WebGLTextureFactory } from "./texture/webgl-texture-factory";
-import { IBuffersFactorySymbol } from "../core/buffers/buffers-factory-interface";
 import { WebGLBuffersFactory } from "./buffers/webgl-buffers-factory";
 
 export class WebGLRegisterServices implements IRegisterServices {

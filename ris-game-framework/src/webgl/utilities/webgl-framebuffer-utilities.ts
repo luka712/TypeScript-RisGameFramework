@@ -97,6 +97,8 @@ export class WebGLFrameBufferUtilities {
             };
         }
 
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
         return framebuffer;
     }
 
@@ -152,7 +154,7 @@ export class WebGLFrameBufferUtilities {
             };
         }
 
-
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
         return framebuffer;
     }
 

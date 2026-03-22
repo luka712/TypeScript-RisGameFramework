@@ -8,7 +8,7 @@ import { BufferUsage } from "../../core/rendering/enums";
 import { asWebGLIndexBuffer, asWebGLVertexBuffer } from "../cast/cast";
 import type { WebGLIndexBuffer } from "../buffers/webgl-index-buffer";
 import type { IRenderTarget2D } from "../../core/render-target/render-target-2d";
-import { AVertexBufferLayout } from "../../core/rendering/a-vertex-buffer-layout";
+import { VertexBufferLayout } from "../../core/rendering/vertex-buffer-layout";
 
 export class WebGLMainFrameBufferRenderPipeline extends AWebGLRenderPipeline implements IMainFrameBufferRenderPipeline {
 
@@ -21,8 +21,17 @@ export class WebGLMainFrameBufferRenderPipeline extends AWebGLRenderPipeline imp
         super(framework);
 
         this._createResources();
-        this.vertexBufferLayouts = [AVertexBufferLayout.CreateFloat3Float2Layout()];
+        this._vertexBufferLayouts = [VertexBufferLayout.createFloat3Float2Layout()];
 
+    }
+
+    /** @inheritdoc */
+    protected _provideBuffers(): WebGLBuffer[] {
+        return [this._vertexBuffer.buffer!];
+    }
+
+    render(): void {
+        throw new Error("Method not implemented.");
     }
 
     public get renderTarget(): IRenderTarget2D {
@@ -49,7 +58,7 @@ export class WebGLMainFrameBufferRenderPipeline extends AWebGLRenderPipeline imp
 
         this._indexBuffer = asWebGLIndexBuffer(this._framework.buffersFactory.createIndexBuffer(
             geometry.indices!, "Main Frame Buffer Render Pipeline Index Buffer",
-         ));
+        ));
     }
 
 }

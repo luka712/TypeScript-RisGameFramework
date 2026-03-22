@@ -4,6 +4,7 @@ export const IFrameworkSymbol = Symbol.for("IFramework");
 export const IRendererSymbol = Symbol.for("IRenderer");
 export const IRenderTargetFactorySymbol = Symbol.for("IRenderTargetFactory");
 export const ITextureFactorySymbol = Symbol.for("ITextureFactory");
+export const IBuffersFactorySymbol = Symbol.for("IBuffersFactory");
 
 /**
  * The interface for registering services to the dependency injection container.
