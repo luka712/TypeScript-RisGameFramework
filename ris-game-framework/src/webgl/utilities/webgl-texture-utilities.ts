@@ -26,7 +26,7 @@ export class WebGLTextureUtilities {
         gl: WebGL2RenderingContext,
         width: number, height: number,
         data: ArrayBufferView<ArrayBufferLike> | null = null,
-        textureFormat = TextureFormat.BGRA_8_Unorm,
+        textureFormat = TextureFormat.BGRA_8_UNORM,
         minFilter = SamplerMinFilter.Nearest,
         magFilter = SamplerMagFilter.Nearest,
         compareFunction = SamplerCompareFunction.Never,

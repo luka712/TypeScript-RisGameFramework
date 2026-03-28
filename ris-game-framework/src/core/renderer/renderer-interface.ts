@@ -2,6 +2,7 @@ import { vec2 } from "gl-matrix";
 import type { TextureFormat } from "../../common/texture-enums";
 import type { Color } from "../math/color";
 import type { RenderingLimits } from "./RenderingLimits";
+import type { IGraphicsDevice } from '../rendering/graphics-device-interface';
 
 export const RenderConfigurationSymbol = Symbol("RenderConfiguration");
 
@@ -32,6 +33,12 @@ export interface IRenderer {
     limits: RenderingLimits | null;
 
     /**
+     * The graphics device used by the renderer. 
+     * This is used to create resources and manage the rendering context.
+     */
+    readonly graphicsDevice: IGraphicsDevice;
+
+    /**
      * The preferred texture format for the renderer.
      * @returns The preferred texture format for the renderer.
      */
@@ -47,6 +54,12 @@ export interface IRenderer {
      * Initializes the renderer.
      */
     initialize(): void;
+
+    /**
+     * Performs any additional initialization steps after the main initialization is complete.
+     * This can be used to set up resources that depend on the graphics device or swap chain being initialized.
+     */
+    afterInitialize(): void;
 
     /**
      * Begins a new render pass.

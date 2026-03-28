@@ -7,7 +7,7 @@ import type { IRenderPipeline } from "./render-pipeline-interface";
  * The main frame buffer is the default render target that is presented to the screen.
  * It is also used as the default render target for all rendering operations if no other render target is specified.
  */
-export interface IMainFrameBufferRenderPipeline extends IRenderPipeline {
+export interface MainRenderTargetRenderPipelineInterface extends IRenderPipeline {
     /**
      * The main frame buffer render target.
      */

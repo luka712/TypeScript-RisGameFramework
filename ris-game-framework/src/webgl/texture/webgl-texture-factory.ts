@@ -48,7 +48,7 @@ export class WebGLTextureFactory implements ITextureFactory {
             vec2.fromValues(width, height),
             imageData,
             textureUsage,
-            TextureFormat.BGRA_8_Unorm,
+            TextureFormat.BGRA_8_UNORM,
             minFilter,
             magFilter,
             SamplerAddressMode.Repeat,

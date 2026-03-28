@@ -1,5 +1,5 @@
 export enum BufferUsage {
-    
+
     /** 
      * No specific usage.
      */
@@ -30,3 +30,40 @@ export enum BufferUsage {
      */
     Index_CopyDst
 }
+
+/**
+ * Specifies the action to take with the attachment contents at the **end** of a render pass.
+ */
+export enum StoreAction {
+    /**
+     * The contents of the attachment will be stored after the render pass. 
+     * This is the default value.
+     */
+    STORE,
+
+    /**
+     * The contents of the attachment will be discarded after the render pass.
+     */
+    DISCARD,
+}
+
+/**
+ * Specifies the action to take with the attachment contents at the **beginning** of a render pass.
+ */
+export enum LoadAction {
+    /**
+     * The contents of the attachment will be cleared at the beginning of the render pass.
+     */
+    CLEAR,
+
+    /**
+     * The contents of the attachment will be loaded from the previous render pass or from the texture/swap chain at the beginning of the render pass.
+     */
+    LOAD,
+
+    /**
+     * The contents of the attachment are undefined at the beginning of the render pass.
+     */
+    UNDEFINED
+}
+

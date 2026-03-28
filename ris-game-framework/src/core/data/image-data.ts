@@ -53,7 +53,7 @@ export class GenericImageData implements IImageData {
 
     /** @inheritdoc */
     get format(): TextureFormat {
-        return TextureFormat.BGRA_8_Unorm;
+        return TextureFormat.BGRA_8_UNORM;
     }
 
     /** @inheritdoc */

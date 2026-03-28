@@ -104,12 +104,12 @@ export class WebGLConverter {
     public static convertInternalFormat(gl: WebGL2RenderingContext, textureFormat: TextureFormat): number {
         switch (textureFormat) {
             // Same format regardless.
-            case TextureFormat.RGBA_8_Unorm:
-            case TextureFormat.BGRA_8_Unorm:
+            case TextureFormat.RGBA_8_UNORM:
+            case TextureFormat.BGRA_8_UNORM:
                 return gl.RGBA8;
             case TextureFormat.Depth_32_Float:
                 return gl.DEPTH_COMPONENT32F;
-            case TextureFormat.Depth_24_Stencil_8:
+            case TextureFormat.DEPTH_24_STENCIL_8:
                 return gl.DEPTH24_STENCIL8;
             default:
                 throw new Error("NotImplementedException");
@@ -124,7 +124,7 @@ export class WebGLConverter {
      */
     public static convertToPixelFormat(gl: WebGL2RenderingContext, textureFormat: TextureFormat): number {
         switch (textureFormat) {
-            case TextureFormat.RGBA_8_Unorm:
+            case TextureFormat.RGBA_8_UNORM:
                 return gl.RGBA;
             default:
                 throw new Error("NotImplementedException");
@@ -139,8 +139,8 @@ export class WebGLConverter {
      */
     public static convertToTextureType(gl: WebGL2RenderingContext, textureFormat: TextureFormat): number {
         switch (textureFormat) {
-            case TextureFormat.RGBA_8_Unorm:
-            case TextureFormat.BGRA_8_Unorm:
+            case TextureFormat.RGBA_8_UNORM:
+            case TextureFormat.BGRA_8_UNORM:
                 return gl.UNSIGNED_BYTE;
             default:
                 throw new Error("NotImplementedException");
