@@ -1,5 +1,6 @@
+import { Color } from "../../math/color";
 import type { ITexture2D } from "../../texture/texture";
-import { LoadAction, StoreAction } from "../enums";
+import { LoadAction, StoreAction } from '../enums';
 import type { ISwapChain } from "../swap-chain/swap-chain-interface";
 
 /**
@@ -19,7 +20,7 @@ export class RenderPassDescriptor {
      * The depth-stencil attachment for the render pass. 
      * This can be used to specify a depth-stencil buffer for depth testing and stencil operations during rendering.
      */
-    public depthStencilAttachment?: RenderPassDepthStencilAttachment | null = null;
+    public depthStencilAttachment?: RenderPassDepthStencilAttachment;
 }
 
 
@@ -27,6 +28,16 @@ export class RenderPassDescriptor {
  * The RenderPassColorAttachment class represents a color attachment for a render pass.
  */
 export class RenderPassColorAttachment {
+
+    /**
+     * The constructor.
+     * @param renderTarget The texture that will be used as the color attachment for the render pass. This can be used for off-screen rendering or when rendering to a texture instead of the swap chain. 
+     * @param swapChain The swap chain that will be used as the color attachment for the render pass. This is typically used when rendering directly to the screen.
+     */
+    constructor(renderTarget?: ITexture2D, swapChain?: ISwapChain) {
+        this.texture = renderTarget;
+        this.swapChain = swapChain;
+    }
 
     /**
      * The swap chain that will be used as the color attachment for the render pass.
@@ -39,12 +50,38 @@ export class RenderPassColorAttachment {
      */
     public texture?: ITexture2D | null = null;
 
+    /**
+     * The clear color for the color attachment.
+     *  This value is used to clear the color attachment at the beginning of the render pass if the load action is set to LoadAction.CLEAR.
+     */
+    public clearColor = new Color(0, 0, 0, 1);
+
+    /**
+     * The action to take for the color attachment at the beginning of the render pass. 
+     * By efault, it is set to LoadAction.STORE, which means that the existing contents of the color attachment will be preserved.
+     */
+    public storeAction = StoreAction.STORE;
+
+    /**
+     * The action to take for the color attachment at the start of the render pass.
+     * By default, it is set to LoadAction.CLEAR, which means that the color attachment 
+     * will be cleared at the beginning of the render pass using the specified clear color.
+     */
+    public loadAction = LoadAction.CLEAR;
 }
 
 /**
  * The RenderPassDepthStencilAttachment class represents the depth-stencil attachment for a render pass.
  */
 export class RenderPassDepthStencilAttachment {
+
+    /**
+     * The constructor.
+     * @param texture The texture that will be used as the depth-stencil attachment for the render pass. This can be used to specify a depth-stencil buffer for depth testing and stencil operations during rendering.
+     */
+    public constructor(texture?: ITexture2D) {
+        this.texture = texture;
+    }
 
     /**
      * The texture that will be used as the depth-stencil attachment for the render pass.

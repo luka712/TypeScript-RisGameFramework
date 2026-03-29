@@ -152,9 +152,9 @@ export class WebGLRenderTarget2D implements IRenderTarget2D {
 
                 this.framebuffer = WebGLUtilities.framebuffer.createWithRenderTextureAsDepthBuffer(
                     this._gl,
-                    this._textureAttachment0.texture,
+                    this._textureAttachment0.glTexture,
                     this._depthStencilTextureAttachment,
-                    this._depthStencilTexture.texture);
+                    this._depthStencilTexture.glTexture);
             }
             else {
                 // We can have render buffer instead.
@@ -166,7 +166,7 @@ export class WebGLRenderTarget2D implements IRenderTarget2D {
 
                 this.framebuffer = WebGLUtilities.framebuffer.createWithRenderBufferAsDepthBuffer(
                     this._gl,
-                    this._textureAttachment0.texture,
+                    this._textureAttachment0.glTexture,
                     this._depthStencilFrameBufferAttachment,
                     this._depthRenderBuffer,
                     undefined);
@@ -178,7 +178,7 @@ export class WebGLRenderTarget2D implements IRenderTarget2D {
         // Without depth buffer.
         else {
             // Create a framebuffer with texture being attached as color attachment 0.
-            this.framebuffer = WebGLUtilities.framebuffer.create(this._gl, this._textureAttachment0.texture);
+            this.framebuffer = WebGLUtilities.framebuffer.create(this._gl, this._textureAttachment0.glTexture);
         }
 
     }

@@ -3,7 +3,7 @@ import { SamplerAddressMode, SamplerMagFilter, SamplerMinFilter, SamplerCompareF
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import type { IFramework } from "../../core/framework-interface";
 import type { vec2 } from "gl-matrix";
-import { asWebGLRenderer } from "../cast/cast";
+import { asWebGLGraphicsDevice, asWebGLRenderer } from "../cast/cast";
 import { State } from "../../common/state";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
 import type { IImageData } from "../../core/data/image-data";
@@ -48,13 +48,14 @@ export class WebGLTexture2D extends ATexture2D {
             samplerCompareFunction,
             label, useMipMaps);
 
-        this._gl = asWebGLRenderer(this._framework.renderer).gl!;
+        this._gl = asWebGLGraphicsDevice(this._framework.renderer.graphicsDevice).gl!;
     }
 
     /**
      * Gets the underlying WebGL texture.
+     * @returns The WebGL texture. 
      */
-    public get texture(): WebGLTexture {
+    public get glTexture(): WebGLTexture {
         return this._texture!;
     }
 

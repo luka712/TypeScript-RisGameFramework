@@ -7,6 +7,7 @@ import { WebGLIndexBuffer } from "../buffers/webgl-index-buffer";
 import { WebGLVertexBuffer } from "../buffers/webgl-vertex-buffer";
 import { WebGLRenderTarget2D } from "../render-target/webgl-render-target-2d";
 import { WebGLTexture2D } from "../texture/webgl-texture-2d";
+import { WebGLGraphicsDevice } from "../webgl-graphics-device";
 import { WebGLRenderer } from "../webgl-renderer";
 
 /**
@@ -72,4 +73,17 @@ export function asWebGLIndexBuffer(indexBuffer: IIndexBuffer): WebGLIndexBuffer 
     } else {
         throw new Error("Index buffer is not a WebGLIndexBuffer.");
     }
+}
+
+/**
+ * Casts the given graphics device to a WebGLGraphicsDevice. If the graphics device is not a WebGLGraphicsDevice, an error is thrown.
+ * @param graphicsDevice The graphics device to cast.
+ * @returns The given graphics device casted to a WebGLGraphicsDevice.
+ */
+export function asWebGLGraphicsDevice(graphicsDevice: IRenderer["graphicsDevice"]): WebGLGraphicsDevice {
+    if (graphicsDevice instanceof WebGLGraphicsDevice   ) {
+        return graphicsDevice as WebGLGraphicsDevice;
+    } else {
+        throw new Error("Graphics device is not a WebGL graphics device.");
+    }   
 }

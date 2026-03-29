@@ -10,6 +10,7 @@ import type { IFramework } from "../framework-interface";
 import type { ITexture2D } from "../texture/texture";
 import type { IRenderPass } from "../rendering/render-pass/render-pass-interface";
 import type { MainRenderTargetRenderPipelineInterface } from "../render-pipelines/main-render-target-render-pipeline-interface";
+import { RenderPassColorAttachment, RenderPassDepthStencilAttachment } from '../rendering/render-pass/render-pass-descriptor';
 
 export abstract class ARendererer implements IRenderer {
 
@@ -72,12 +73,9 @@ export abstract class ARendererer implements IRenderer {
 
     /** @inheritdoc */
     public afterInitialize(): void {
+
         this._swapChainRenderPass = this._graphicsDevice.createRenderPass({
-            colorAttachments: [
-                {
-                    swapChain: this._swapChain,
-                }
-            ]
+            colorAttachments: [new RenderPassColorAttachment(undefined, this._swapChain)]
         });
 
         this._mainRenderTarget = this._framework.textureFactory.createEmpty(
@@ -98,20 +96,16 @@ export abstract class ARendererer implements IRenderer {
         this._mainRenderTargetPipeline = this._framework.renderPipelineFactory.createMainRenderTargetRenderPipeline(this._mainRenderTarget);
 
         this._mainRenderTargetRenderPass = this._graphicsDevice.createRenderPass({
-            colorAttachments: [{
-                texture: this._mainRenderTarget,
-            }],
-            depthStencilAttachment: {
-                texture: this._depthStencilBuffer,
-            }
+            colorAttachments: [new RenderPassColorAttachment(this._mainRenderTarget)],
+            depthStencilAttachment: new RenderPassDepthStencilAttachment(this._depthStencilBuffer)
         });
     }
 
     /** @inheritdoc */
     public beginRenderPass(): void {
-        this._mainRenderTargetRenderPass.beginPass();   
+        this._mainRenderTargetRenderPass.beginPass();
     }
-    
+
     /** @inheritdoc */
     public endRenderPass(): void {
         this._mainRenderTargetRenderPass.endPass();
@@ -119,7 +113,7 @@ export abstract class ARendererer implements IRenderer {
         this._swapChainRenderPass.beginPass();
         this._mainRenderTargetPipeline.render();
         this._swapChainRenderPass.endPass();
-        
+
         this._swapChain.present();
     }
 

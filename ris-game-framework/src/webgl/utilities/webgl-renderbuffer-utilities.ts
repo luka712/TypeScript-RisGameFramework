@@ -1,4 +1,5 @@
 import type { TextureFormat } from "../../common/texture-enums";
+import { SpectorJSUtilities } from "./spector-js-utilities";
 import { WebGLConverter } from "./webgl-converter";
 
 /**
@@ -25,10 +26,7 @@ export class WebGLRenderbufferUtilities {
             height);
 
         if (label) {
-            // @ts-ignore
-            renderBuffer.__SPECTOR_Metadata = {
-                name: label,
-            };
+            SpectorJSUtilities.setLabel(renderBuffer, label);
         }
 
         return renderBuffer;

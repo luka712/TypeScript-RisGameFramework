@@ -45,4 +45,9 @@ export class WebGLUtilities {
      * The WebGL buffer utilities.
      */
     public static readonly buffer = new WebGLBufferUtilities();
+
+    /**
+     * The WebGL render buffer utilities.
+     */
+    public static readonly renderBuffer = new WebGLRenderbufferUtilities();
 }
