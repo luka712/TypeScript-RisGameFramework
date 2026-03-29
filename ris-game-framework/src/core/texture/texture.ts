@@ -1,6 +1,5 @@
 import type { IDisposable } from "../../common/disposable";
 import { TextureUsage, TextureFormat } from "../../common/texture-enums";
-import { SamplerMinFilter, SamplerMagFilter, SamplerAddressMode, SamplerCompareFunction } from "../../common/sampler-enums";
 import { State } from "../../common/state";
 
 /**
@@ -53,12 +52,6 @@ export abstract class ATexture2D implements ITexture2D {
      * @param _height The height of the texture.
      * @param _textureUsage The texture usage.
      * @param _textureFormat The texture format.
-     * @param minFilter The min filter to use when sampling the texture. This determines how the texture is sampled when it is minified (i.e., when it is smaller than its original size).
-     * @param magFilter The mag filter to use when sampling the texture. This determines how the texture is sampled when it is magnified (i.e., when it is larger than its original size).
-     * @param addressModeU The address mode for the u coordinate. This determines how texture coordinates outside the [0, 1] range are handled in the u direction.
-     * @param addressModeV The address mode for the v coordinate. This determines how texture coordinates outside the [0, 1] range are handled in the v direction.
-     * @param addressModeW The address mode for the w coordinate. This determines how texture coordinates outside the [0, 1] range are handled in the w direction.
-     * @param compareFunction The compare function to use when sampling the texture. This is used for depth textures and determines how the sampled depth value is compared to the reference value.
      * @param label The label for the texture. This can be used for debugging purposes to identify the texture in graphics debuggers.
      * @param useMipMaps This determines whether mipmaps should be generated for the texture. Mipmaps are smaller versions of the texture that are used when the texture is minified to improve performance and reduce aliasing.
      * @param anisotropy This determines the level of anisotropic filtering to use when sampling the texture. Anisotropic filtering improves the quality of texture sampling at oblique viewing angles, but it can also reduce performance. A value of 1 means no anisotropic filtering, while higher values (e.g., 4, 8, 16) indicate increasing levels of anisotropic filtering.
@@ -68,12 +61,6 @@ export abstract class ATexture2D implements ITexture2D {
         protected readonly _height: number,
         protected readonly _textureUsage: TextureUsage,
         protected readonly _textureFormat: TextureFormat,
-        protected readonly _minFilter: SamplerMinFilter = SamplerMinFilter.Linear,
-        protected readonly _magFilter: SamplerMagFilter = SamplerMagFilter.Linear,
-        protected readonly _addressModeU: SamplerAddressMode = SamplerAddressMode.ClampToEdge,
-        protected readonly _addressModeV: SamplerAddressMode = SamplerAddressMode.ClampToEdge,
-        protected readonly _addressModeW: SamplerAddressMode = SamplerAddressMode.ClampToEdge,
-        protected readonly _compareFunction: SamplerCompareFunction = SamplerCompareFunction.Never,
         protected readonly _label: string | null = null,
         protected readonly _useMipMaps: boolean = false,
         protected readonly _anisotropy: number = 1

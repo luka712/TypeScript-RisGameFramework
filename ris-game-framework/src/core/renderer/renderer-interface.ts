@@ -3,6 +3,7 @@ import type { TextureFormat } from "../../common/texture-enums";
 import type { Color } from "../math/color";
 import type { RenderingLimits } from "./RenderingLimits";
 import type { IGraphicsDevice } from '../rendering/graphics-device-interface';
+import { TextureSamplerFilteringPreset } from "../rendering/enums";
 
 export const RenderConfigurationSymbol = Symbol("RenderConfiguration");
 
@@ -10,11 +11,18 @@ export const RenderConfigurationSymbol = Symbol("RenderConfiguration");
  * The configuration for the renderer. This is used to initialize the renderer.
  */
 export class RenderConfiguration {
- 
+
     /**
      * The size of the main frame buffer. This is used to initialize the main render target.
      */
     frameBufferSize: vec2 = vec2.fromValues(800, 600);
+
+    /**
+     * The preset for texture sampler filtering.
+     *  This is used to configure the default texture sampler in the graphics device. 
+     * The default texture sampler is used when a texture is sampled without a specific sampler being bound.
+     */
+    textureFiltering = TextureSamplerFilteringPreset.BILINEAR;
 }
 
 /**

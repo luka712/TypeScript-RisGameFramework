@@ -1,24 +1,32 @@
-import type { IFramework } from "../core/framework-interface";
-import type { IGraphicsDevice } from "../core/rendering/graphics-device-interface";
 import type { RenderPassDescriptor } from "../core/rendering/render-pass/render-pass-descriptor";
 import type { IRenderPass } from "../core/rendering/render-pass/render-pass-interface";
+import type { ISampler } from "../core/rendering/sampler/sampler-interface";
+import type { SamplerDescriptor } from "../core/rendering/sampler/sampler-descriptor";
 import type { SwapChainDescriptor } from "../core/rendering/swap-chain/swap-chain-descriptor";
 import type { ISwapChain } from "../core/rendering/swap-chain/swap-chain-interface";
 import type { IWindowManager } from "../core/window/window-manager-interface";
 import { WebGLSwapChain } from "./swap-chain/webgl-swap-chain";
+import { WebGLSampler } from "./sampler/webgl-sampler";
+import { WebGLRenderPass } from "./render-pass/webgl-render-pass";
+import { AGraphicsDevice, GraphicsDeviceDescriptor } from "../core/rendering/a-graphics-device";
 
-export class WebGLGraphicsDevice implements IGraphicsDevice {
+export class WebGLGraphicsDevice extends AGraphicsDevice {
 
     private readonly _windowManager: IWindowManager;
     private _canvas: HTMLCanvasElement = null!;
     private _gl: WebGL2RenderingContext = null!;
 
-    public constructor(windowManager: IWindowManager) {
+    /**
+     * The constructor.
+     * @param windowManager The window manager that provides access to the canvas element and other window-related functionalities needed for initializing the graphics device and creating rendering contexts. 
+     * @param descriptor The descriptor for the graphics device. This is used to configure the graphics device during initialization.
+     */
+    public constructor(windowManager: IWindowManager, descriptor: GraphicsDeviceDescriptor) {
+
+        super(descriptor);
         this._windowManager = windowManager;
     }
-    createRenderPass(descriptor: RenderPassDescriptor): IRenderPass {
-        throw new Error("Method not implemented.");
-    }
+
 
     /**
      * The WebGL rendering context.
@@ -30,6 +38,9 @@ export class WebGLGraphicsDevice implements IGraphicsDevice {
 
     /** @inheritdoc */
     public initialize(): void {
+
+        super.initialize();
+
         this._canvas = this._windowManager.canvas;
 
         const contextOptions: WebGLContextAttributes = {
@@ -51,5 +62,15 @@ export class WebGLGraphicsDevice implements IGraphicsDevice {
     /** @inheritdoc */
     public createSwapChain(canvas: HTMLCanvasElement, swapChainDescriptor: SwapChainDescriptor): ISwapChain {
         return new WebGLSwapChain(canvas);
+    }
+
+    /** @inheritdoc */
+    public createSampler(descriptor?: SamplerDescriptor): ISampler {
+        return new WebGLSampler(this, descriptor);
+    }
+
+    /** @inheritdoc */
+    public createRenderPass(descriptor: RenderPassDescriptor): IRenderPass {
+        return new WebGLRenderPass(this, descriptor);
     }
 }

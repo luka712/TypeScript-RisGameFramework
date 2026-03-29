@@ -4,6 +4,8 @@ import { TextureFormat } from "../../common/texture-enums";
 import { VertexFormat } from "../../common/vertex-format";
 import { Culling } from "../../core/renderer/enums";
 import { BufferUsage } from "../../core/rendering/enums";
+import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from "../../core/rendering/sampler/enums";
+import { State } from '../../common/state';
 
 export class WebGLConverter {
 
@@ -12,7 +14,7 @@ export class WebGLConverter {
      * @param usage The BufferUsage.
      * @return The WebGL enum.
      */
-    public static convertBufferUsage(usage: BufferUsage) : GLenum {
+    public static convertBufferUsage(usage: BufferUsage): GLenum {
         switch (usage) {
             case BufferUsage.Vertex:
                 return WebGL2RenderingContext.STATIC_DRAW;
@@ -107,7 +109,7 @@ export class WebGLConverter {
             case TextureFormat.RGBA_8_UNORM:
             case TextureFormat.BGRA_8_UNORM:
                 return gl.RGBA8;
-            case TextureFormat.Depth_32_Float:
+            case TextureFormat.DEPTH_32_FLOAT:
                 return gl.DEPTH_COMPONENT32F;
             case TextureFormat.DEPTH_24_STENCIL_8:
                 return gl.DEPTH24_STENCIL8;
@@ -203,5 +205,78 @@ export class WebGLConverter {
         }
     }
 
-}
+    /**
+     * Converts SamplerFilter to WebGL enum.
+     * @param gl The WebGL2RenderingContext.
+     * @param filter The SamplerFilter.
+     * @returns The WebGL enum.
+     */
+    public static convertMagFilter(gl: WebGL2RenderingContext, filter: SamplerFilter): number {
+        switch (filter) {
+            case SamplerFilter.NEAREST:
+                return gl.NEAREST;
+            case SamplerFilter.LINEAR:
+                return gl.LINEAR;
+            default:
+                throw new Error("NotImplementedException");
+        }
+    }
 
+    /**
+     * Converts SamplerFilter and MipmapSamplerFilter to WebGL enum for minification filter.
+     * @param gl The WebGL2RenderingContext.
+     * @param filter The SamplerFilter.
+     * @param mipMapFilter The MipmapSamplerFilter.
+     * @returns The WebGL enum.
+     */
+    public static convertMinFIlter(gl: WebGL2RenderingContext, filter: SamplerFilter, mipMapFilter: MipmapSamplerFilter): number {
+
+        if (mipMapFilter == MipmapSamplerFilter.NONE) {
+            return this.convertMagFilter(gl, filter);
+        }
+        switch (filter) {
+            case SamplerFilter.NEAREST:
+                switch (mipMapFilter) {
+                    case MipmapSamplerFilter.NEAREST:
+                        return gl.NEAREST_MIPMAP_NEAREST;
+                    case MipmapSamplerFilter.LINEAR:
+                        return gl.NEAREST_MIPMAP_LINEAR;
+                    default:
+                        throw new Error("NotImplementedException");
+                }
+            case SamplerFilter.LINEAR:
+                switch (mipMapFilter) {
+                    case MipmapSamplerFilter.NEAREST:
+                        return gl.LINEAR_MIPMAP_NEAREST;
+                    case MipmapSamplerFilter.LINEAR:
+                        return gl.LINEAR_MIPMAP_LINEAR;
+                    default:
+                        throw new Error("NotImplementedException");
+                }
+            default:
+                throw new Error("NotImplementedException");
+        }
+    }
+
+    /**
+     * Converts SamplerAddressMode to WebGL enum.
+     * @param gl The WebGL2RenderingContext.
+     * @param addressMode The SamplerAddressMode.
+     * @returns The WebGL enum.
+     */
+    public static convertAddressMode(gl: WebGL2RenderingContext, addressMode: SamplerAddressMode): number {
+        switch (addressMode) {
+            case SamplerAddressMode.CLAMP_TO_EDGE:
+                return gl.CLAMP_TO_EDGE;
+            case SamplerAddressMode.REPEAT:
+                return gl.REPEAT;
+            case SamplerAddressMode.MIRROR_REPEAT:
+                return gl.MIRRORED_REPEAT;
+            case SamplerAddressMode.CLAMP_TO_BORDER:
+                return gl.CLAMP_TO_EDGE;
+            default:
+                throw new Error("NotImplementedException");
+        }
+    }
+
+}

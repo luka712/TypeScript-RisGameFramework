@@ -2,6 +2,8 @@ import { SwapChainDescriptor } from './swap-chain/swap-chain-descriptor';
 import type { ISwapChain } from './swap-chain/swap-chain-interface';
 import type { RenderPassDescriptor } from './render-pass/render-pass-descriptor';
 import type { IRenderPass } from './render-pass/render-pass-interface';
+import type { ISampler } from './sampler/sampler-interface';
+import type { SamplerDescriptor } from './sampler/sampler-descriptor';
 
 /**
  * This file defines the IGraphicsDevice interface,
@@ -11,6 +13,13 @@ import type { IRenderPass } from './render-pass/render-pass-interface';
  *  The IGraphicsDevice interface may include methods for creating render targets, managing resources, and handling rendering states.
  */
 export interface IGraphicsDevice{
+
+    /**
+     * The default texture sampler. 
+     * This sampler is used for sampling textures when no other sampler is specified.
+     *  It is configured based on the graphics device descriptor and can be overridden by derived classes to provide custom sampler configurations.
+     */
+    readonly defaultTextureSampler: ISampler;
 
     /**
      * Initializes the graphics device, setting up necessary resources and configurations for rendering operations.
@@ -30,4 +39,12 @@ export interface IGraphicsDevice{
      * @returns An instance of IRenderPass that represents the created render pass.
      */
     createRenderPass(descriptor: RenderPassDescriptor) : IRenderPass;
+
+    /**
+     * Creates a sampler, which is used to sample textures in the shader. 
+     * The sampler defines how the texture is sampled, including filtering methods and address modes.
+     * @param descriptor The descriptor containing configuration details for the sampler. This parameter is optional, and if not provided, default values will be used for the sampler configuration.
+     * @returns An instance of ISampler that represents the created sampler.
+     */
+    createSampler(descriptor?: SamplerDescriptor): ISampler;
 }

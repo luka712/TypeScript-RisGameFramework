@@ -12,6 +12,7 @@ import { WebGLGraphicsDevice } from "./webgl-graphics-device";
 @injectable()
 export class WebGLRenderer extends ARendererer {
 
+  private _renderConfiguration: RenderConfiguration;
 
   /**
    * The constructor.
@@ -22,10 +23,13 @@ export class WebGLRenderer extends ARendererer {
     @inject(IFrameworkSymbol) framework: IFramework,
     @inject(RenderConfigurationSymbol) renderConfiguration: RenderConfiguration) {
     super(framework);
+    this._renderConfiguration = renderConfiguration;
   }
 
   /** @inheritdoc */
   protected createGraphicsDevice(): IGraphicsDevice {
-    return new WebGLGraphicsDevice(this._framework.windowManager);
+    return new WebGLGraphicsDevice(this._framework.windowManager , {
+      samplerFilteringPreset: this._renderConfiguration.textureFiltering
+    });
   }
 }
