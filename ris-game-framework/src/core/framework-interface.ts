@@ -4,7 +4,7 @@ import type { ITextureFactory } from "./texture/texture-factory";
 import type { IWindowManager } from "./window/window-manager-interface";
 import type { IGeometryBuilder } from "./geometry/geometry-builder-interface";
 import type { IRenderTargetFactory } from "./render-target/render-target-factory";
-import type { RenderPipelineFactoryInterface } from "./render-pipelines/render-pipeline-factory-interface";
+import type { IRenderPipelineFactory } from "./render-pipelines/render-pipeline-factory-interface";
 
 export interface IFramework {
 
@@ -48,7 +48,7 @@ export interface IFramework {
      * The render pipeline factory associated with this framework. This is used to create render pipelines for the renderer.
      * @return The RenderPipelineFactoryInterface instance.
      */
-    get renderPipelineFactory(): RenderPipelineFactoryInterface;
+    get renderPipelineFactory(): IRenderPipelineFactory;
 
     /**
      * Initializes the framework.

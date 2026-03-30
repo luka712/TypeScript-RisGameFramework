@@ -1,6 +1,7 @@
-import type { IDisposable } from "../../common/disposable";
-import { TextureUsage, TextureFormat } from "../../common/texture-enums";
-import { State } from "../../common/state";
+import type { IDisposable } from "../../../common/disposable";
+import { State } from "../../../common/state";
+import type { TextureUsage, TextureFormat } from "../../../common/texture-enums";
+import type { TextureViewDescriptor, ITextureView } from "./texture-view/texture-view";
 
 /**
  * This file defines the Texture2D interface, which represents a 2D texture in the rendering system.
@@ -101,6 +102,13 @@ export abstract class ATexture2D implements ITexture2D {
     public get label(): string | null {
         return this._label;
     }
+
+    /**
+     * Creates a texture view for the texture.
+     * @param descriptor The descriptor for the texture view. 
+     * @returns The created texture view, which can be used for sampling the texture in shaders.
+     */
+    public abstract createView(descriptor?: TextureViewDescriptor): ITextureView;
 
     dispose(): void {
         // TODO: Implement disposal logic for texture resources

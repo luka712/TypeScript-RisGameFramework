@@ -1,11 +1,13 @@
 import type { ITexture2D } from '../texture/texture';
 import type { MainRenderTargetRenderPipelineInterface } from './main-render-target-render-pipeline-interface';
 
+export const IRenderPipelineFactorySymbol = Symbol("IRenderPipelineFactory");
+
 /**
  * The interface for the render pipeline factory. 
  * This factory is responsible for creating render pipelines, which define the rendering process and the resources used in rendering.
  */
-export interface RenderPipelineFactoryInterface {
+export interface IRenderPipelineFactory {
 
     /**
      * Creates a render pipeline for the main frame buffer.

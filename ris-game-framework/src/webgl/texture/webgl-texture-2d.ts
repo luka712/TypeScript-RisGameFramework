@@ -1,4 +1,3 @@
-import { ATexture2D } from "../../core/texture/texture";
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import type { IFramework } from "../../core/framework-interface";
 import type { vec2 } from "gl-matrix";
@@ -6,8 +5,11 @@ import { asWebGLGraphicsDevice } from "../cast/cast";
 import { State } from "../../common/state";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
 import type { IImageData } from "../../core/data/image-data";
+import { ATexture2D } from "../../core/rendering/texture/texture";
+import type { TextureViewDescriptor, ITextureView } from "../../core/rendering/texture/texture-view/texture-view";
 
 export class WebGLTexture2D extends ATexture2D {
+
 
     private readonly _gl: WebGL2RenderingContext;
     private _texture: WebGLTexture | null = null;
@@ -64,6 +66,11 @@ export class WebGLTexture2D extends ATexture2D {
             this._anisotropy,
             this._label
         );
+    }
+
+    /** @inheritdoc */
+    public createView(descriptor?: TextureViewDescriptor): ITextureView {
+        throw new Error("Method not implemented.");
     }
 
 

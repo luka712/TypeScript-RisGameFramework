@@ -28,7 +28,7 @@ export class WebGLRenderer extends ARendererer {
 
   /** @inheritdoc */
   protected createGraphicsDevice(): IGraphicsDevice {
-    return new WebGLGraphicsDevice(this._framework.windowManager , {
+    return new WebGLGraphicsDevice(this._framework.windowManager, {
       samplerFilteringPreset: this._renderConfiguration.textureFiltering
     });
   }

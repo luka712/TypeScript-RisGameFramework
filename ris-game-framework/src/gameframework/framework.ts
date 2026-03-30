@@ -12,6 +12,7 @@ import type { IRenderTargetFactory } from "../core/render-target/render-target-f
 import { IGeometryBuilderSymbol, type IGeometryBuilder } from "../core/geometry/geometry-builder-interface";
 import { GeometryBuilder } from "../core/geometry/geometry-builder";
 import type { IBuffersFactory } from "../core/buffers/buffers-factory-interface";
+import { IRenderPipelineFactorySymbol, type IRenderPipelineFactory } from "../core/render-pipelines/render-pipeline-factory-interface";
 
 export class Framework implements IFramework {
 
@@ -22,6 +23,7 @@ export class Framework implements IFramework {
   private readonly _renderTargetFactory: IRenderTargetFactory;
   private readonly _buffersFactory: IBuffersFactory;
   private readonly _geometryBuilder: IGeometryBuilder;
+  private readonly _renderPipelineFactory: IRenderPipelineFactory;
 
   /**
    * The constructor for the Framework class.
@@ -35,7 +37,9 @@ export class Framework implements IFramework {
 
     // Setup container.
     this._container.registerInstance(IFrameworkSymbol, this);
-    this._container.registerInstance(RenderConfigurationSymbol, new RenderConfiguration());
+    const rendererConfig = new RenderConfiguration();
+    rendererConfig.textureFiltering = options.textureFiltering;
+    this._container.registerInstance(RenderConfigurationSymbol, rendererConfig);
     this._container.registerInstance(IGeometryBuilderSymbol, new GeometryBuilder());
     (new WebGLRegisterServices).register(this._container);
     this._renderer = this._container.resolve(IRendererSymbol);
@@ -43,6 +47,12 @@ export class Framework implements IFramework {
     this._renderTargetFactory = this._container.resolve(IRenderTargetFactorySymbol);
     this._buffersFactory = this._container.resolve(IBuffersFactorySymbol);
     this._geometryBuilder = this._container.resolve(IGeometryBuilderSymbol);
+    this._renderPipelineFactory = this._container.resolve(IRenderPipelineFactorySymbol);
+  }
+
+  /** @inheritdoc */
+  public get renderPipelineFactory(): IRenderPipelineFactory {
+    return this._renderPipelineFactory;
   }
 
   /** @inheritdoc */
