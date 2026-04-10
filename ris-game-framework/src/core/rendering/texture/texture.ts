@@ -35,6 +35,12 @@ export interface ITexture2D extends IDisposable {
      */
     get state(): State;
 
+    /**
+     * The format of the texture.
+     *  This property indicates the format of the texture data,
+     *  which is important for correctly interpreting the texture in shaders.
+     */
+    get textureFormat(): TextureFormat;
 }
 
 /**
@@ -87,7 +93,6 @@ export abstract class ATexture2D implements ITexture2D {
         return this._state;
     }
 
-
     /** @inheritdoc */
     public get width(): number {
         return this._width;
@@ -101,6 +106,11 @@ export abstract class ATexture2D implements ITexture2D {
     /** @inheritdoc */
     public get label(): string | null {
         return this._label;
+    }
+
+    /** @inheritdoc */
+    public get textureFormat(): TextureFormat {
+        return this._textureFormat;
     }
 
     /**

@@ -1,5 +1,4 @@
 import { BlendFactor, BlendOperation } from "../../common/blend-state";
-import { SamplerMagFilter, SamplerMinFilter } from "../../common/sampler-enums";
 import { TextureFormat } from "../../common/texture-enums";
 import { VertexFormat } from "../../common/vertex-format";
 import { Culling } from "../../core/renderer/enums";
@@ -153,17 +152,36 @@ export class WebGLConverter {
      * Converts SamplerMinFilter to WebGL enum.
      * @param gl The WebGL2RenderingContext.
      * @param minFilter The SamplerMinFilter.
+     * @param mipMapFilter The MipmapSamplerFilter.
      * @returns The WebGL enum.
      */
-    public static convertToMinFilter(gl: WebGL2RenderingContext, minFilter: SamplerMinFilter): number {
-        switch (minFilter) {
-            case SamplerMinFilter.Nearest:
-                return gl.NEAREST;
-            case SamplerMinFilter.Linear:
-                return gl.LINEAR;
-            default:
-                throw new Error("Cannot convert min filter " + minFilter);
+    public static convertToMinFilter(gl: WebGL2RenderingContext, minFilter: SamplerFilter, mipMapFilter: MipmapSamplerFilter): number {
+        if (mipMapFilter == MipmapSamplerFilter.NONE) {
+            return this.convertMagFilter(gl, minFilter);
         }
+
+        if (minFilter == SamplerFilter.NEAREST) {
+            switch (mipMapFilter) {
+                case MipmapSamplerFilter.NEAREST:
+                    return gl.NEAREST_MIPMAP_NEAREST;
+                case MipmapSamplerFilter.LINEAR:
+                    return gl.NEAREST_MIPMAP_LINEAR;
+                default:
+                    throw new Error("NotImplementedException");
+            }
+        }
+        else if (minFilter == SamplerFilter.LINEAR) {
+            switch (mipMapFilter) {
+                case MipmapSamplerFilter.NEAREST:
+                    return gl.LINEAR_MIPMAP_NEAREST;
+                case MipmapSamplerFilter.LINEAR:
+                    return gl.LINEAR_MIPMAP_LINEAR;
+                default:
+                    throw new Error("NotImplementedException");
+            }
+        }
+
+        throw new Error("NotImplementedException");
     }
 
     /**
@@ -172,11 +190,11 @@ export class WebGLConverter {
      * @param magFilter The SamplerMagFilter.
      * @returns The WebGL enum.
      */
-    public static convertToMagFilter(gl: WebGL2RenderingContext, magFilter: SamplerMagFilter): number {
+    public static convertToMagFilter(gl: WebGL2RenderingContext, magFilter: SamplerFilter): number {
         switch (magFilter) {
-            case SamplerMagFilter.Nearest:
+            case SamplerFilter.NEAREST:
                 return gl.NEAREST;
-            case SamplerMagFilter.Linear:
+            case SamplerFilter.LINEAR:
                 return gl.LINEAR;
             default:
                 throw new Error("NotImplementedException");

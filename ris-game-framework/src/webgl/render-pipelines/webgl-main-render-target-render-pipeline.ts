@@ -1,25 +1,25 @@
 import { vec2 } from "gl-matrix";
 import type { IFramework } from "../../core/framework-interface";
-import type { MainRenderTargetRenderPipelineInterface } from "../../core/render-pipelines/main-render-target-render-pipeline-interface";
+import type { IMainRenderTargetRenderPipeline } from "../../core/render-pipelines/main-render-target-render-pipeline-interface";
 import type { WebGLVertexBuffer } from "../buffers/webgl-vertex-buffer";
 import { AWebGLRenderPipeline } from "./a-webgl-render-pipeline";
 import { GeometryFormat } from "../../core/geometry/geometry-format";
 import { BufferUsage } from "../../core/rendering/enums";
 import { asWebGLIndexBuffer, asWebGLVertexBuffer } from "../cast/cast";
 import type { WebGLIndexBuffer } from "../buffers/webgl-index-buffer";
-import type { IRenderTarget2D } from "../../core/render-target/render-target-2d";
 import { VertexBufferLayout } from "../../core/rendering/vertex-buffer-layout";
+import type { ITexture2D } from "../../core/rendering/texture/texture";
 
-export class WebGLMainFrameBufferRenderPipeline extends AWebGLRenderPipeline implements MainRenderTargetRenderPipelineInterface {
+export class WebGLMainRenderTargetRenderPipeline extends AWebGLRenderPipeline implements IMainRenderTargetRenderPipeline {
 
     private _vertexBuffer: WebGLVertexBuffer = null!;
     private _indexBuffer: WebGLIndexBuffer = null!;
 
-    private _renderTarget: IRenderTarget2D | undefined;
+    private _mainRenderTarget: ITexture2D | undefined;
 
-    constructor(framework: IFramework) {
+    constructor(framework: IFramework, mainRenderTarget: ITexture2D) {
         super(framework);
-
+        this._mainRenderTarget = mainRenderTarget;
         this._createResources();
         this._vertexBufferLayouts = [VertexBufferLayout.createFloat3Float2Layout()];
 
@@ -34,11 +34,11 @@ export class WebGLMainFrameBufferRenderPipeline extends AWebGLRenderPipeline imp
         throw new Error("Method not implemented.");
     }
 
-    public get renderTarget(): IRenderTarget2D {
-        if (!this._renderTarget) {
+    public get mainRenderTarget(): ITexture2D {
+        if (!this._mainRenderTarget) {
             throw new Error("Render target is not set.");
         }
-        return this._renderTarget;
+        return this._mainRenderTarget;
     }
 
     private _createResources(): void {

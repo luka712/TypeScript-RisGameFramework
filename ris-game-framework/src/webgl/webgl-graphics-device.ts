@@ -39,8 +39,6 @@ export class WebGLGraphicsDevice extends AGraphicsDevice {
     /** @inheritdoc */
     public initialize(): void {
 
-        super.initialize();
-
         this._canvas = this._windowManager.canvas;
 
         const contextOptions: WebGLContextAttributes = {
@@ -57,6 +55,8 @@ export class WebGLGraphicsDevice extends AGraphicsDevice {
         if (!this._gl) {
             throw new Error("WebGL not supported.");
         }
+
+        super.initialize();
     }
 
     /** @inheritdoc */

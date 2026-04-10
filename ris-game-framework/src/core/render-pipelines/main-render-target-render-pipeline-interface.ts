@@ -1,4 +1,4 @@
-import type { IRenderTarget2D } from "../render-target/render-target-2d";
+import type { ITexture2D } from "../rendering/texture/texture";
 import type { IRenderPipeline } from "./render-pipeline-interface";
 
 /**
@@ -7,11 +7,11 @@ import type { IRenderPipeline } from "./render-pipeline-interface";
  * The main frame buffer is the default render target that is presented to the screen.
  * It is also used as the default render target for all rendering operations if no other render target is specified.
  */
-export interface MainRenderTargetRenderPipelineInterface extends IRenderPipeline {
+export interface IMainRenderTargetRenderPipeline extends IRenderPipeline {
     /**
-     * The main frame buffer render target.
+     * The main render target.
      */
-    renderTarget: IRenderTarget2D;
+    mainRenderTarget: ITexture2D;
 
     /**
      * Render the main frame buffer.

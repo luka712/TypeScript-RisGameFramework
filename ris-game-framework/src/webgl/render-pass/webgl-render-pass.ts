@@ -78,7 +78,7 @@ export class WebGLRenderPass implements IRenderPass {
         this._frameBuffer = WebGLUtilities.framebuffer.create(this._gl, glColorAttachments)
     }
 
-    private _setupDepthStencilAttachment(depthStencilAttachment?: RenderPassDepthStencilAttachment, colorAttachments: RenderPassColorAttachment[]): void {
+    private _setupDepthStencilAttachment(depthStencilAttachment?: RenderPassDepthStencilAttachment, colorAttachments: RenderPassColorAttachment[] = []): void {
 
         if (!depthStencilAttachment) {
             return;
@@ -127,7 +127,7 @@ export class WebGLRenderPass implements IRenderPass {
         // Otherwise, we attach the provided depth-stencil texture to the framebuffer.
         else {
             var glTexture = asWebGLTexture2D(texture);
-            WebGLUtilities.framebuffer.attachDepthStencilTexture(this._gl, this._frameBuffer, glTexture.glTexture, glTexture.);
+            WebGLUtilities.framebuffer.attachDepthStencilTexture(this._gl, this._frameBuffer, glTexture.glTexture, glTexture.textureFormat);
         }
     }
 

@@ -7,10 +7,10 @@ import { SwapChainDescriptor } from "../rendering/swap-chain/swap-chain-descript
 import type { ISwapChain } from "../rendering/swap-chain/swap-chain-interface";
 import type { IWindowManager } from "../window/window-manager-interface";
 import type { IFramework } from "../framework-interface";
-import type { ITexture2D } from "../texture/texture";
 import type { IRenderPass } from "../rendering/render-pass/render-pass-interface";
-import type { MainRenderTargetRenderPipelineInterface } from "../render-pipelines/main-render-target-render-pipeline-interface";
+import type { IMainRenderTargetRenderPipeline } from "../render-pipelines/main-render-target-render-pipeline-interface";
 import { RenderPassColorAttachment, RenderPassDepthStencilAttachment } from '../rendering/render-pass/render-pass-descriptor';
+import type { ITexture2D } from "../rendering/texture/texture";
 
 export abstract class ARendererer implements IRenderer {
 
@@ -25,7 +25,7 @@ export abstract class ARendererer implements IRenderer {
     protected _depthStencilBuffer: ITexture2D = null!;
     protected _swapChainRenderPass: IRenderPass = null!;
     protected _mainRenderTargetRenderPass: IRenderPass = null!;
-    protected _mainRenderTargetPipeline: MainRenderTargetRenderPipelineInterface = null!;
+    protected _mainRenderTargetPipeline: IMainRenderTargetRenderPipeline = null!;
 
 
     public get graphicsDevice(): IGraphicsDevice {

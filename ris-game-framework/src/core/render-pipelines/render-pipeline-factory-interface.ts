@@ -1,5 +1,5 @@
-import type { ITexture2D } from '../texture/texture';
-import type { MainRenderTargetRenderPipelineInterface } from './main-render-target-render-pipeline-interface';
+import type { ITexture2D } from '../rendering/texture/texture';
+import type { IMainRenderTargetRenderPipeline } from './main-render-target-render-pipeline-interface';
 
 export const IRenderPipelineFactorySymbol = Symbol("IRenderPipelineFactory");
 
@@ -14,6 +14,6 @@ export interface IRenderPipelineFactory {
      * @param renderTarget The render target that will be used for the main frame buffer. This is typically the back buffer of the swap chain.
      * @returns An instance of MainRenderTargetRenderPipelineInterface that represents the created render pipeline for the main frame buffer.
      */
-    createMainRenderTargetRenderPipeline(renderTarget: ITexture2D): MainRenderTargetRenderPipelineInterface;
+    createMainRenderTargetRenderPipeline(renderTarget: ITexture2D): IMainRenderTargetRenderPipeline;
 
 }

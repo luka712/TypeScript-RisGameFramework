@@ -5,14 +5,13 @@ import type { IWindowManager } from "../core/window/window-manager-interface";
 import { WebGLRegisterServices } from "../webgl/webgl-register-services";
 import { FrameworkOptions } from "./framework-options";
 
-import { IBuffersFactorySymbol, IFrameworkSymbol, IRendererSymbol, IRenderTargetFactorySymbol, ITextureFactorySymbol } from "../core/dependency-injection/register-services-interface";
+import { IBuffersFactorySymbol, IFrameworkSymbol, IRendererSymbol, ITextureFactorySymbol } from "../core/dependency-injection/register-services-interface";
 import { RenderConfiguration, RenderConfigurationSymbol, type IRenderer } from "../core/renderer/renderer-interface";
-import type { ITextureFactory } from "../core/texture/texture-factory";
-import type { IRenderTargetFactory } from "../core/render-target/render-target-factory";
 import { IGeometryBuilderSymbol, type IGeometryBuilder } from "../core/geometry/geometry-builder-interface";
 import { GeometryBuilder } from "../core/geometry/geometry-builder";
 import type { IBuffersFactory } from "../core/buffers/buffers-factory-interface";
 import { IRenderPipelineFactorySymbol, type IRenderPipelineFactory } from "../core/render-pipelines/render-pipeline-factory-interface";
+import type { ITextureFactory } from "../core/rendering/texture/texture-factory";
 
 export class Framework implements IFramework {
 
@@ -20,7 +19,6 @@ export class Framework implements IFramework {
   private readonly _windowManager: IWindowManager;
   private readonly _renderer: IRenderer;
   private readonly _textureFactory: ITextureFactory;
-  private readonly _renderTargetFactory: IRenderTargetFactory;
   private readonly _buffersFactory: IBuffersFactory;
   private readonly _geometryBuilder: IGeometryBuilder;
   private readonly _renderPipelineFactory: IRenderPipelineFactory;
@@ -44,7 +42,6 @@ export class Framework implements IFramework {
     (new WebGLRegisterServices).register(this._container);
     this._renderer = this._container.resolve(IRendererSymbol);
     this._textureFactory = this._container.resolve(ITextureFactorySymbol);
-    this._renderTargetFactory = this._container.resolve(IRenderTargetFactorySymbol);
     this._buffersFactory = this._container.resolve(IBuffersFactorySymbol);
     this._geometryBuilder = this._container.resolve(IGeometryBuilderSymbol);
     this._renderPipelineFactory = this._container.resolve(IRenderPipelineFactorySymbol);
@@ -78,11 +75,6 @@ export class Framework implements IFramework {
   /** @inheritdoc */
   public get buffersFactory(): IBuffersFactory {
     return this._buffersFactory;
-  }
-
-  /** @inheritdoc */
-  public get renderTargetFactory(): IRenderTargetFactory {
-    return this._renderTargetFactory;
   }
 
   /** @inheritdoc */

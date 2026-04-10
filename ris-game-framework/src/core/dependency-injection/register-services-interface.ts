@@ -2,7 +2,6 @@ import type { DependencyContainer } from "tsyringe";
 
 export const IFrameworkSymbol = Symbol.for("IFramework");
 export const IRendererSymbol = Symbol.for("IRenderer");
-export const IRenderTargetFactorySymbol = Symbol.for("IRenderTargetFactory");
 export const ITextureFactorySymbol = Symbol.for("ITextureFactory");
 export const IBuffersFactorySymbol = Symbol.for("IBuffersFactory");
 

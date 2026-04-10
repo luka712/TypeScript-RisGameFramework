@@ -5,11 +5,12 @@ import type { ISampler } from "../../core/rendering/sampler/sampler-interface";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
 import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
 
+/**
+ * The WebGL implementation of the ISampler interface.
+ */
 export class WebGLSampler implements ISampler {
 
-    private readonly _graphicsDevice: WebGLGraphicsDevice;
     private readonly _gl: WebGL2RenderingContext;
-    private _isDirty = true;
     private _minFilter = SamplerFilter.NEAREST;
     private _magFilter = SamplerFilter.NEAREST;
     private _mipMapFilter = MipmapSamplerFilter.NONE;
@@ -24,7 +25,6 @@ export class WebGLSampler implements ISampler {
      */
     constructor(graphicsDevice: WebGLGraphicsDevice, descriptor?: SamplerDescriptor) {
 
-        this._graphicsDevice = graphicsDevice;
         this._gl = graphicsDevice.gl;
 
         descriptor = descriptor ?? new SamplerDescriptor();
@@ -36,7 +36,7 @@ export class WebGLSampler implements ISampler {
         this._addressModueV = descriptor.addressModeV;
         this._addressModueW = descriptor.addressModeW;
 
-        this.applyChanges();
+        this._createSampler();
     }
 
     /** @inheritdoc */
@@ -44,24 +44,10 @@ export class WebGLSampler implements ISampler {
         return this._minFilter;
     }
 
-    public set minFilter(value: SamplerFilter) {
-        if (this._minFilter !== value) {
-            this._minFilter = value;
-            this._isDirty = true;
-        }
-    }
 
     /** @inheritdoc */
     public get magFilter() {
         return this._magFilter;
-    }
-
-    /** @inheritdoc */
-    public set magFilter(value: SamplerFilter) {
-        if (this._magFilter !== value) {
-            this._magFilter = value;
-            this._isDirty = true;
-        }
     }
 
     /** @inheritdoc */
@@ -70,24 +56,8 @@ export class WebGLSampler implements ISampler {
     }
 
     /** @inheritdoc */
-    public set mipMapFilter(value: MipmapSamplerFilter) {
-        if (this._mipMapFilter !== value) {
-            this._mipMapFilter = value;
-            this._isDirty = true;
-        }
-    }
-
-    /** @inheritdoc */
     public get addressModueU() {
         return this._addressModueU;
-    }
-
-    /** @inheritdoc */
-    public set addressModueU(value: SamplerAddressMode) {
-        if (this._addressModueU !== value) {
-            this._addressModueU = value;
-            this._isDirty = true;
-        }
     }
 
     /** @inheritdoc */
@@ -96,28 +66,15 @@ export class WebGLSampler implements ISampler {
     }
 
     /** @inheritdoc */
-    public set addressModueV(value: SamplerAddressMode) {
-        if (this._addressModueV !== value) {
-            this._addressModueV = value;
-            this._isDirty = true;
-        }
-    }
-
-    /** @inheritdoc */
     public get addressModueW() {
         return this._addressModueW;
     }
 
+    
     /** @inheritdoc */
-    public set addressModueW(value: SamplerAddressMode) {
-        if (this._addressModueW !== value) {
-            this._addressModueW = value;
-            this._isDirty = true;
-        }
+    public get handle(): any {
+        return this.glSampler;
     }
-
-    /** @inheritdoc */
-    public handle: any;
 
     /**
      * The handle of the sampler. 
@@ -126,16 +83,7 @@ export class WebGLSampler implements ISampler {
     public glSampler: globalThis.WebGLSampler = null!;
 
     /** @inheritdoc */
-    public applyChanges(): void {
-        if (!this._isDirty) {
-            return;
-        }
-
-        this._isDirty = false;
-
-        if (this.glSampler != 0) {
-            this._gl.deleteSampler(this.glSampler);
-        }
+    public _createSampler(): void {
 
         this.glSampler = WebGLUtilities.sampler.create(this._gl,
             this._minFilter,
@@ -147,17 +95,13 @@ export class WebGLSampler implements ISampler {
             SamplerCompareFunction.Never,
             1,
         );
-
-        this.handle = this.glSampler;
     }
 
     /** @inheritdoc */
     public dispose(): void {
         if (this.glSampler) {
             this._gl.deleteSampler(this.glSampler);
-            this.glSampler = null;
+            this.glSampler = null!;
         }
     }
-
-
 }

@@ -1,14 +1,13 @@
 import { inject, injectable } from "tsyringe";
-import type { ITextureFactory } from "../../core/texture/texture-factory";
 import { IFrameworkSymbol } from "../../core/dependency-injection/register-services-interface";
 import type { IFramework } from "../../core/framework-interface";
-import { SamplerAddressMode, SamplerCompareFunction, SamplerMagFilter, SamplerMinFilter } from "../../common/sampler-enums";
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import { Color } from "../../core/math/color";
-import type { ITexture2D } from "../../core/texture/texture";
 import { WebGLTexture2D } from "./webgl-texture-2d";
 import { vec2 } from "gl-matrix";
 import { GenericImageData } from "../../core/data/image-data";
+import type { ITextureFactory } from "../../core/rendering/texture/texture-factory";
+import type { ITexture2D } from "../../core/rendering/texture/texture";
 
 @injectable()
 export class WebGLTextureFactory implements ITextureFactory {
@@ -24,11 +23,9 @@ export class WebGLTextureFactory implements ITextureFactory {
     public create(
         data: ArrayBufferView,
         width: number, height: number, channels: number,
-        minFilter = SamplerMinFilter.Linear,
-        magFilter = SamplerMagFilter.Linear,
         label: string | null | undefined = null,
         useMipMaps = false,
-        textureUsage = TextureUsage.CopyDst_TextureBinding): ITexture2D {
+        textureUsage = TextureUsage.COPY_DST_TEXTURE_BINDING): ITexture2D {
 
         if (!data) {
             throw new Error("Data must not be null.");
@@ -49,12 +46,6 @@ export class WebGLTextureFactory implements ITextureFactory {
             imageData,
             textureUsage,
             TextureFormat.BGRA_8_UNORM,
-            minFilter,
-            magFilter,
-            SamplerAddressMode.Repeat,
-            SamplerAddressMode.Repeat,
-            SamplerAddressMode.Repeat,
-            SamplerCompareFunction.Never,
             useMipMaps,
             label
         );
@@ -67,11 +58,8 @@ export class WebGLTextureFactory implements ITextureFactory {
     public createEmpty(
         width: number, height: number,
         color: Color | null = null,
-        minFilter = SamplerMinFilter.Linear,
-        magFilter = SamplerMagFilter.Linear,
-        textureUsage = TextureUsage.CopyDst_TextureBinding,
-        textureFormat = TextureFormat.Undefined,
-        compareFunction = SamplerCompareFunction.Never,
+        textureUsage = TextureUsage.COPY_DST_TEXTURE_BINDING,
+        textureFormat = TextureFormat.UNDEFINED,
         label: string | null = null,
         useMipmap = false): ITexture2D {
 
@@ -79,7 +67,7 @@ export class WebGLTextureFactory implements ITextureFactory {
             throw new Error("Width and height must be greater than 0.");
         }
 
-        if (textureFormat == TextureFormat.Undefined) {
+        if (textureFormat == TextureFormat.UNDEFINED) {
             textureFormat = this._framework.renderer.preferredTextureFormat;
         }
 
@@ -91,12 +79,6 @@ export class WebGLTextureFactory implements ITextureFactory {
                 null,
                 textureUsage,
                 textureFormat,
-                minFilter,
-                magFilter,
-                SamplerAddressMode.ClampToEdge,
-                SamplerAddressMode.ClampToEdge,
-                SamplerAddressMode.ClampToEdge,
-                compareFunction,
                 useMipmap ?? false,
                 label ?? ""
             );
@@ -116,6 +98,6 @@ export class WebGLTextureFactory implements ITextureFactory {
             bytes[i + 3] = color.a * 255;
         }
 
-        return this.create(bytes, width, height, 4, minFilter, magFilter, label, useMipmap, textureUsage);
+        return this.create(bytes, width, height, 4, label, useMipmap, textureUsage);
     }
 }
