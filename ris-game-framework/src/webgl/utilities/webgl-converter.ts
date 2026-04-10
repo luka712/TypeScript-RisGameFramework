@@ -15,7 +15,8 @@ export class WebGLConverter {
      */
     public static convertBufferUsage(usage: BufferUsage): GLenum {
         switch (usage) {
-            case BufferUsage.Vertex:
+            case BufferUsage.VERTEX:
+            case BufferUsage.INDEX:
                 return WebGL2RenderingContext.STATIC_DRAW;
             default:
                 throw new Error("NotImplementedException");

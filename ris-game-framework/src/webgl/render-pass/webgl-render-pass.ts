@@ -38,7 +38,9 @@ export class WebGLRenderPass implements IRenderPass {
         this._gl = graphicsDevice.gl;
 
         this._setupFrameBuffer(descriptor.colorAttachments);
-        this._setupDepthStencilAttachment(descriptor.depthStencilAttachment, descriptor.colorAttachments);
+        if (descriptor.depthStencilAttachment) {
+            this._setupDepthStencilAttachment(descriptor.depthStencilAttachment, descriptor.colorAttachments);
+        }
     }
 
     private _setupFrameBuffer(colorAttachments: RenderPassColorAttachment[]): void {
@@ -167,6 +169,18 @@ export class WebGLRenderPass implements IRenderPass {
         const gl = this._gl;
         if (this._discardAttachments.length > 0) {
             gl.invalidateFramebuffer(gl.FRAMEBUFFER, this._discardAttachments);
+        }
+    }
+
+    /** @inheritdoc */
+    public dispose(): void {
+        if (this._frameBuffer) {
+            this._gl.deleteFramebuffer(this._frameBuffer);
+            this._frameBuffer = null!;
+        }
+        if (this._depthStencilRenderBuffer) {
+            this._gl.deleteRenderbuffer(this._depthStencilRenderBuffer);
+            this._depthStencilRenderBuffer = null;
         }
     }
 }

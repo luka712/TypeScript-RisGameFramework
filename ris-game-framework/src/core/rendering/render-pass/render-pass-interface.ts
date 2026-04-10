@@ -1,8 +1,9 @@
+import type { IDisposable } from "../../../common/disposable";
 
 /**
  * Defines the interface for a render pass, which encapsulates the operations and state management required to execute a rendering sequence.
  */
-export interface IRenderPass {
+export interface IRenderPass extends IDisposable {
 
     /**
      * Begins the render pass, setting up necessary state and resources for rendering. 

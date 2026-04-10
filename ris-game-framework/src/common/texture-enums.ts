@@ -48,40 +48,25 @@ export enum TextureUsage {
     /**
      * Default value. For unknown texture usage.
      */
-    UNDEFINED,
+    UNDEFINED = 0,
 
     /**
      * The texture can be used as a shader resource.
      */
-    TEXTURE_BINDING,
+    TEXTURE_BINDING = 1 << 0,
 
     /**
      * The texture can be used as a copy destination.
      */
-    COPY_DST,
+    COPY_DST = 1 << 1,
 
     /**
      * The texture can be used as a copy source.
      */
-    COPY_SRC,
+    COPY_SRC = 1 << 2,
 
     /**
      * The texture can be used as a render target attachment.
      */
-    RENDER_ATTACHMENT,
-
-    /**
-     * The texture can be used as a copy destination and a shader resource.
-     */
-    COPY_DST_TEXTURE_BINDING,
-
-    /**
-     * The texture can be used as a render target attachment and a shader resource.
-     */
-    TEXTURE_BINDING_RENDER_TARGET,
-
-    /**
-     * The texture can be used as a copy destination, a render target attachment and a shader resource.
-     */
-    COPY_DST_TEXTURE_BINDING_RENDER_TARGET
+    RENDER_ATTACHMENT = 1 << 3,
 }

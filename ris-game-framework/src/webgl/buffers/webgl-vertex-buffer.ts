@@ -1,8 +1,9 @@
 import type { IVertexBuffer } from "../../core/buffers/vertex-buffer-interface";
 import type { IFramework } from "../../core/framework-interface";
 import { BufferUsage } from "../../core/rendering/enums";
+import { asWebGLGraphicsDevice } from "../cast/cast";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
-import type { WebGLRenderer } from "../webgl-renderer";
+import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
 
 /**
  * The WebGL implementation of the vertex buffer. 
@@ -12,7 +13,7 @@ import type { WebGLRenderer } from "../webgl-renderer";
  */
 export class WebGLVertexBuffer implements IVertexBuffer {
 
-    private readonly _renderer: WebGLRenderer;
+    private readonly _graphicsDevice: WebGLGraphicsDevice;
     private readonly _gl: WebGL2RenderingContext;
     private _byteStride = 0;
     private _vertexCount = 0;
@@ -25,8 +26,8 @@ export class WebGLVertexBuffer implements IVertexBuffer {
      * @param label An optional label for the vertex buffer, which can be used for debugging purposes.
      */
     constructor(framework: IFramework, private readonly _label: string | null = null) {
-        this._renderer = framework.renderer as WebGLRenderer;
-        this._gl = this._renderer.gl!;
+        this._graphicsDevice = asWebGLGraphicsDevice(framework.renderer.graphicsDevice);
+        this._gl = this._graphicsDevice.gl;
     }
 
     /**

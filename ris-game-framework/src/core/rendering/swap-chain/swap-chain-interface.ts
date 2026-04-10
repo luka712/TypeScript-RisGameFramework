@@ -1,6 +1,11 @@
 import type { vec2 } from "gl-matrix";
 import type { TextureFormat } from "../../../common/texture-enums";
 
+/**
+ * The ISwapChain interface defines the contract for a swap chain, which is responsible for managing the back buffer and presenting rendered content to the display. 
+ * A swap chain typically handles the creation and management of the back buffer, as well as the presentation of rendered frames to the screen. 
+ * This interface provides methods for resizing the back buffer and presenting the rendered content, as well as properties for accessing the back buffer size and texture format.
+ */
 export interface ISwapChain {
 
     /**
@@ -19,7 +24,7 @@ export interface ISwapChain {
      * @param width The new width of the back buffer.
      * @param height The new height of the back buffer.
      */
-    setSize(width: number, height: number): void;
+    resize(width: number, height: number): void;
 
     /**
      * Presents the rendered content to the display, swapping the back buffer with the front buffer.

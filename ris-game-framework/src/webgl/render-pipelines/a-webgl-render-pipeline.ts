@@ -1,7 +1,7 @@
 import type { IFramework } from '../../core/framework-interface';
 import type { IRenderPipeline } from '../../core/render-pipelines/render-pipeline-interface';
 import type { VertexBufferLayout } from '../../core/rendering/vertex-buffer-layout';
-import { asWebGLRenderer } from '../cast/cast';
+import { asWebGLGraphicsDevice, asWebGLRenderer } from '../cast/cast';
 import { WebGLConverter } from '../utilities/webgl-converter';
 
 /**
@@ -23,7 +23,7 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
      */
     constructor(framework: IFramework) {
         this._framework = framework;
-        this._gl = asWebGLRenderer(this._framework.renderer).gl!;
+        this._gl = asWebGLGraphicsDevice(framework.renderer.graphicsDevice).gl;
     }
 
     /** @inheritDoc */

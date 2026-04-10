@@ -1,7 +1,7 @@
 import { Color } from "../../math/color";
-import type { ITexture2D } from "../../texture/texture";
 import { LoadAction, StoreAction } from '../enums';
 import type { ISwapChain } from "../swap-chain/swap-chain-interface";
+import type { ITexture2D } from "../texture/texture";
 
 /**
  * This file defines the RenderPassDescriptor class, which is used to describe the configuration of a render pass in the rendering pipeline. 

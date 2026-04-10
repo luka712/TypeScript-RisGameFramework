@@ -52,7 +52,7 @@ export class WebGLMainRenderTargetRenderPipeline extends AWebGLRenderPipeline im
             data,
             (3 + 2) * Float32Array.BYTES_PER_ELEMENT,
             4,
-            BufferUsage.Vertex,
+            BufferUsage.VERTEX,
             "Main Frame Buffer Render Pipeline Vertex Buffer"
         ));
 

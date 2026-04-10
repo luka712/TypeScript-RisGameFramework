@@ -81,6 +81,7 @@ export class Framework implements IFramework {
   initalize(): void {
 
     this._renderer.initialize();
+    this._renderer.afterInitialize();
 
     this.windowManager.updateEvent(() => {
       // Update logic here

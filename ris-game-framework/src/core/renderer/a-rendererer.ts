@@ -1,4 +1,4 @@
-import { TextureFormat } from "../../common/texture-enums";
+import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import type { Color } from "../math/color";
 import type { IGraphicsDevice } from "../rendering/graphics-device-interface";
 import type { IRenderer } from "./renderer-interface";
@@ -9,8 +9,9 @@ import type { IWindowManager } from "../window/window-manager-interface";
 import type { IFramework } from "../framework-interface";
 import type { IRenderPass } from "../rendering/render-pass/render-pass-interface";
 import type { IMainRenderTargetRenderPipeline } from "../render-pipelines/main-render-target-render-pipeline-interface";
-import { RenderPassColorAttachment, RenderPassDepthStencilAttachment } from '../rendering/render-pass/render-pass-descriptor';
+import { RenderPassColorAttachment, RenderPassDepthStencilAttachment, RenderPassDescriptor } from '../rendering/render-pass/render-pass-descriptor';
 import type { ITexture2D } from "../rendering/texture/texture";
+import type { vec2 } from "gl-matrix";
 
 export abstract class ARendererer implements IRenderer {
 
@@ -19,21 +20,26 @@ export abstract class ARendererer implements IRenderer {
     private _graphicsDevice: IGraphicsDevice = null!;
     private _preferredTextureFormat: TextureFormat = TextureFormat.BGRA_8_UNORM;
     private _preferredDepthStencilFormat: TextureFormat = TextureFormat.DEPTH_24_STENCIL_8;
+    private readonly _currentBackBufferSize: vec2 = [0, 0];
+    private _swapChainRequiresResize: boolean = false;
 
+    protected _mainRenderTargetRequiresResize: boolean = false;
     protected _swapChain: ISwapChain = null!;
     protected _mainRenderTarget: ITexture2D = null!;
     protected _depthStencilBuffer: ITexture2D = null!;
     protected _swapChainRenderPass: IRenderPass = null!;
-    protected _mainRenderTargetRenderPass: IRenderPass = null!;
-    protected _mainRenderTargetPipeline: IMainRenderTargetRenderPipeline = null!;
+    protected _mainRenderTargetRenderPass?: IRenderPass;
+    protected _mainRenderTargetPipeline?: IMainRenderTargetRenderPipeline;
 
-
+    /** @inheritdoc */
     public get graphicsDevice(): IGraphicsDevice {
         return this._graphicsDevice;
     }
+
     public get clearColor(): Color {
         throw new Error("Method not implemented.");
     }
+
     public get limits(): RenderingLimits | null {
         throw new Error("Method not implemented.");
     }
@@ -48,9 +54,36 @@ export abstract class ARendererer implements IRenderer {
         return this._preferredDepthStencilFormat;
     }
 
+    /** @inheritdoc */
+    public get backBufferSize(): vec2 {
+        return this._currentBackBufferSize;
+    }
+
+    /** @inheritdoc */
+    public set backBufferSize(size: vec2) {
+        if (this.backBufferMatchesSwapChain) {
+            console.warn(`Attempting to set back buffer size to ${size[0]}x${size[1]}, but back buffer is currently matching the swap chain.
+                 To set the back buffer size, either set backBufferMatchesSwapChain to false, or resize the swap chain using the setSize method on the swap chain.`);
+        }
+        else {
+            this._currentBackBufferSize[0] = size[0];
+            this._currentBackBufferSize[1] = size[1];
+            this._mainRenderTargetRequiresResize = true;
+        }
+    }
+
+    /** @inheritdoc */
+    public backBufferMatchesSwapChain: boolean = false;
+
+    /**
+     * The constrcutor.
+     * @param framework The framework. 
+     */
     constructor(framework: IFramework) {
         this._framework = framework;
         this._windowManager = framework.windowManager;
+        this._currentBackBufferSize[0] = this._windowManager.canvas.width;
+        this._currentBackBufferSize[1] = this._windowManager.canvas.height;
     }
 
     /**
@@ -78,41 +111,76 @@ export abstract class ARendererer implements IRenderer {
             colorAttachments: [new RenderPassColorAttachment(undefined, this._swapChain)]
         });
 
+        this._setupMainRenderPass();
+    }
+
+    private _setupMainRenderPass(): void {
+
+        this._mainRenderTargetRenderPass?.dispose();
+        this._mainRenderTargetPipeline?.dispose();
+        this._depthStencilBuffer?.dispose();
+        this._mainRenderTarget?.dispose();
+
+        // Create a main frame buffer.
         this._mainRenderTarget = this._framework.textureFactory.createEmpty(
-            this._swapChain.backBufferSize[0],
-            this._swapChain.backBufferSize[1],
+            this.backBufferSize[0], this.backBufferSize[1],
+            undefined,
+            TextureUsage.TEXTURE_BINDING | TextureUsage.RENDER_ATTACHMENT,
+            this.preferredDepthStencilFormat
         );
 
         this._depthStencilBuffer = this._framework.textureFactory.createEmpty(
-            this._swapChain.backBufferSize[0],
-            this._swapChain.backBufferSize[1],
+            this.backBufferSize[0], this.backBufferSize[1],
             undefined,
-            undefined,
-            undefined,
-            undefined,
-            this.preferredDepthStencilFormat,
-        );
+            TextureUsage.RENDER_ATTACHMENT);
 
-        this._mainRenderTargetPipeline = this._framework.renderPipelineFactory.createMainRenderTargetRenderPipeline(this._mainRenderTarget);
+        // Create main frame buffer pipeline.
+        this._mainRenderTargetPipeline = this._framework
+            .renderPipelineFactory
+            .createMainRenderTargetRenderPipeline(this._mainRenderTarget);
 
-        this._mainRenderTargetRenderPass = this._graphicsDevice.createRenderPass({
-            colorAttachments: [new RenderPassColorAttachment(this._mainRenderTarget)],
-            depthStencilAttachment: new RenderPassDepthStencilAttachment(this._depthStencilBuffer)
-        });
+        const renderPassDesc = new RenderPassDescriptor();
+        renderPassDesc.colorAttachments.push(new RenderPassColorAttachment(this._mainRenderTarget));
+        renderPassDesc.depthStencilAttachment = new RenderPassDepthStencilAttachment(this._depthStencilBuffer);
+        this._mainRenderTargetRenderPass = this._graphicsDevice.createRenderPass(renderPassDesc);
+
+        this._mainRenderTargetRequiresResize = false;
+    }
+
+    private _handleResizing(): void {
+        // If back buffer size is set to match swap chain size, then main render target needs
+        // to be resized whenever swap chain needs to be resized.
+        // If back buffer size is not set to match swap chain size,
+        // then main render target only needs to be resized when back buffer size is changed.
+        if ((this.backBufferMatchesSwapChain && this._swapChainRequiresResize) || this._mainRenderTargetRequiresResize) {
+            this._setupMainRenderPass();
+        }
+
+        if (!this._swapChainRequiresResize) {
+            return;
+        }
+
+        // Note: surface texture and surface texture view must be released before trying to resize.
+        this._swapChain.resize(this.backBufferSize[0], this.backBufferSize[1]);
+
+        // ConfigureDepthStencil();
+        this._swapChainRequiresResize = false;
     }
 
     /** @inheritdoc */
     public beginRenderPass(): void {
-        this._mainRenderTargetRenderPass.beginPass();
+        this._mainRenderTargetRenderPass!.beginPass();
     }
 
     /** @inheritdoc */
     public endRenderPass(): void {
-        this._mainRenderTargetRenderPass.endPass();
+        this._mainRenderTargetRenderPass!.endPass();
 
-        this._swapChainRenderPass.beginPass();
-        this._mainRenderTargetPipeline.render();
-        this._swapChainRenderPass.endPass();
+        this._handleResizing();
+
+        this._swapChainRenderPass!.beginPass();
+        this._mainRenderTargetPipeline!.render();
+        this._swapChainRenderPass!.endPass();
 
         this._swapChain.present();
     }

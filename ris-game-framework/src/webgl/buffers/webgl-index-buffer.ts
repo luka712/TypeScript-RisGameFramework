@@ -2,7 +2,7 @@ import { IndexBufferType } from "../../common/enums";
 import type { IIndexBuffer } from "../../core/buffers/index-buffer-interface";
 import type { IFramework } from "../../core/framework-interface";
 import { BufferUsage } from "../../core/rendering/enums";
-import { asWebGLRenderer } from "../cast/cast";
+import { asWebGLGraphicsDevice, asWebGLRenderer } from "../cast/cast";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
 
 /**
@@ -25,7 +25,7 @@ export class WebGLIndexBuffer implements IIndexBuffer {
      * @param label An optional label for the index buffer, which can be used for debugging purposes.
      */
     constructor(framework: IFramework, label: string | null = null) {
-        this._gl = asWebGLRenderer(framework.renderer).gl!;
+        this._gl = asWebGLGraphicsDevice(framework.renderer.graphicsDevice).gl;
         this._label = label;
     }
 
@@ -74,7 +74,7 @@ export class WebGLIndexBuffer implements IIndexBuffer {
 
         this._indicesCount = data.length;
         this._byteSize = this._indicesCount * this._elementByteSize;
-        this.buffer = WebGLUtilities.buffer.createIndexBuffer(this._gl, data, BufferUsage.Index);
+        this.buffer = WebGLUtilities.buffer.createIndexBuffer(this._gl, data, BufferUsage.INDEX);
     }
 
 

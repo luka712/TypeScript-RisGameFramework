@@ -59,6 +59,18 @@ export interface IRenderer {
     get preferredDepthStencilFormat(): TextureFormat;
 
     /**
+     * The size of the back buffer.
+     */
+    backBufferSize: vec2;
+
+    /**
+     * Whether the back buffer size matches the swap chain size.
+     * If <code>true</code>, the renderer will assume that the back buffer size matches the swap chain size,
+     * overriding the <code>backBufferSize</code> property.
+     */
+    backBufferMatchesSwapChain: boolean;
+
+    /**
      * Initializes the renderer.
      */
     initialize(): void;

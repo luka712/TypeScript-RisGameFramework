@@ -34,7 +34,7 @@ export class WebGLSwapChain implements ISwapChain {
     }
 
     /** @inheritdoc */
-    public setSize(width: number, height: number): void {
+    public resize(width: number, height: number): void {
         // Nothing to do here since the canvas size is managed by the application and WebGL will automatically adjust the viewport accordingly.
     }
 
