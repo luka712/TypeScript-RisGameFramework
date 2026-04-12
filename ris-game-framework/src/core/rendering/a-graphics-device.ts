@@ -1,3 +1,5 @@
+import { BlendStateDescriptor } from "./blending/blend-state-descriptor";
+import type { IBlendState } from "./blending/blend-state-interface";
 import { TextureSamplerFilteringPreset } from "./enums";
 import type { IGraphicsDevice } from "./graphics-device-interface";
 import type { RenderPassDescriptor } from "./render-pass/render-pass-descriptor";
@@ -28,6 +30,7 @@ export abstract class AGraphicsDevice implements IGraphicsDevice {
 
     protected readonly _descriptor: GraphicsDeviceDescriptor;
     protected _defaultTextureSampler: ISampler = null!;
+    protected _defaultBlendState: IBlendState = null!;
 
     /**
      * The constructor.
@@ -37,16 +40,22 @@ export abstract class AGraphicsDevice implements IGraphicsDevice {
         this._descriptor = descriptor;
     }
 
+
     /** @inheritdoc */
     public get defaultTextureSampler(): ISampler {
         return this._defaultTextureSampler;
+    }
+
+    /** @inheritdoc */
+    public get defaultBlendState(): IBlendState {
+        return this._defaultBlendState;
     }
 
     /**
      * Configures and creates the default texture sampler based on the sampler filtering preset specified in the graphics device descriptor. The method creates a new sampler descriptor, sets its properties according to the selected filtering preset, and then creates and returns a new sampler using the configured descriptor.
      * @returns The default texture sampler configured according to the sampler filtering preset specified in the graphics device descriptor.
      */
-    protected configureAndCreateDefaultSampler() :ISampler {
+    protected configureAndCreateDefaultSampler(): ISampler {
         var samplerDescriptor = new SamplerDescriptor();
         samplerDescriptor.minFilter = this._descriptor.samplerFilteringPreset == TextureSamplerFilteringPreset.POINT ? SamplerFilter.NEAREST : SamplerFilter.LINEAR;
         samplerDescriptor.magFilter = this._descriptor.samplerFilteringPreset == TextureSamplerFilteringPreset.POINT ? SamplerFilter.NEAREST : SamplerFilter.LINEAR;
@@ -57,6 +66,7 @@ export abstract class AGraphicsDevice implements IGraphicsDevice {
     /** @inheritdoc */
     public initialize(): void {
         this._defaultTextureSampler = this.configureAndCreateDefaultSampler();
+        this._defaultBlendState = this.createBlendState(new BlendStateDescriptor());
     }
 
     /** @inheritdoc */
@@ -67,4 +77,7 @@ export abstract class AGraphicsDevice implements IGraphicsDevice {
 
     /** @inheritdoc */
     public abstract createRenderPass(descriptor: RenderPassDescriptor): IRenderPass;
+
+    /** @inheritdoc */
+    public abstract createBlendState(descriptor: BlendStateDescriptor): IBlendState;
 }

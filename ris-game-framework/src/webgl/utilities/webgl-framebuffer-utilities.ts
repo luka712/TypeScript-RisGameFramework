@@ -44,7 +44,7 @@ export class WebGLFrameBufferUtilities {
 
             // Connect the texture to the framebuffer.
             gl.framebufferTexture2D(gl.FRAMEBUFFER,
-                gl.COLOR_ATTACHMENT0,
+                gl.COLOR_ATTACHMENT0 + i,
                 gl.TEXTURE_2D,
                 textureId,
                 0);
@@ -52,7 +52,8 @@ export class WebGLFrameBufferUtilities {
 
         // Check if the framebuffer is complete.
         if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
-            throw new Error("Framebuffer is not complete.");
+            var error = gl.getError();
+            throw new Error("Framebuffer is not complete." + " WebGL error code: " + error);
         }
 
         return framebuffer;

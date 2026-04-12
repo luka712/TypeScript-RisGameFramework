@@ -126,13 +126,14 @@ export abstract class ARendererer implements IRenderer {
             this.backBufferSize[0], this.backBufferSize[1],
             undefined,
             TextureUsage.TEXTURE_BINDING | TextureUsage.RENDER_ATTACHMENT,
-            this.preferredDepthStencilFormat
+            this.preferredTextureFormat
         );
 
         this._depthStencilBuffer = this._framework.textureFactory.createEmpty(
             this.backBufferSize[0], this.backBufferSize[1],
             undefined,
-            TextureUsage.RENDER_ATTACHMENT);
+            TextureUsage.RENDER_ATTACHMENT,
+            this.preferredDepthStencilFormat);
 
         // Create main frame buffer pipeline.
         this._mainRenderTargetPipeline = this._framework

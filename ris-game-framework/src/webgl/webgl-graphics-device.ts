@@ -9,8 +9,12 @@ import { WebGLSwapChain } from "./swap-chain/webgl-swap-chain";
 import { WebGLSampler } from "./sampler/webgl-sampler";
 import { WebGLRenderPass } from "./render-pass/webgl-render-pass";
 import { AGraphicsDevice, GraphicsDeviceDescriptor } from "../core/rendering/a-graphics-device";
+import type { BlendStateDescriptor } from "../core/rendering/blending/blend-state-descriptor";
+import type { IBlendState } from "../core/rendering/blending/blend-state-interface";
+import { WebGLBlendState } from "./blending/webgl-blend-state";
 
 export class WebGLGraphicsDevice extends AGraphicsDevice {
+
 
     private readonly _windowManager: IWindowManager;
     private _canvas: HTMLCanvasElement = null!;
@@ -72,5 +76,10 @@ export class WebGLGraphicsDevice extends AGraphicsDevice {
     /** @inheritdoc */
     public createRenderPass(descriptor: RenderPassDescriptor): IRenderPass {
         return new WebGLRenderPass(this, descriptor);
+    }
+
+    /** @inheritdoc */
+    public createBlendState(descriptor: BlendStateDescriptor): IBlendState {
+        return new WebGLBlendState(this, descriptor);
     }
 }

@@ -1,10 +1,9 @@
-import { BlendFactor, BlendOperation } from "../../common/blend-state";
 import { TextureFormat } from "../../common/texture-enums";
 import { VertexFormat } from "../../common/vertex-format";
 import { Culling } from "../../core/renderer/enums";
+import { BlendFactor, BlendOperation } from "../../core/rendering/blending/enums";
 import { BufferUsage } from "../../core/rendering/enums";
 import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from "../../core/rendering/sampler/enums";
-import { State } from '../../common/state';
 
 export class WebGLConverter {
 
@@ -33,15 +32,15 @@ export class WebGLConverter {
         blendOperation: BlendOperation,
     ): GLenum {
         switch (blendOperation) {
-            case BlendOperation.Add:
+            case BlendOperation.ADD:
                 return gl.FUNC_ADD;
-            case BlendOperation.Subtract:
+            case BlendOperation.SUBTRACT:
                 return gl.FUNC_SUBTRACT;
-            case BlendOperation.ReverseSubtract:
+            case BlendOperation.REVERSE_SUBTRACT:
                 return gl.FUNC_REVERSE_SUBTRACT;
-            case BlendOperation.Min:
+            case BlendOperation.MIN:
                 return gl.MIN;
-            case BlendOperation.Max:
+            case BlendOperation.MAX:
                 return gl.MAX;
             default:
                 throw new Error("NotImplementedException");
@@ -59,20 +58,20 @@ export class WebGLConverter {
         blendingFactor: BlendFactor,
     ): number {
         switch (blendingFactor) {
-            case BlendFactor.Zero:
-                return gl.ZERO;
-            case BlendFactor.One:
+            // case BlendFactor.ZERO:
+            //     return gl.ZERO;
+            case BlendFactor.ONE:
                 return gl.ONE;
-            case BlendFactor.Src:
-                return gl.SRC_COLOR;
-            case BlendFactor.SrcAlpha:
+            // case BlendFactor.SRC_COLOR:
+            //     return gl.SRC_COLOR;
+            case BlendFactor.SRC_ALPHA:
                 return gl.SRC_ALPHA;
-            case BlendFactor.OneMinusSrcAlpha:
+            case BlendFactor.ONE_MINUS_SRC_ALPHA:
                 return gl.ONE_MINUS_SRC_ALPHA;
-            case BlendFactor.DstAlpha:
-                return gl.DST_ALPHA;
-            case BlendFactor.OneMinusDstAlpha:
-                return gl.ONE_MINUS_DST_ALPHA;
+            // case BlendFactor.DST_ALPHA:
+            //     return gl.DST_ALPHA;
+            // case BlendFactor.ONE_MINUS_DST_ALPHA:
+            //     return gl.ONE_MINUS_DST_ALPHA;
             default:
                 throw new Error("NotImplementedException");
         }
@@ -127,7 +126,12 @@ export class WebGLConverter {
     public static convertToPixelFormat(gl: WebGL2RenderingContext, textureFormat: TextureFormat): number {
         switch (textureFormat) {
             case TextureFormat.RGBA_8_UNORM:
+            case TextureFormat.BGRA_8_UNORM:
                 return gl.RGBA;
+            case TextureFormat.DEPTH_32_FLOAT:
+                return gl.DEPTH_COMPONENT;
+            case TextureFormat.DEPTH_24_STENCIL_8:
+                return gl.DEPTH_STENCIL;
             default:
                 throw new Error("NotImplementedException");
         }
@@ -144,6 +148,10 @@ export class WebGLConverter {
             case TextureFormat.RGBA_8_UNORM:
             case TextureFormat.BGRA_8_UNORM:
                 return gl.UNSIGNED_BYTE;
+            case TextureFormat.DEPTH_32_FLOAT:
+                return gl.FLOAT;
+            case TextureFormat.DEPTH_24_STENCIL_8:
+                return gl.UNSIGNED_INT_24_8;
             default:
                 throw new Error("NotImplementedException");
         }

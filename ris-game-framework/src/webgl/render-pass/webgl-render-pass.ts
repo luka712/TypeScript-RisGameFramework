@@ -18,7 +18,7 @@ export class WebGLRenderPass implements IRenderPass {
 
     private _colorAttachmentsCount = 0;
     private _clearColors: Color[] = [];
-    private _frameBuffer: WebGLFramebuffer = null!;
+    private _frameBuffer: WebGLFramebuffer | null = null;
     private _depthStencilRenderBuffer: WebGLRenderbuffer | null = null;
     private _clearBufferMask: GLbitfield = 0;
     private _enableDepthTest = false;
@@ -60,7 +60,7 @@ export class WebGLRenderPass implements IRenderPass {
             // If the color attachment is a swapchain, we don't need to create a framebuffer,
             // as we'll be rendering directly to the default framebuffer.
             if (colorAttachment.swapChain) {
-                this._frameBuffer = 0; // Default framebuffer
+                this._frameBuffer = null; // Default framebuffer
                 return;
             }
         }

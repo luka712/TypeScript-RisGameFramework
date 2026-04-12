@@ -30,10 +30,7 @@ export class WebGLMainRenderTargetRenderPipeline extends AWebGLRenderPipeline im
         return [this._vertexBuffer.buffer!];
     }
 
-    render(): void {
-        throw new Error("Method not implemented.");
-    }
-
+   
     public get mainRenderTarget(): ITexture2D {
         if (!this._mainRenderTarget) {
             throw new Error("Render target is not set.");
@@ -60,5 +57,11 @@ export class WebGLMainRenderTargetRenderPipeline extends AWebGLRenderPipeline im
             geometry.indices!, "Main Frame Buffer Render Pipeline Index Buffer",
         ));
     }
+
+    /** @inheritdoc */
+    public render(): void {
+        this._set
+    }
+
 
 }

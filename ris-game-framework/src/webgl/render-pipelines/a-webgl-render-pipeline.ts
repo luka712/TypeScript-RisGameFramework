@@ -44,10 +44,10 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
      *  This method binds the provided buffers and sets up the vertex attribute pointers based on the vertex buffer layouts.
      */
     protected _createVertexArrayObject(): void {
-       this._vertexArrayObject = this._gl.createVertexArray();
-       const buffers = this._provideBuffers();
+        this._vertexArrayObject = this._gl.createVertexArray();
+        const buffers = this._provideBuffers();
 
-       for(let i = 0; i < this._vertexBufferLayouts.length; i++) {
+        for (let i = 0; i < this._vertexBufferLayouts.length; i++) {
             const layout = this._vertexBufferLayouts[i];
             const buffer = buffers[i];
 
@@ -55,7 +55,7 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
             this._gl.bindBuffer(this._gl.ARRAY_BUFFER, buffer);
 
             const stride = layout.arrayStride;
-            for(const attribute of layout.attributes) {
+            for (const attribute of layout.attributes) {
 
                 const size = WebGLConverter.convertVertexFormat(attribute.format);
                 const index = attribute.shaderLocation;
@@ -64,11 +64,20 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
                 this._gl.enableVertexAttribArray(index);
                 this._gl.vertexAttribPointer(index, size, this._gl.FLOAT, false, stride, offset);
             }
-       }
+        }
     }
 
+    /**
+     * Set up the pipeline state.
+     *  This method should be called before rendering to set up the necessary pipeline state, such as blending, depth testing, etc.
+     */
+    protected _setupPipeline(): void {
+        {
+            _blendState.Apply(_gl);
+        }
+
     /** @inheritDoc */
-    initialize(): void {
+    public initialize(): void {
 
         if (!this.vertexBufferLayouts || this.vertexBufferLayouts.length === 0) {
             throw new Error('At least one vertex buffer layout must be provided for the render pipeline.');
