@@ -6,12 +6,12 @@ import type { SwapChainDescriptor } from "../core/rendering/swap-chain/swap-chai
 import type { ISwapChain } from "../core/rendering/swap-chain/swap-chain-interface";
 import type { IWindowManager } from "../core/window/window-manager-interface";
 import { WebGLSwapChain } from "./swap-chain/webgl-swap-chain";
-import { WebGLSampler } from "./sampler/webgl-sampler";
+import { WebGlSampler } from "./sampler/webgl-sampler";
 import { WebGLRenderPass } from "./render-pass/webgl-render-pass";
 import { AGraphicsDevice, GraphicsDeviceDescriptor } from "../core/rendering/a-graphics-device";
 import type { BlendStateDescriptor } from "../core/rendering/blending/blend-state-descriptor";
 import type { IBlendState } from "../core/rendering/blending/blend-state-interface";
-import { WebGLBlendState } from "./blending/webgl-blend-state";
+import { WebGlBlendState } from "./blending/webgl-blend-state";
 
 export class WebGLGraphicsDevice extends AGraphicsDevice {
 
@@ -70,7 +70,7 @@ export class WebGLGraphicsDevice extends AGraphicsDevice {
 
     /** @inheritdoc */
     public createSampler(descriptor?: SamplerDescriptor): ISampler {
-        return new WebGLSampler(this, descriptor);
+        return new WebGlSampler(this, descriptor);
     }
 
     /** @inheritdoc */
@@ -80,6 +80,6 @@ export class WebGLGraphicsDevice extends AGraphicsDevice {
 
     /** @inheritdoc */
     public createBlendState(descriptor: BlendStateDescriptor): IBlendState {
-        return new WebGLBlendState(this, descriptor);
+        return new WebGlBlendState(this, descriptor);
     }
 }

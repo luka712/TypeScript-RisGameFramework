@@ -8,7 +8,7 @@ import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
 /**
  * The WebGL implementation of the ISampler interface.
  */
-export class WebGLSampler implements ISampler {
+export class WebGlSampler implements ISampler {
 
     private readonly _gl: WebGL2RenderingContext;
     private _minFilter = SamplerFilter.NEAREST;
@@ -19,7 +19,7 @@ export class WebGLSampler implements ISampler {
     private _addressModueW = SamplerAddressMode.CLAMP_TO_EDGE;
 
     /**
-     * Creates an instance of WebGLSampler.
+     * Creates an instance of WebGlSampler.
      * @param graphicsDevice The WebGL graphics device that will be used to create the sampler. The graphics device provides access to the WebGL rendering context and other resources needed for creating and managing the sampler.
      * @param descriptor The descriptor containing configuration details for the sampler. This parameter is optional, and if not provided, default values will be used for the sampler configuration. The descriptor allows you to specify various properties of the sampler, such as filtering methods and address modes, which determine how textures are sampled in the shader.
      */
@@ -43,7 +43,6 @@ export class WebGLSampler implements ISampler {
     public get minFilter() {
         return this._minFilter;
     }
-
 
     /** @inheritdoc */
     public get magFilter() {
@@ -70,7 +69,6 @@ export class WebGLSampler implements ISampler {
         return this._addressModueW;
     }
 
-    
     /** @inheritdoc */
     public get handle(): any {
         return this.glSampler;

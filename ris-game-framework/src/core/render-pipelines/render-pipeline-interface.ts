@@ -1,4 +1,5 @@
 import type { IDisposable } from "../../common/disposable";
+import type { IBlendState } from "../rendering/blending/blend-state-interface";
 import type { VertexBufferLayout } from "../rendering/vertex-buffer-layout";
 
 /**
@@ -7,9 +8,14 @@ import type { VertexBufferLayout } from "../rendering/vertex-buffer-layout";
 export interface IRenderPipeline extends IDisposable{
 
     /**
+     * The blend state used by the render pipeline. This defines how the output of the fragment shader is blended with the existing color in the render target.
+     */
+    readonly blendState: IBlendState;
+
+    /**
      * The vertex buffer layouts used by the render pipeline.
      */
-    vertexBufferLayouts: VertexBufferLayout[];
+    readonly vertexBufferLayouts: VertexBufferLayout[];
 
     /**
      * Initializes the render pipeline. This should be called before rendering with the pipeline.

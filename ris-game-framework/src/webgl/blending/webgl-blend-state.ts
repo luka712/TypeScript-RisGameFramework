@@ -3,7 +3,7 @@ import type { IBlendState } from "../../core/rendering/blending/blend-state-inte
 import { WebGLConverter } from "../utilities/webgl-converter";
 import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
 
-export class WebGLBlendState implements IBlendState {
+export class WebGlBlendState implements IBlendState {
 
     private readonly _gl: WebGL2RenderingContext;
 

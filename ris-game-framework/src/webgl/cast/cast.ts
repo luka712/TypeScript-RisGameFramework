@@ -3,7 +3,7 @@ import type { IVertexBuffer } from "../../core/buffers/vertex-buffer-interface";
 import type { IRenderer } from "../../core/renderer/renderer-interface";
 import type { IBlendState } from "../../core/rendering/blending/blend-state-interface";
 import type { ITexture2D } from "../../core/rendering/texture/texture";
-import { WebGLBlendState } from "../blending/webgl-blend-state";
+import { WebGlBlendState } from "../blending/webgl-blend-state";
 import { WebGLIndexBuffer } from "../buffers/webgl-index-buffer";
 import { WebGLVertexBuffer } from "../buffers/webgl-vertex-buffer";
 import { WebGLTexture2D } from "../texture/webgl-texture-2d";
@@ -80,9 +80,9 @@ export function asWebGLGraphicsDevice(graphicsDevice: IRenderer["graphicsDevice"
  * @param blendState The blend state to cast.
  * @returns The given blend state casted to a WebGLBlendState.
  */
-export function asWebGLBlendState(blendState: IBlendState): WebGLBlendState {
-    if (blendState instanceof WebGLBlendState) {
-        return blendState as WebGLBlendState;
+export function asWebGLBlendState(blendState: IBlendState): WebGlBlendState {
+    if (blendState instanceof WebGlBlendState) {
+        return blendState as WebGlBlendState;
     } else {
         throw new Error("Blend state is not a WebGL blend state.");
     }

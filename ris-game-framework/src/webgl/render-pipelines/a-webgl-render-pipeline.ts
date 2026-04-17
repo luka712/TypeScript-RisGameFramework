@@ -1,7 +1,10 @@
 import type { IFramework } from '../../core/framework-interface';
 import type { IRenderPipeline } from '../../core/render-pipelines/render-pipeline-interface';
+import type { IBlendState } from '../../core/rendering/blending/blend-state-interface';
 import type { VertexBufferLayout } from '../../core/rendering/vertex-buffer-layout';
-import { asWebGLGraphicsDevice, asWebGLRenderer } from '../cast/cast';
+import type { WebGlBlendState } from '../blending/webgl-blend-state';
+import { asWebGLGraphicsDevice } from '../cast/cast';
+import type { WebGlSampler } from '../sampler/webgl-sampler';
 import { WebGLConverter } from '../utilities/webgl-converter';
 
 /**
@@ -11,25 +14,30 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
 
     /** The framework instance. */
     protected readonly _framework: IFramework;
-    private readonly _gl: WebGL2RenderingContext;
-
+    protected readonly _gl: WebGL2RenderingContext;
+    protected readonly _sampler: WebGlSampler;
+    protected readonly _blendState: WebGlBlendState;
     protected _vertexArrayObject: WebGLVertexArrayObject | null = null;
-
-    protected _vertexBufferLayouts: VertexBufferLayout[] = [];
 
     /**
      * The constructor.
      * @param framework The framework.
      */
-    constructor(framework: IFramework) {
+    public constructor(framework: IFramework) {
         this._framework = framework;
-        this._gl = asWebGLGraphicsDevice(framework.renderer.graphicsDevice).gl;
+        const graphicsDevice = asWebGLGraphicsDevice(framework.renderer.graphicsDevice);
+        this._gl = graphicsDevice.gl;
+        this._blendState = graphicsDevice.defaultBlendState as WebGlBlendState;
+        this._sampler = graphicsDevice.defaultTextureSampler as WebGlSampler;
     }
 
     /** @inheritDoc */
-    public get vertexBufferLayouts(): VertexBufferLayout[] {
-        return this._vertexBufferLayouts;
+    public get blendState(): IBlendState {
+        return this._blendState;
     }
+
+    /** @inheritDoc */
+    public vertexBufferLayouts : VertexBufferLayout[] = null!;
 
     /**
      * Provide WebGL buffers for the render pipeline. 
@@ -47,8 +55,8 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
         this._vertexArrayObject = this._gl.createVertexArray();
         const buffers = this._provideBuffers();
 
-        for (let i = 0; i < this._vertexBufferLayouts.length; i++) {
-            const layout = this._vertexBufferLayouts[i];
+        for (let i = 0; i < this.vertexBufferLayouts.length; i++) {
+            const layout = this.vertexBufferLayouts[i];
             const buffer = buffers[i];
 
             this._gl.bindVertexArray(this._vertexArrayObject);
@@ -72,9 +80,9 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
      *  This method should be called before rendering to set up the necessary pipeline state, such as blending, depth testing, etc.
      */
     protected _setupPipeline(): void {
-        {
-            _blendState.Apply(_gl);
-        }
+
+        this._blendState.apply(this._gl);
+    }
 
     /** @inheritDoc */
     public initialize(): void {
@@ -87,7 +95,7 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
     }
 
     /** @inheritDoc */
-    dispose(): void {
+    public dispose(): void {
         if (this._vertexArrayObject) {
             this._gl.deleteVertexArray(this._vertexArrayObject);
             this._vertexArrayObject = null;

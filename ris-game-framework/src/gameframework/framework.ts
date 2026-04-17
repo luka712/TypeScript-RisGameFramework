@@ -12,6 +12,10 @@ import { GeometryBuilder } from "../core/geometry/geometry-builder";
 import type { IBuffersFactory } from "../core/buffers/buffers-factory-interface";
 import { IRenderPipelineFactorySymbol, type IRenderPipelineFactory } from "../core/render-pipelines/render-pipeline-factory-interface";
 import type { ITextureFactory } from "../core/rendering/texture/texture-factory";
+import { ShaderLoader, ShaderLoaderSymbol } from "../core/shader/shader-loader";
+import { ContentManager } from "../core/content/content-manager";
+import { IContentManagerSymbol, type IContentManager } from "../core/content/content-manager-interface";
+import { IContentModuleSymbol, type IContentModule } from "../core/content/content-module-interface";
 
 export class Framework implements IFramework {
 
@@ -22,6 +26,8 @@ export class Framework implements IFramework {
   private readonly _buffersFactory: IBuffersFactory;
   private readonly _geometryBuilder: IGeometryBuilder;
   private readonly _renderPipelineFactory: IRenderPipelineFactory;
+  private readonly _shaderLoader: ShaderLoader;
+  private readonly _contentManager: IContentManager;
 
   /**
    * The constructor for the Framework class.
@@ -39,12 +45,21 @@ export class Framework implements IFramework {
     rendererConfig.textureFiltering = options.textureFiltering;
     this._container.registerInstance(RenderConfigurationSymbol, rendererConfig);
     this._container.registerInstance(IGeometryBuilderSymbol, new GeometryBuilder());
+    this._container.registerInstance(ShaderLoaderSymbol, new ShaderLoader());
+    this._container.registerInstance(IContentManagerSymbol, new ContentManager());
     (new WebGLRegisterServices).register(this._container);
     this._renderer = this._container.resolve(IRendererSymbol);
     this._textureFactory = this._container.resolve(ITextureFactorySymbol);
     this._buffersFactory = this._container.resolve(IBuffersFactorySymbol);
     this._geometryBuilder = this._container.resolve(IGeometryBuilderSymbol);
     this._renderPipelineFactory = this._container.resolve(IRenderPipelineFactorySymbol);
+    this._shaderLoader = this._container.resolve(ShaderLoaderSymbol);
+    this._contentManager = this._container.resolve(IContentManagerSymbol);
+  }
+
+  /** @inheritdoc */
+  public get shaderLoader(): ShaderLoader {
+    return this._shaderLoader;
   }
 
   /** @inheritdoc */
@@ -78,7 +93,21 @@ export class Framework implements IFramework {
   }
 
   /** @inheritdoc */
-  initalize(): void {
+  public get content(): IContentManager {
+    return this._contentManager;
+  }
+
+  private _initializeSelf() {
+    const contentModules = this._container.resolveAll<IContentModule>(IContentModuleSymbol);
+    for (const contentModule of contentModules) {
+      this._contentManager.addContentModule(contentModule);
+    }
+  }
+
+  /** @inheritdoc */
+  public initalize(): void {
+
+    this._initializeSelf();
 
     this._renderer.initialize();
     this._renderer.afterInitialize();

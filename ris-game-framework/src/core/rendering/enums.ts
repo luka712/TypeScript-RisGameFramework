@@ -78,3 +78,19 @@ export enum TextureSamplerFilteringPreset {
      */
     TRILINEAR
 }
+
+/**
+ * The shader stage. This is used to specify the shader stage for a shader module or a shader resource binding.
+ */
+export enum ShaderStage {
+    /**
+     * The vertex shader stage. This is used to specify that a shader module is a vertex shader, or to specify that a shader resource binding is visible to the vertex shader stage.
+     */
+    VERTEX = 1 << 0,
+
+    /**
+     * The fragment shader stage. This is used to specify that a shader module is a fragment shader, or to specify that a shader resource binding is visible to the fragment shader stage.
+     */
+    FRAGMENT = 1 << 1,
+
+}

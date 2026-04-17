@@ -4,6 +4,8 @@ import type { IWindowManager } from "./window/window-manager-interface";
 import type { IGeometryBuilder } from "./geometry/geometry-builder-interface";
 import type { IRenderPipelineFactory } from "./render-pipelines/render-pipeline-factory-interface";
 import type { ITextureFactory } from "./rendering/texture/texture-factory";
+import type { ShaderLoader } from "./shader/shader-loader";
+import type { IContentManager } from "./content/content-manager-interface";
 
 export interface IFramework {
 
@@ -42,6 +44,18 @@ export interface IFramework {
      * @return The RenderPipelineFactoryInterface instance.
      */
     get renderPipelineFactory(): IRenderPipelineFactory;
+
+    /**
+     * Gets the shader loader associated with this framework. This is used to load shader source code for the renderer.
+     * @return The ShaderLoader instance.
+     */
+    get shaderLoader(): ShaderLoader;
+
+    /**
+     * Gets the content manager associated with this framework. This is used to load content for the renderer.
+     * @return The IContentManager instance.
+     */
+    get content(): IContentManager;
 
     /**
      * Initializes the framework.

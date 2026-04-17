@@ -3,8 +3,10 @@ import { WebGLBufferUtilities } from "./webgl-buffer-utilities";
 import { WebGLCullingUtilities } from "./webgl-culling-utilities";
 import { WebGLFilterAnisotropicUtilities } from "./webgl-filter-anisotropic-utilities";
 import { WebGLFrameBufferUtilities } from "./webgl-framebuffer-utilities";
+import { WebGLProgramUtilities } from "./webgl-program-utilities";
 import { WebGLRenderbufferUtilities } from "./webgl-renderbuffer-utilities";
 import { WebGLSamplerUtilities } from "./webgl-sampler-utilities";
+import { WebGLShaderUtilities } from "./webgl-shader-utilities";
 import { WebGLTextureUtilities } from "./webgl-texture-utilities";
 
 /**
@@ -56,4 +58,14 @@ export class WebGLUtilities {
      * The WebGL sampler utilities.
      */
     public static readonly sampler = new WebGLSamplerUtilities();
+
+    /**
+     * The WebGL shader utilities.
+     */
+    public static readonly shader = new WebGLShaderUtilities();
+
+    /**
+     * The WebGL program utilities.
+     */
+    public static readonly program = new WebGLProgramUtilities();
 }

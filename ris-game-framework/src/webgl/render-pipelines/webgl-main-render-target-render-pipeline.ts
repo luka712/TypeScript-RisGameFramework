@@ -9,20 +9,28 @@ import { asWebGLIndexBuffer, asWebGLVertexBuffer } from "../cast/cast";
 import type { WebGLIndexBuffer } from "../buffers/webgl-index-buffer";
 import { VertexBufferLayout } from "../../core/rendering/vertex-buffer-layout";
 import type { ITexture2D } from "../../core/rendering/texture/texture";
+import type { WebGLTexture2D } from "../texture/webgl-texture-2d";
+import { WebGLShaderModule } from "../shader/webgl-shader-module";
 
+/**
+ * The WebGL implementation of the main render target render pipeline. 
+ */
 export class WebGLMainRenderTargetRenderPipeline extends AWebGLRenderPipeline implements IMainRenderTargetRenderPipeline {
 
+    private _program: WebGLProgram = null!;
     private _vertexBuffer: WebGLVertexBuffer = null!;
     private _indexBuffer: WebGLIndexBuffer = null!;
+    private _mainRenderTarget: WebGLTexture2D = null!;
 
-    private _mainRenderTarget: ITexture2D | undefined;
 
-    constructor(framework: IFramework, mainRenderTarget: ITexture2D) {
+    /**
+     * The constructor.
+     * @param framework The framework. 
+     * @param mainRenderTarget The main render target texture. This is the texture that will be rendered to by this render pipeline. It should be the same texture as the one used in the swap chain's render pass descriptor for the main render target.
+     */
+    public constructor(framework: IFramework, mainRenderTarget: ITexture2D) {
         super(framework);
-        this._mainRenderTarget = mainRenderTarget;
-        this._createResources();
-        this._vertexBufferLayouts = [VertexBufferLayout.createFloat3Float2Layout()];
-
+        this._mainRenderTarget = mainRenderTarget as WebGLTexture2D;
     }
 
     /** @inheritdoc */
@@ -30,12 +38,30 @@ export class WebGLMainRenderTargetRenderPipeline extends AWebGLRenderPipeline im
         return [this._vertexBuffer.buffer!];
     }
 
-   
+    /** @inheritdoc */
     public get mainRenderTarget(): ITexture2D {
         if (!this._mainRenderTarget) {
             throw new Error("Render target is not set.");
         }
         return this._mainRenderTarget;
+    }
+
+    /** @inheritdoc */
+    public set mainRenderTarget(value: ITexture2D) {
+        this._mainRenderTarget = value as WebGLTexture2D;
+    }
+
+    /** @inheritdoc */
+    public initialize(): void {
+        this._framework.content.load<WebGLShaderModule>(WebGLShaderModule.name, "main_render_target_flip_y").webGlProgramPromise!.then(program => {
+            debugger;
+            this._program = program;
+        }).catch(error => {
+            console.error("Failed to load shader module for main render target render pipeline.", error);
+        });
+        this._createResources();
+        this.vertexBufferLayouts = [VertexBufferLayout.createFloat3Float2Layout()];
+        super.initialize();
     }
 
     private _createResources(): void {
@@ -60,8 +86,21 @@ export class WebGLMainRenderTargetRenderPipeline extends AWebGLRenderPipeline im
 
     /** @inheritdoc */
     public render(): void {
-        this._set
+
+        if (this._program == null) {
+            return;
+        }
+
+        this._setupPipeline();
+
+        this._gl.useProgram(this._program);
+        this._gl.bindVertexArray(this._vertexArrayObject);
+        this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, this._indexBuffer.buffer);
+
+        this._gl.activeTexture(this._gl.TEXTURE0);
+        this._gl.bindTexture(this._gl.TEXTURE_2D, this._mainRenderTarget.glTexture);
+        this._gl.bindSampler(0, this._sampler.glSampler);
+
+        this._gl.drawElements(this._gl.TRIANGLES, this._indexBuffer.indicesCount, this._gl.UNSIGNED_SHORT, 0);
     }
-
-
 }
