@@ -54,7 +54,7 @@ export class RenderPassColorAttachment {
      * The clear color for the color attachment.
      *  This value is used to clear the color attachment at the beginning of the render pass if the load action is set to LoadAction.CLEAR.
      */
-    public clearColor = new Color(0, 0, 0, 1);
+    public clearColor = Color.black();
 
     /**
      * The action to take for the color attachment at the beginning of the render pass. 

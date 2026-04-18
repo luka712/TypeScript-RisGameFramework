@@ -1,8 +1,7 @@
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
-import type { Color } from "../math/color";
+import { Color } from "../math/color";
 import type { IGraphicsDevice } from "../rendering/graphics-device-interface";
 import type { IRenderer } from "./renderer-interface";
-import type { RenderingLimits } from "./RenderingLimits";
 import { SwapChainDescriptor } from "../rendering/swap-chain/swap-chain-descriptor";
 import type { ISwapChain } from "../rendering/swap-chain/swap-chain-interface";
 import type { IWindowManager } from "../window/window-manager-interface";
@@ -12,6 +11,7 @@ import type { IMainRenderTargetRenderPipeline } from "../render-pipelines/main-r
 import { RenderPassColorAttachment, RenderPassDepthStencilAttachment, RenderPassDescriptor } from '../rendering/render-pass/render-pass-descriptor';
 import type { ITexture2D } from "../rendering/texture/texture";
 import type { vec2 } from "gl-matrix";
+import type { RenderingLimits } from "./rendering-limits";
 
 export abstract class ARendererer implements IRenderer {
 
@@ -22,6 +22,8 @@ export abstract class ARendererer implements IRenderer {
     private _preferredDepthStencilFormat: TextureFormat = TextureFormat.DEPTH_24_STENCIL_8;
     private readonly _currentBackBufferSize: vec2 = [0, 0];
     private _swapChainRequiresResize: boolean = false;
+    private _mainRenderPassDirty = true;
+    private _clearColor: Color = Color.lightPink();
 
     protected _mainRenderTargetRequiresResize: boolean = false;
     protected _swapChain: ISwapChain = null!;
@@ -36,8 +38,15 @@ export abstract class ARendererer implements IRenderer {
         return this._graphicsDevice;
     }
 
+    /** @inheritdoc */
     public get clearColor(): Color {
-        throw new Error("Method not implemented.");
+        return this._clearColor;
+    }
+
+    /** @inheritdoc */
+    public set clearColor(color: Color) {
+        this._clearColor = color;
+        this._mainRenderPassDirty = true;
     }
 
     public get limits(): RenderingLimits | null {
@@ -116,7 +125,6 @@ export abstract class ARendererer implements IRenderer {
 
     private _setupMainRenderPass(): void {
 
-        this._mainRenderTargetRenderPass?.dispose();
         this._mainRenderTargetPipeline?.dispose();
         this._depthStencilBuffer?.dispose();
         this._mainRenderTarget?.dispose();
@@ -140,12 +148,20 @@ export abstract class ARendererer implements IRenderer {
             .renderPipelineFactory
             .createMainRenderTargetRenderPipeline(this._mainRenderTarget);
 
+        this._createMainRenderPass();
+        this._mainRenderTargetRequiresResize = false;
+    }
+
+    private _createMainRenderPass(): void {
+        this._mainRenderTargetRenderPass?.dispose();
         const renderPassDesc = new RenderPassDescriptor();
-        renderPassDesc.colorAttachments.push(new RenderPassColorAttachment(this._mainRenderTarget));
+        const colorAttachment = new RenderPassColorAttachment(this._mainRenderTarget);
+        colorAttachment.clearColor = this._clearColor;
+        debugger;
+        renderPassDesc.colorAttachments.push(colorAttachment);
         renderPassDesc.depthStencilAttachment = new RenderPassDepthStencilAttachment(this._depthStencilBuffer);
         this._mainRenderTargetRenderPass = this._graphicsDevice.createRenderPass(renderPassDesc);
-
-        this._mainRenderTargetRequiresResize = false;
+        this._mainRenderPassDirty = false;
     }
 
     private _handleResizing(): void {
@@ -184,6 +200,11 @@ export abstract class ARendererer implements IRenderer {
         this._swapChainRenderPass!.endPass();
 
         this._swapChain.present();
+
+        // For example, clear color change.
+        if(this._mainRenderPassDirty) {
+            this._createMainRenderPass();
+        }
     }
 
 }

@@ -12,9 +12,7 @@ import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
  */
 export class WebGLRenderPass implements IRenderPass {
 
-    private readonly _graphicsDevice: WebGLGraphicsDevice;
     private readonly _gl: WebGL2RenderingContext;
-    private readonly _descriptor: RenderPassDescriptor;
 
     private _colorAttachmentsCount = 0;
     private _clearColors: Color[] = [];
@@ -33,8 +31,6 @@ export class WebGLRenderPass implements IRenderPass {
      * @param descriptor The render pass descriptor.
      */
     public constructor(graphicsDevice: WebGLGraphicsDevice, descriptor: RenderPassDescriptor) {
-        this._descriptor = descriptor;
-        this._graphicsDevice = graphicsDevice;
         this._gl = graphicsDevice.gl;
 
         this._setupFrameBuffer(descriptor.colorAttachments);
@@ -49,6 +45,7 @@ export class WebGLRenderPass implements IRenderPass {
 
         for (let i = 0; i < this._colorAttachmentsCount; i++) {
             const colorAttachment = colorAttachments[i];
+            debugger;
             this._clearColors.push(colorAttachment.clearColor);
             if (colorAttachment.loadAction == LoadAction.CLEAR) {
                 this._clearBufferMask |= this._gl.COLOR_BUFFER_BIT;
@@ -123,13 +120,13 @@ export class WebGLRenderPass implements IRenderPass {
                 }
                 var colorTex = colorAttachments[0].texture!;
                 this._depthStencilRenderBuffer = WebGLUtilities.renderBuffer.create(this._gl, format, colorTex.width, colorTex.height, null);
-                WebGLUtilities.framebuffer.attachDepthStencilRenderBuffer(this._gl, this._frameBuffer, this._depthStencilRenderBuffer, format);
+                WebGLUtilities.framebuffer.attachDepthStencilRenderBuffer(this._gl, this._frameBuffer!, this._depthStencilRenderBuffer, format);
             }
         }
         // Otherwise, we attach the provided depth-stencil texture to the framebuffer.
         else {
             var glTexture = asWebGLTexture2D(texture);
-            WebGLUtilities.framebuffer.attachDepthStencilTexture(this._gl, this._frameBuffer, glTexture.glTexture, glTexture.textureFormat);
+            WebGLUtilities.framebuffer.attachDepthStencilTexture(this._gl, this._frameBuffer!, glTexture.glTexture, glTexture.textureFormat);
         }
     }
 
@@ -138,6 +135,9 @@ export class WebGLRenderPass implements IRenderPass {
         const gl = this._gl;
 
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._frameBuffer);
+        
+        // COLOR
+        gl.clear(this._clearBufferMask);
 
         if (this._enableDepthTest) {
             gl.enable(gl.DEPTH_TEST);
@@ -158,9 +158,6 @@ export class WebGLRenderPass implements IRenderPass {
         for (let i = 0; i < this._colorAttachmentsCount; i++) {
             gl.clearBufferfv(gl.COLOR, i, this._clearColors[i]);
         }
-
-        // COLOR
-        gl.clear(this._clearBufferMask);
     }
 
     /** @inheritdoc */

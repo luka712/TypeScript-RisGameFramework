@@ -1,5 +1,6 @@
 import type { BufferUsage } from "../rendering/enums";
 import type { IIndexBuffer } from "./index-buffer-interface";
+import type { IUniformBuffer } from "./uniform-buffer-interface";
 import type { IVertexBuffer } from "./vertex-buffer-interface";
 
 
@@ -31,4 +32,13 @@ export interface IBuffersFactory {
      * @return The created index buffer.
      */
     createIndexBuffer(data: Uint16Array | Uint32Array, label: string | null): IIndexBuffer;
+
+    /**
+     * Creates a uniform buffer.
+     * @param dataOrByteLength The data to initialize the buffer with, which can be an ArrayBuffer or a TypedArray containing uniform data, or a number representing the byte length of the buffer to create.
+     * @param bufferUsage The intended usage of the buffer, which can affect how the buffer is created and optimized by the graphics API. For example, a uniform buffer may be optimized for use as a uniform buffer in rendering operations. By default it is UNIFORM | COPY_DST, which means the buffer is intended to be used as a uniform buffer and can also be updated with new data after creation.  
+     * @param label The label for the buffer, which can be used for debugging purposes to identify the buffer in graphics debugging tools.
+     * @returns The created uniform buffer.
+     */
+    createUniformBuffer(dataOrByteLength: ArrayBuffer | ArrayBufferView | number, bufferUsage: BufferUsage, label: string | null): IUniformBuffer;
 }

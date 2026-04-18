@@ -16,6 +16,11 @@ export enum BufferUsage {
     INDEX,
 
     /**
+     * The buffer is intended to be used as a uniform buffer.
+     */
+    UNIFORM,
+
+    /**
      * The buffer is intended to be used as a copy destination.
      */
     COPY_DST,

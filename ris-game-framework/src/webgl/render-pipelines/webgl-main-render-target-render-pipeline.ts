@@ -54,7 +54,6 @@ export class WebGLMainRenderTargetRenderPipeline extends AWebGLRenderPipeline im
     /** @inheritdoc */
     public initialize(): void {
         this._framework.content.load<WebGLShaderModule>(WebGLShaderModule.name, "main_render_target_flip_y").webGlProgramPromise!.then(program => {
-            debugger;
             this._program = program;
         }).catch(error => {
             console.error("Failed to load shader module for main render target render pipeline.", error);

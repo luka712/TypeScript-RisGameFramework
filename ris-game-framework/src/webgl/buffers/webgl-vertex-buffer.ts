@@ -18,7 +18,7 @@ export class WebGLVertexBuffer implements IVertexBuffer {
     private _byteStride = 0;
     private _vertexCount = 0;
     private _byteSize = 0;
-    private _bufferUsage = BufferUsage.None;
+    private _bufferUsage = BufferUsage.NONE;
 
     /**
      * The constructor.
