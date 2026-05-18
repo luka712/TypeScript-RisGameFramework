@@ -3,9 +3,66 @@ import { VertexFormat } from "../../common/vertex-format";
 import { Culling } from "../../core/renderer/enums";
 import { BlendFactor, BlendOperation } from "../../core/rendering/blending/enums";
 import { BufferUsage } from "../../core/rendering/enums";
+import { PrimitiveTopology } from "../../core/rendering/primitive/enums";
+import { CullMode } from "../../core/rendering/primitive/enums";
+import { FrontFace } from "../../core/rendering/primitive/enums";
 import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from "../../core/rendering/sampler/enums";
 
 export class WebGLConverter {
+
+    /**
+     * Converts PrimitiveTopology to WebGL enum.
+     * @param topology The PrimitiveTopology.
+     * @returns The WebGL enum.
+     */
+    public static convertPrimitiveType(topology: PrimitiveTopology): number {
+
+        switch (topology) {
+            case PrimitiveTopology.TRIANGLE_LIST:
+                return WebGL2RenderingContext.TRIANGLES;
+            case PrimitiveTopology.LINE_LIST:
+                return WebGL2RenderingContext.LINES;
+            case PrimitiveTopology.LINE_STRIP:
+                return WebGL2RenderingContext.LINE_STRIP;
+            default:
+                throw new Error("Method not implemented.");
+        }
+    }
+
+    /**
+     * Converts CullMode to WebGL enum.
+     * @param cullFace The CullMode.
+     * @return The WebGL enum.
+     */
+    public static convertCullFace(cullFace: CullMode): number {
+
+        switch (cullFace) {
+            case CullMode.NONE:
+                return WebGL2RenderingContext.NONE;
+            case CullMode.BACK:
+                return WebGL2RenderingContext.BACK;
+            case CullMode.FRONT:
+                return WebGL2RenderingContext.FRONT;
+            default: throw new Error("Method not implemented.");
+        }
+
+    }
+
+    /**
+     * Converts FrontFace to WebGL enum.
+     * @param frontFace The FrontFace.
+     * @return The WebGL enum.
+     */
+    public static convertFrontFace(frontFace: FrontFace): number {
+        switch (frontFace) {
+            case FrontFace.CW:
+                return WebGL2RenderingContext.CW;
+            case FrontFace.CCW:
+                return WebGL2RenderingContext.CCW;
+            default:
+                throw new Error("Method not implemented.");
+        }
+    }
 
     /**
      * Converts BufferUsage to WebGL enum.

@@ -1,10 +1,12 @@
 import type { IIndexBuffer } from "../../core/buffers/index-buffer-interface";
+import type { IUniformBuffer } from "../../core/buffers/uniform-buffer-interface";
 import type { IVertexBuffer } from "../../core/buffers/vertex-buffer-interface";
 import type { IRenderer } from "../../core/renderer/renderer-interface";
 import type { IBlendState } from "../../core/rendering/blending/blend-state-interface";
 import type { ITexture2D } from "../../core/rendering/texture/texture";
 import { WebGlBlendState } from "../blending/webgl-blend-state";
 import { WebGLIndexBuffer } from "../buffers/webgl-index-buffer";
+import { WebGlUniformBuffer } from "../buffers/webgl-uniform-buffer";
 import { WebGLVertexBuffer } from "../buffers/webgl-vertex-buffer";
 import { WebGLTexture2D } from "../texture/webgl-texture-2d";
 import { WebGLGraphicsDevice } from "../webgl-graphics-device";
@@ -59,6 +61,19 @@ export function asWebGLIndexBuffer(indexBuffer: IIndexBuffer): WebGLIndexBuffer 
         return indexBuffer;
     } else {
         throw new Error("Index buffer is not a WebGLIndexBuffer.");
+    }
+}
+
+/**
+ * Casts the given uniform buffer to a WebGLUniformBuffer. If the uniform buffer is not a WebGLUniformBuffer, an error is thrown.
+ * @param uniformBuffer The uniform buffer to cast.
+ * @returns The given uniform buffer casted to a WebGLUniformBuffer.
+ */
+export function asWebGLUniformBuffer(uniformBuffer: IUniformBuffer): WebGlUniformBuffer {
+    if (uniformBuffer instanceof WebGlUniformBuffer) {
+        return uniformBuffer;
+    } else {
+        throw new Error("Uniform buffer is not a WebGLUniformBuffer.");
     }
 }
 

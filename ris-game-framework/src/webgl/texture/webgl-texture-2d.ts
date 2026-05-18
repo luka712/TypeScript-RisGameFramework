@@ -1,10 +1,10 @@
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import type { IFramework } from "../../core/framework-interface";
 import type { vec2 } from "gl-matrix";
-import { asWebGLGraphicsDevice } from "../cast/cast";
+import { asWebGLGraphicsDevice, asWebGLTexture2D } from '../cast/cast';
 import { State } from "../../common/state";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
-import type { IImageData } from "../../core/data/image-data";
+import { GenericImageData, type IImageData } from "../../core/data/image-data";
 import { ATexture2D } from "../../core/rendering/texture/texture";
 import type { TextureViewDescriptor, ITextureView } from "../../core/rendering/texture/texture-view/texture-view";
 
@@ -84,6 +84,26 @@ export class WebGLTexture2D extends ATexture2D {
         this._gl.deleteTexture(this._texture);
         this._texture = null;
         this._state = State.Disposed;
+    }
+
+    private static _defaultFilled: WebGLTexture2D | null = null;
+
+    /**
+     * Creates a default 1x1 white texture if it doesn't already exist, and returns it. 
+     * This can be used as a placeholder texture when a texture is expected but not available.
+     * @param framework The framework instance.
+     * @returns The default 1x1 white texture.
+     */
+    public static getOrCreateDefault(framework: IFramework): WebGLTexture2D {
+        if (this._defaultFilled === null || this._defaultFilled.state === State.Disposed) {
+            
+            const imageData = new GenericImageData(new Uint8Array([255, 255, 255, 255]), 1, 1, 4);
+                        
+            this._defaultFilled = new WebGLTexture2D(framework, [1, 1], imageData, TextureUsage.TEXTURE_BINDING, TextureFormat.RGBA_8_UNORM, false, "DefaultFilledTexture");
+            this._defaultFilled.initialize();
+        }
+
+        return this._defaultFilled;
     }
 
 }

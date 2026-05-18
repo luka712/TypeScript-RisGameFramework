@@ -17,6 +17,12 @@ export interface IRenderPipeline extends IDisposable{
      */
     readonly vertexBufferLayouts: VertexBufferLayout[];
 
+/**
+ * The primitive state of the render pipeline. This defines how the vertices are assembled into primitives (e.g., triangles, lines, points) and how the rasterization is performed.
+ */
+    readonly primitiveState: IPrimitiveState;
+         
+
     /**
      * Initializes the render pipeline. This should be called before rendering with the pipeline.
      */

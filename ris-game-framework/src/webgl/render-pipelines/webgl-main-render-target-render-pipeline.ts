@@ -17,11 +17,9 @@ import { WebGLShaderModule } from "../shader/webgl-shader-module";
  */
 export class WebGLMainRenderTargetRenderPipeline extends AWebGLRenderPipeline implements IMainRenderTargetRenderPipeline {
 
-    private _program: WebGLProgram = null!;
     private _vertexBuffer: WebGLVertexBuffer = null!;
     private _indexBuffer: WebGLIndexBuffer = null!;
     private _mainRenderTarget: WebGLTexture2D = null!;
-
 
     /**
      * The constructor.

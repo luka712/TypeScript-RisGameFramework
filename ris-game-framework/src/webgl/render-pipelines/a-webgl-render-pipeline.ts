@@ -19,6 +19,9 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
     protected readonly _blendState: WebGlBlendState;
     protected _vertexArrayObject: WebGLVertexArrayObject | null = null;
 
+    protected _program: WebGLProgram = null!;
+
+
     /**
      * The constructor.
      * @param framework The framework.
