@@ -2,6 +2,8 @@ import { BlendStateDescriptor } from "./blending/blend-state-descriptor";
 import type { IBlendState } from "./blending/blend-state-interface";
 import { TextureSamplerFilteringPreset } from "./enums";
 import type { IGraphicsDevice } from "./graphics-device-interface";
+import type { PrimitiveStateDescriptor } from "./primitive/primitive-state-descriptor";
+import type { IPrimitiveState } from "./primitive/primitve-interface";
 import type { RenderPassDescriptor } from "./render-pass/render-pass-descriptor";
 import type { IRenderPass } from "./render-pass/render-pass-interface";
 import { MipmapSamplerFilter, SamplerFilter } from "./sampler/enums";
@@ -31,6 +33,7 @@ export abstract class AGraphicsDevice implements IGraphicsDevice {
     protected readonly _descriptor: GraphicsDeviceDescriptor;
     protected _defaultTextureSampler: ISampler = null!;
     protected _defaultBlendState: IBlendState = null!;
+    protected _defaultPrimitiveState: IPrimitiveState = null!;
 
     /**
      * The constructor.
@@ -40,7 +43,6 @@ export abstract class AGraphicsDevice implements IGraphicsDevice {
         this._descriptor = descriptor;
     }
 
-
     /** @inheritdoc */
     public get defaultTextureSampler(): ISampler {
         return this._defaultTextureSampler;
@@ -49,6 +51,11 @@ export abstract class AGraphicsDevice implements IGraphicsDevice {
     /** @inheritdoc */
     public get defaultBlendState(): IBlendState {
         return this._defaultBlendState;
+    }
+
+    /** @inheritdoc */
+    public get defaultPrimitiveState(): IPrimitiveState {
+        return this._defaultPrimitiveState;
     }
 
     /**
@@ -67,6 +74,7 @@ export abstract class AGraphicsDevice implements IGraphicsDevice {
     public initialize(): void {
         this._defaultTextureSampler = this.configureAndCreateDefaultSampler();
         this._defaultBlendState = this.createBlendState(new BlendStateDescriptor());
+        this._defaultPrimitiveState = this.createPrimitiveState();
     }
 
     /** @inheritdoc */
@@ -80,4 +88,7 @@ export abstract class AGraphicsDevice implements IGraphicsDevice {
 
     /** @inheritdoc */
     public abstract createBlendState(descriptor: BlendStateDescriptor): IBlendState;
+
+    /** @inheritdoc */
+    public abstract createPrimitiveState(descriptor: PrimitiveStateDescriptor ): IPrimitiveState;
 }

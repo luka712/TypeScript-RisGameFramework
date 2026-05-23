@@ -6,7 +6,7 @@ import { WebGLConverter } from "../utilities/webgl-converter";
 /**
 * The WebGL implementation of primitive state.
 */
-export class WebGLPrimitiveState implements IPrimitiveState {
+export class WebGlPrimitiveState implements IPrimitiveState {
     private readonly _cullingEnabled: boolean;
     private _glPrimitiveType: number;
     private _glCullFace: number;
@@ -45,9 +45,11 @@ export class WebGLPrimitiveState implements IPrimitiveState {
         return this._glPrimitiveType;
     }
 
+    /** @inheritdoc */
     public apply(gl: WebGL2RenderingContext) {
         if (this._cullingEnabled) {
             gl.enable(gl.CULL_FACE);
+            gl.cullFace(this._glCullFace);
         }
         else {
             gl.disable(gl.CULL_FACE);

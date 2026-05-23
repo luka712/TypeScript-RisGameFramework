@@ -12,8 +12,11 @@ import { AGraphicsDevice, GraphicsDeviceDescriptor } from "../core/rendering/a-g
 import type { BlendStateDescriptor } from "../core/rendering/blending/blend-state-descriptor";
 import type { IBlendState } from "../core/rendering/blending/blend-state-interface";
 import { WebGlBlendState } from "./blending/webgl-blend-state";
+import type { IPrimitiveState } from "../core/rendering/primitive/primitve-interface";
+import { WebGlPrimitiveState } from "./primitive/webgl-primitive-state";
+import { PrimitiveStateDescriptor } from "../core/rendering/primitive/primitive-state-descriptor";
 
-export class WebGLGraphicsDevice extends AGraphicsDevice {
+export class WebGlGraphicsDevice extends AGraphicsDevice {
 
 
     private readonly _windowManager: IWindowManager;
@@ -81,5 +84,11 @@ export class WebGLGraphicsDevice extends AGraphicsDevice {
     /** @inheritdoc */
     public createBlendState(descriptor: BlendStateDescriptor): IBlendState {
         return new WebGlBlendState(this, descriptor);
+    }
+
+    /** @inheritdoc */
+       public createPrimitiveState(descriptor?: PrimitiveStateDescriptor): IPrimitiveState {
+        descriptor = descriptor || new PrimitiveStateDescriptor();
+        return new WebGlPrimitiveState(this._gl, descriptor);
     }
 }

@@ -1,11 +1,12 @@
 import type { IDisposable } from "../../common/disposable";
 import type { IBlendState } from "../rendering/blending/blend-state-interface";
+import type { IPrimitiveState } from "../rendering/primitive/primitve-interface";
 import type { VertexBufferLayout } from "../rendering/vertex-buffer-layout";
 
 /**
  * The interface for a render pipeline. A render pipeline defines the rendering process, including the vertex buffer layouts and the rendering steps.
  */
-export interface IRenderPipeline extends IDisposable{
+export interface IRenderPipeline extends IDisposable {
 
     /**
      * The blend state used by the render pipeline. This defines how the output of the fragment shader is blended with the existing color in the render target.
@@ -17,11 +18,11 @@ export interface IRenderPipeline extends IDisposable{
      */
     readonly vertexBufferLayouts: VertexBufferLayout[];
 
-/**
- * The primitive state of the render pipeline. This defines how the vertices are assembled into primitives (e.g., triangles, lines, points) and how the rasterization is performed.
- */
+    /**
+     * The primitive state of the render pipeline. This defines how the vertices are assembled into primitives (e.g., triangles, lines, points) and how the rasterization is performed.
+     */
     readonly primitiveState: IPrimitiveState;
-         
+
 
     /**
      * Initializes the render pipeline. This should be called before rendering with the pipeline.

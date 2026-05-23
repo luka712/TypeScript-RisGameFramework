@@ -9,19 +9,19 @@ import type { IIndexBuffer } from "../../core/buffers/index-buffer-interface";
 import { WebGLIndexBuffer as WebGlIndexBuffer } from "./webgl-index-buffer";
 import type { IUniformBuffer } from "../../core/buffers/uniform-buffer-interface";
 import { WebGlUniformBuffer } from "./webgl-uniform-buffer";
-import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
+import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
 
 @injectable()
 export class WebGLBuffersFactory implements IBuffersFactory {
 
-    private readonly _graphicsDevice: WebGLGraphicsDevice;
+    private readonly _graphicsDevice: WebGlGraphicsDevice;
 
     /**
      * The constructor of the WebGLBuffersFactory class.
      * @param _framework The framework instance to use for creating buffers.
      */
     public constructor(@inject(IFrameworkSymbol) private readonly _framework: IFramework) {
-        this._graphicsDevice = this._framework.renderer.graphicsDevice as WebGLGraphicsDevice;
+        this._graphicsDevice = this._framework.renderer.graphicsDevice as WebGlGraphicsDevice;
     }
 
     /** @inheritdoc */

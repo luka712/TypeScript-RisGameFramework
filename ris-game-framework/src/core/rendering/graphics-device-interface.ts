@@ -6,6 +6,8 @@ import type { ISampler } from './sampler/sampler-interface';
 import type { SamplerDescriptor } from './sampler/sampler-descriptor';
 import type { IBlendState } from './blending/blend-state-interface';
 import type { BlendStateDescriptor } from './blending/blend-state-descriptor';
+import type { IPrimitiveState } from './primitive/primitve-interface';
+import type { PrimitiveStateDescriptor } from './primitive/primitive-state-descriptor';
 
 /**
  * This file defines the IGraphicsDevice interface,
@@ -28,6 +30,12 @@ export interface IGraphicsDevice {
      *  This blend state is used for blending operations when no other blend state is specified. It is configured based on the graphics device descriptor and can be overridden by derived classes to provide custom blend state configurations.
      */
     readonly defaultBlendState: IBlendState;
+
+    /**
+     * The default primitive state. 
+     * This primitive state is used for primitive rendering operations when no other primitive state is specified.
+     */
+    readonly defaultPrimitiveState: IPrimitiveState;
 
     /**
      * Initializes the graphics device, setting up necessary resources and configurations for rendering operations.
@@ -62,4 +70,11 @@ export interface IGraphicsDevice {
      * @return An instance of IBlendState that represents the created blend state.
      */
     createBlendState(descriptor: BlendStateDescriptor): IBlendState;
+
+    /**
+     * Creates a primitive state, which defines how primitives are rendered, including topology, culling mode, and front face winding order.
+     * @param descriptor The descriptor containing configuration details for the primitive state, such as topology, cull face mode, and front face winding order.
+     * @returns An instance of IPrimitiveState that represents the created primitive state.
+     */
+    createPrimitiveState(descriptor: PrimitiveStateDescriptor): IPrimitiveState;
 }

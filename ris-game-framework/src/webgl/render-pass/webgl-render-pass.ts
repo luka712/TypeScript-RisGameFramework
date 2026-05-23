@@ -5,7 +5,7 @@ import type { RenderPassColorAttachment, RenderPassDepthStencilAttachment, Rende
 import type { IRenderPass } from "../../core/rendering/render-pass/render-pass-interface";
 import { asWebGLTexture2D } from "../cast/cast";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
-import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
+import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
 
 /**
  * The WeGL implementation of the IRenderPass interface. 
@@ -30,7 +30,7 @@ export class WebGLRenderPass implements IRenderPass {
      * @param graphicsDevice The graphics device.
      * @param descriptor The render pass descriptor.
      */
-    public constructor(graphicsDevice: WebGLGraphicsDevice, descriptor: RenderPassDescriptor) {
+    public constructor(graphicsDevice: WebGlGraphicsDevice, descriptor: RenderPassDescriptor) {
         this._gl = graphicsDevice.gl;
 
         this._setupFrameBuffer(descriptor.colorAttachments);

@@ -3,7 +3,7 @@ import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from "../../co
 import { SamplerDescriptor } from "../../core/rendering/sampler/sampler-descriptor";
 import type { ISampler } from "../../core/rendering/sampler/sampler-interface";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
-import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
+import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
 
 /**
  * The WebGL implementation of the ISampler interface.
@@ -23,7 +23,7 @@ export class WebGlSampler implements ISampler {
      * @param graphicsDevice The WebGL graphics device that will be used to create the sampler. The graphics device provides access to the WebGL rendering context and other resources needed for creating and managing the sampler.
      * @param descriptor The descriptor containing configuration details for the sampler. This parameter is optional, and if not provided, default values will be used for the sampler configuration. The descriptor allows you to specify various properties of the sampler, such as filtering methods and address modes, which determine how textures are sampled in the shader.
      */
-    constructor(graphicsDevice: WebGLGraphicsDevice, descriptor?: SamplerDescriptor) {
+    constructor(graphicsDevice: WebGlGraphicsDevice, descriptor?: SamplerDescriptor) {
 
         this._gl = graphicsDevice.gl;
 

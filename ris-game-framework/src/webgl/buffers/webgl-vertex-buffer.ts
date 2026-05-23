@@ -3,7 +3,7 @@ import type { IFramework } from "../../core/framework-interface";
 import { BufferUsage } from "../../core/rendering/enums";
 import { asWebGLGraphicsDevice } from "../cast/cast";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
-import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
+import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
 
 /**
  * The WebGL implementation of the vertex buffer. 
@@ -13,7 +13,7 @@ import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
  */
 export class WebGLVertexBuffer implements IVertexBuffer {
 
-    private readonly _graphicsDevice: WebGLGraphicsDevice;
+    private readonly _graphicsDevice: WebGlGraphicsDevice;
     private readonly _gl: WebGL2RenderingContext;
     private _byteStride = 0;
     private _vertexCount = 0;

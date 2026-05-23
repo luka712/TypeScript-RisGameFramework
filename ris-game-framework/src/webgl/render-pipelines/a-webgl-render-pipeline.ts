@@ -4,19 +4,21 @@ import type { IBlendState } from '../../core/rendering/blending/blend-state-inte
 import type { VertexBufferLayout } from '../../core/rendering/vertex-buffer-layout';
 import type { WebGlBlendState } from '../blending/webgl-blend-state';
 import { asWebGLGraphicsDevice } from '../cast/cast';
+import type { WebGlPrimitiveState } from '../primitive/webgl-primitive-state';
 import type { WebGlSampler } from '../sampler/webgl-sampler';
 import { WebGLConverter } from '../utilities/webgl-converter';
 
 /**
  * The base class for WebGL render pipelines. This class provides common functionality for all WebGL render pipelines.
  */
-export abstract class AWebGLRenderPipeline implements IRenderPipeline {
+export abstract class AWebGlRenderPipeline implements IRenderPipeline {
 
     /** The framework instance. */
     protected readonly _framework: IFramework;
     protected readonly _gl: WebGL2RenderingContext;
     protected readonly _sampler: WebGlSampler;
     protected readonly _blendState: WebGlBlendState;
+    protected readonly _primitiveState: WebGlPrimitiveState;
     protected _vertexArrayObject: WebGLVertexArrayObject | null = null;
 
     protected _program: WebGLProgram = null!;
@@ -32,11 +34,17 @@ export abstract class AWebGLRenderPipeline implements IRenderPipeline {
         this._gl = graphicsDevice.gl;
         this._blendState = graphicsDevice.defaultBlendState as WebGlBlendState;
         this._sampler = graphicsDevice.defaultTextureSampler as WebGlSampler;
+        this._primitiveState = graphicsDevice.defaultPrimitiveState as WebGlPrimitiveState;
     }
 
     /** @inheritDoc */
     public get blendState(): IBlendState {
         return this._blendState;
+    }
+
+    /** @inheritDoc */
+    public get primitiveState(): WebGlPrimitiveState {
+        return this._primitiveState;
     }
 
     /** @inheritDoc */

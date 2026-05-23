@@ -9,7 +9,7 @@ import { WebGLIndexBuffer } from "../buffers/webgl-index-buffer";
 import { WebGlUniformBuffer } from "../buffers/webgl-uniform-buffer";
 import { WebGLVertexBuffer } from "../buffers/webgl-vertex-buffer";
 import { WebGLTexture2D } from "../texture/webgl-texture-2d";
-import { WebGLGraphicsDevice } from "../webgl-graphics-device";
+import { WebGlGraphicsDevice } from "../webgl-graphics-device";
 import { WebGLRenderer } from "../webgl-renderer";
 
 /**
@@ -82,9 +82,9 @@ export function asWebGLUniformBuffer(uniformBuffer: IUniformBuffer): WebGlUnifor
  * @param graphicsDevice The graphics device to cast.
  * @returns The given graphics device casted to a WebGLGraphicsDevice.
  */
-export function asWebGLGraphicsDevice(graphicsDevice: IRenderer["graphicsDevice"]): WebGLGraphicsDevice {
-    if (graphicsDevice instanceof WebGLGraphicsDevice   ) {
-        return graphicsDevice as WebGLGraphicsDevice;
+export function asWebGLGraphicsDevice(graphicsDevice: IRenderer["graphicsDevice"]): WebGlGraphicsDevice {
+    if (graphicsDevice instanceof WebGlGraphicsDevice   ) {
+        return graphicsDevice as WebGlGraphicsDevice;
     } else {
         throw new Error("Graphics device is not a WebGL graphics device.");
     }   

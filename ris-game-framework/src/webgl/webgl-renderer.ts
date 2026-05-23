@@ -4,7 +4,7 @@ import { inject, injectable } from "tsyringe";
 import { IFrameworkSymbol } from "../core/dependency-injection/register-services-interface";
 import { ARendererer } from "../core/renderer/a-rendererer";
 import type { IGraphicsDevice } from "../core/rendering/graphics-device-interface";
-import { WebGLGraphicsDevice } from "./webgl-graphics-device";
+import { WebGlGraphicsDevice } from "./webgl-graphics-device";
 
 /**
  * The WebGL implementation of the IRenderer interface.
@@ -28,7 +28,7 @@ export class WebGLRenderer extends ARendererer {
 
   /** @inheritdoc */
   protected createGraphicsDevice(): IGraphicsDevice {
-    return new WebGLGraphicsDevice(this._framework.windowManager, {
+    return new WebGlGraphicsDevice(this._framework.windowManager, {
       samplerFilteringPreset: this._renderConfiguration.textureFiltering
     });
   }

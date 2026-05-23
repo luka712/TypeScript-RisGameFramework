@@ -1,6 +1,6 @@
 import type { IShaderModule } from "../../core/shader/shader-module-interface";
 import { ShaderStage } from '../../core/rendering/enums';
-import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
+import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
 import { RenderingBackend } from "../../common/rendering-backend";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
 import type { IFramework } from "../../core/framework-interface";
@@ -11,7 +11,7 @@ import type { IFramework } from "../../core/framework-interface";
 export class WebGLShaderModule implements IShaderModule {
 
     private readonly _framework: IFramework;
-    private readonly _graphicsDevice: WebGLGraphicsDevice;
+    private readonly _graphicsDevice: WebGlGraphicsDevice;
     private readonly _gl: WebGL2RenderingContext;
     private _program?: WebGLProgram;
 
@@ -22,7 +22,7 @@ export class WebGLShaderModule implements IShaderModule {
      */
     public constructor(framework: IFramework, shaderFilePath: string) {
         this._framework = framework;
-        this._graphicsDevice = framework.renderer.graphicsDevice as WebGLGraphicsDevice;
+        this._graphicsDevice = framework.renderer.graphicsDevice as WebGlGraphicsDevice;
         this._gl = this._graphicsDevice.gl;
         this.webGlProgramPromise = new Promise<WebGLProgram>(async (resolve, reject) => {
             try {

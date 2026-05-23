@@ -2,7 +2,7 @@ import type { IUniformBuffer } from "../../core/buffers/uniform-buffer-interface
 import type { BufferUsage } from "../../core/rendering/enums";
 import type { IGraphicsDevice } from "../../core/rendering/graphics-device-interface";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
-import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
+import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
 
 /**
  * The WebGL implementaiton of the uniform buffer. 
@@ -16,7 +16,7 @@ export class WebGlUniformBuffer implements IUniformBuffer {
      * The constructor for the WebGLUniformBuffer.
      */
     public constructor(graphicsDevice: IGraphicsDevice, bufferUsage: BufferUsage, label: string) {
-        this._gl = (graphicsDevice as WebGLGraphicsDevice).gl;
+        this._gl = (graphicsDevice as WebGlGraphicsDevice).gl;
         this.bufferUsage = bufferUsage;
         this.label = label;
     }

@@ -1,7 +1,7 @@
 import type { BlendStateDescriptor } from "../../core/rendering/blending/blend-state-descriptor";
 import type { IBlendState } from "../../core/rendering/blending/blend-state-interface";
 import { WebGLConverter } from "../utilities/webgl-converter";
-import type { WebGLGraphicsDevice } from "../webgl-graphics-device";
+import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
 
 export class WebGlBlendState implements IBlendState {
 
@@ -20,7 +20,7 @@ export class WebGlBlendState implements IBlendState {
      * @param _graphicsDevice The graphics device.
      * @param descriptor The blend state descriptor.
      */
-    public constructor(private readonly _graphicsDevice: WebGLGraphicsDevice, descriptor: BlendStateDescriptor) {
+    public constructor(private readonly _graphicsDevice: WebGlGraphicsDevice, descriptor: BlendStateDescriptor) {
         this._gl = this._graphicsDevice.gl;
         this._blendEnabled = descriptor.blendingEnabled;
         this._srcColorFactor = WebGLConverter.convertBlendFactor(this._gl, descriptor.color.srcFactor);

@@ -7,15 +7,17 @@ import type { WebGlUniformBuffer } from "../../buffers/webgl-uniform-buffer";
 import { asWebGLIndexBuffer, asWebGLTexture2D, asWebGLUniformBuffer, asWebGLVertexBuffer } from "../../cast/cast";
 import { WebGLShaderModule } from "../../shader/webgl-shader-module";
 import { WebGLTexture2D } from "../../texture/webgl-texture-2d";
-import { AWebGLRenderPipeline } from "../a-webgl-render-pipeline";
 import { WebGLVertexBuffer } from '../../buffers/webgl-vertex-buffer';
 import type { IIndexBuffer } from "../../../core/buffers/index-buffer-interface";
 import type { IVertexBuffer } from "../../../core/buffers/vertex-buffer-interface";
+import { AWebGlRenderPipeline } from "../a-webgl-render-pipeline";
+import type { WebGLIndexBuffer } from "../../buffers/webgl-index-buffer";
+import { IndexBufferType } from "../../../common/enums";
 
 /**
  * The WebGL implementation of the sprite render pipeline. 
  */
-export class WebGLSpriteRenderPipeline extends AWebGLRenderPipeline implements ISpriteRenderPipeline {
+export class WebGLSpriteRenderPipeline extends AWebGlRenderPipeline implements ISpriteRenderPipeline {
 
     private static readonly CAMERA_BINDING_POINT: number = 0;
 
@@ -24,7 +26,6 @@ export class WebGLSpriteRenderPipeline extends AWebGLRenderPipeline implements I
     private _cameraBlockIndex: number = -1;
     private _buffersArray: WebGLBuffer[] = [null!];
     private _lastVertexBuffer: WebGLVertexBuffer | null = null;
-
 
     /**
      * The constructor.
@@ -91,48 +92,48 @@ export class WebGLSpriteRenderPipeline extends AWebGLRenderPipeline implements I
     }
 
     /** @inheritdoc */
-    public render(vertexBuffer: IVertexBuffer, indexBuffer: IIndexBuffer, indicesCount?: number, indicesOffset?: number): void {
+    public render(vertexBuffer: IVertexBuffer, indexBuffer: IIndexBuffer, indicesCount: number = -1, indicesOffset: number = 0): void {
+
         if (indicesCount == 0) {
             return;
         }
 
-        const webGlVertexBuffer = asWebGLVertexBuffer(vertexBuffer);
-        const webGlIndexBuffer = asWebGLIndexBuffer(indexBuffer);
+        const webGlVertexBuffer = vertexBuffer as WebGLVertexBuffer;
+        const webGlIndexBuffer = indexBuffer as WebGLIndexBuffer;
 
-        
-        _primitiveState.Apply(_gl);
-        _blendState.Apply(_gl);
+
+        this._primitiveState.apply(this._gl);
+        this._blendState.apply(this._gl);
 
         // if it was changed, we need to create a new vao.
-        if (_lastVertexBuffer != openGlVertexBuffer) {
+        if (this._lastVertexBuffer != webGlVertexBuffer) {
             // Create a new VAO. Internally deletes the old one.
-            _lastVertexBuffer = openGlVertexBuffer;
-            CreateVertexArrayObject();
+            this._lastVertexBuffer = webGlVertexBuffer;
+            this._createVertexArrayObject();
         }
 
-        _gl.UseProgram(_program);
+        this._gl.useProgram(this._program);
         // Bind the vao. It contains all the information about the vertex buffer layout ( vertices + instances)
-        _gl.BindVertexArray(_vertexArrayObject);
-        _gl.BindBuffer(GLEnum.ElementArrayBuffer, openGlIndexBuffer.Buffer);
-        _gl.BindBufferBase(GLEnum.UniformBuffer, _cameraBlockIndex, _projectionViewBuffer.Buffer);
-        _gl.ActiveTexture(GLEnum.Texture0);
-        _gl.BindTexture(GLEnum.Texture2D, _texture.GLTexture);
-        _gl.BindSampler(0, _sampler.GLSampler);
+        this._gl.bindVertexArray(this._vertexArrayObject);
+        this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, webGlIndexBuffer.buffer);
+        this._gl.bindBufferBase(this._gl.UNIFORM_BUFFER, this._cameraBlockIndex, this._projectionViewBuffer.glBuffer!);
+        this._gl.activeTexture(this._gl.TEXTURE0);
+        this._gl.bindTexture(this._gl.TEXTURE_2D, this._texture!.glTexture);
+        this._gl.bindSampler(0, this._sampler.glSampler);
 
- // We can only really use two types uint16 and uint32. Boolean check to see which one to use.
- GLEnum type = indexBuffer.Type == IndexBufferType.Uint16
-            ? GLEnum.UnsignedShort
-            : GLEnum.UnsignedInt;
+        // We can only really use two types uint16 and uint32. Boolean check to see which one to use.
+        const type = indexBuffer.type == IndexBufferType.Uint16
+            ? this._gl.UNSIGNED_SHORT
+            : this._gl.UNSIGNED_INT;
 
- // api.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
+        // api.PolygonMode(GLEnum.FrontAndBack, GLEnum.Line);
 
- // Either draw all indices or a specific amount. If indicesCount is -1, draw all as defined by the index buffer.
- uint toIndices = indicesCount > 0 ? (uint)indicesCount: indexBuffer.IndicesCount;
- uint fromIndices = indicesOffset * indexBuffer.ElementByteSize;
-        unsafe
-        {
-            _gl.DrawElements(_primitiveState.GLPrimitiveType, toIndices, type, (void*)fromIndices);
-        }
+        // Either draw all indices or a specific amount. If indicesCount is -1, draw all as defined by the index buffer.
+        const toIndices = indicesCount > 0 ? indicesCount : indexBuffer.indicesCount;
+        const fromIndices = indicesOffset * indexBuffer.elementByteSize;
+
+        this._gl.drawElements(this._primitiveState.glPrimitiveType, toIndices, type, fromIndices);
+
     }
 
 }
