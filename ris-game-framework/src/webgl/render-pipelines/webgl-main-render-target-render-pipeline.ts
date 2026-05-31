@@ -2,7 +2,6 @@ import { vec2 } from "gl-matrix";
 import type { IFramework } from "../../core/framework-interface";
 import type { IMainRenderTargetRenderPipeline } from "../../core/render-pipelines/main-render-target-render-pipeline-interface";
 import type { WebGLVertexBuffer } from "../buffers/webgl-vertex-buffer";
-import { AWebGLRenderPipeline } from "./a-webgl-render-pipeline";
 import { GeometryFormat } from "../../core/geometry/geometry-format";
 import { BufferUsage } from "../../core/rendering/enums";
 import { asWebGLIndexBuffer, asWebGLVertexBuffer } from "../cast/cast";
@@ -11,11 +10,12 @@ import { VertexBufferLayout } from "../../core/rendering/vertex-buffer-layout";
 import type { ITexture2D } from "../../core/rendering/texture/texture";
 import type { WebGLTexture2D } from "../texture/webgl-texture-2d";
 import { WebGLShaderModule } from "../shader/webgl-shader-module";
+import { AWebGlRenderPipeline } from "./a-webgl-render-pipeline";
 
 /**
  * The WebGL implementation of the main render target render pipeline. 
  */
-export class WebGLMainRenderTargetRenderPipeline extends AWebGLRenderPipeline implements IMainRenderTargetRenderPipeline {
+export class WebGlMainRenderTargetRenderPipeline extends AWebGlRenderPipeline implements IMainRenderTargetRenderPipeline {
 
     private _vertexBuffer: WebGLVertexBuffer = null!;
     private _indexBuffer: WebGLIndexBuffer = null!;

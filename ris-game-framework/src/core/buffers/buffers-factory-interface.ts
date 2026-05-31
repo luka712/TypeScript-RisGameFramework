@@ -23,7 +23,7 @@ export interface IBuffersFactory {
         byteStride: number,
         vertexCount: number,
         bufferUsage: BufferUsage,
-        label: string | null): IVertexBuffer;
+        label?: string): IVertexBuffer;
 
     /**
      * Creates an index buffer.
@@ -31,7 +31,7 @@ export interface IBuffersFactory {
      * @param label The label for the buffer, which can be used for debugging purposes to identify the buffer in graphics debugging tools.
      * @return The created index buffer.
      */
-    createIndexBuffer(data: Uint16Array | Uint32Array, label: string | null): IIndexBuffer;
+    createIndexBuffer(data: Uint16Array | Uint32Array, label?: string): IIndexBuffer;
 
     /**
      * Creates a uniform buffer.
@@ -40,5 +40,5 @@ export interface IBuffersFactory {
      * @param label The label for the buffer, which can be used for debugging purposes to identify the buffer in graphics debugging tools.
      * @returns The created uniform buffer.
      */
-    createUniformBuffer(dataOrByteLength: ArrayBuffer | ArrayBufferView | number, bufferUsage: BufferUsage, label: string | null): IUniformBuffer;
+    createUniformBuffer(dataOrByteLength: ArrayBuffer | ArrayBufferView | number, bufferUsage: BufferUsage, label?: string): IUniformBuffer;
 }

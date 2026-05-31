@@ -36,3 +36,18 @@ export enum GeometryFormat {
      */
     Pos3_TextureCoords2 = 4
 }
+
+/**
+ * Gets the stride of a vertex in bytes for a given geometry format.
+ *  This is used to determine how to interleave the vertex data and how to create the vertex buffer for a mesh.
+ * @param format The geometry format.
+ * @returns The stride of a vertex in bytes for the given geometry format.
+ */
+export function formatStride(format: GeometryFormat): number {
+    switch (format) {
+        case GeometryFormat.Pos3_Color4:
+            return (3 + 4) * Float32Array.BYTES_PER_ELEMENT;
+        default:
+            throw new Error(`Unsupported geometry format: ${format}`);
+    }
+}

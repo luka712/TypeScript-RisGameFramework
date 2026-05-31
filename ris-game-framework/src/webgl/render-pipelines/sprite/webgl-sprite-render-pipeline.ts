@@ -4,7 +4,7 @@ import type { ISpriteRenderPipeline } from "../../../core/render-pipelines/sprit
 import type { ITexture2D } from "../../../core/rendering/texture/texture";
 import { VertexBufferLayout } from "../../../core/rendering/vertex-buffer-layout";
 import type { WebGlUniformBuffer } from "../../buffers/webgl-uniform-buffer";
-import { asWebGLIndexBuffer, asWebGLTexture2D, asWebGLUniformBuffer, asWebGLVertexBuffer } from "../../cast/cast";
+import {  asWebGLTexture2D, asWebGLUniformBuffer } from "../../cast/cast";
 import { WebGLShaderModule } from "../../shader/webgl-shader-module";
 import { WebGLTexture2D } from "../../texture/webgl-texture-2d";
 import { WebGLVertexBuffer } from '../../buffers/webgl-vertex-buffer';
@@ -17,7 +17,7 @@ import { IndexBufferType } from "../../../common/enums";
 /**
  * The WebGL implementation of the sprite render pipeline. 
  */
-export class WebGLSpriteRenderPipeline extends AWebGlRenderPipeline implements ISpriteRenderPipeline {
+export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements ISpriteRenderPipeline {
 
     private static readonly CAMERA_BINDING_POINT: number = 0;
 
@@ -76,7 +76,7 @@ export class WebGLSpriteRenderPipeline extends AWebGlRenderPipeline implements I
             this._texture = WebGLTexture2D.getOrCreateDefault(this._framework);
 
             this._cameraBlockIndex = this._gl.getUniformBlockIndex(this._program, "_MatrixStorage_float4x4_ColMajorstd140");
-            this._gl.uniformBlockBinding(this._program, this._cameraBlockIndex, WebGLSpriteRenderPipeline.CAMERA_BINDING_POINT);
+            this._gl.uniformBlockBinding(this._program, this._cameraBlockIndex, WebGlSpriteRenderPipeline.CAMERA_BINDING_POINT);
         }
     }
 

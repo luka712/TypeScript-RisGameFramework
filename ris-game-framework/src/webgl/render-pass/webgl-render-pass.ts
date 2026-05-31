@@ -45,7 +45,6 @@ export class WebGLRenderPass implements IRenderPass {
 
         for (let i = 0; i < this._colorAttachmentsCount; i++) {
             const colorAttachment = colorAttachments[i];
-            debugger;
             this._clearColors.push(colorAttachment.clearColor);
             if (colorAttachment.loadAction == LoadAction.CLEAR) {
                 this._clearBufferMask |= this._gl.COLOR_BUFFER_BIT;
@@ -66,7 +65,7 @@ export class WebGLRenderPass implements IRenderPass {
         for (let i = 0; i < this._colorAttachmentsCount; i++) {
             var colorAttachment = colorAttachments[i];
             var texture = asWebGLTexture2D(colorAttachment.texture!);
-            if (!TextureFormat) {
+            if (!texture) {
                 throw new Error("Texture must be provided for non-swapchain color attachments.");
             }
 

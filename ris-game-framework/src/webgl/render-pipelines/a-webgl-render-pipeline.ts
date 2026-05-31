@@ -20,9 +20,9 @@ export abstract class AWebGlRenderPipeline implements IRenderPipeline {
     protected readonly _blendState: WebGlBlendState;
     protected readonly _primitiveState: WebGlPrimitiveState;
     protected _vertexArrayObject: WebGLVertexArrayObject | null = null;
+    
 
     protected _program: WebGLProgram = null!;
-
 
     /**
      * The constructor.
@@ -91,7 +91,6 @@ export abstract class AWebGlRenderPipeline implements IRenderPipeline {
      *  This method should be called before rendering to set up the necessary pipeline state, such as blending, depth testing, etc.
      */
     protected _setupPipeline(): void {
-
         this._blendState.apply(this._gl);
     }
 

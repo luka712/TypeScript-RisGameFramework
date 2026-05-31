@@ -1,5 +1,7 @@
+import type { IUniformBuffer } from '../buffers/uniform-buffer-interface';
 import type { ITexture2D } from '../rendering/texture/texture';
 import type { IMainRenderTargetRenderPipeline } from './main-render-target-render-pipeline-interface';
+import type { ISpriteRenderPipeline } from './sprite-render-pipeline';
 
 export const IRenderPipelineFactorySymbol = Symbol("IRenderPipelineFactory");
 
@@ -14,4 +16,11 @@ export interface IRenderPipelineFactory {
      * @returns An instance of MainRenderTargetRenderPipelineInterface that represents the created render pipeline for the main frame buffer.
      */
     createMainRenderTargetRenderPipeline(renderTarget: ITexture2D): IMainRenderTargetRenderPipeline;
+
+    /**
+     * Creates a render pipeline for rendering sprites.
+     * @param projectionViewBuffer The uniform buffer that contains the projection and view matrices for sprite rendering. 
+     * @return An instance of ISpriteRenderPipeline that represents the created render pipeline for sprite rendering.
+     */
+    createSpriteRenderPipeline(projectionViewBuffer: IUniformBuffer): ISpriteRenderPipeline;
 }

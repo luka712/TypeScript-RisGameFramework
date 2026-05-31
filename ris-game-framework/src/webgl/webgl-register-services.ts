@@ -4,7 +4,7 @@ import { WebGLRenderer } from "./webgl-renderer";
 import { WebGLTextureFactory } from "./texture/webgl-texture-factory";
 import { WebGLBuffersFactory } from "./buffers/webgl-buffers-factory";
 import { IRenderPipelineFactorySymbol } from "../core/render-pipelines/render-pipeline-factory-interface";
-import { WebGLRenderPipelineFactory } from "./render-pipelines/webgl-render-pipeline-factory";
+import { WebGlRenderPipelineFactory } from "./render-pipelines/webgl-render-pipeline-factory";
 import { IContentModuleSymbol } from '../core/content/content-module-interface';
 import { WebGLShaderContentModule } from "./shader/webgl-shader-content-module";
 
@@ -15,7 +15,7 @@ export class WebGLRegisterServices implements IRegisterServices {
         container.registerSingleton(IRendererSymbol, WebGLRenderer);
         container.registerSingleton(ITextureFactorySymbol, WebGLTextureFactory);
         container.registerSingleton(IBuffersFactorySymbol, WebGLBuffersFactory);
-        container.registerSingleton(IRenderPipelineFactorySymbol, WebGLRenderPipelineFactory);
+        container.registerSingleton(IRenderPipelineFactorySymbol, WebGlRenderPipelineFactory);
         container.registerSingleton(IContentModuleSymbol, WebGLShaderContentModule);
     }
 }

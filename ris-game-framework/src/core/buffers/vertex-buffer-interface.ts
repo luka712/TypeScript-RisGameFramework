@@ -1,6 +1,7 @@
+import type { IDisposable } from "../../common/disposable";
 import { BufferUsage } from "../rendering/enums";
 
-export interface IVertexBuffer {
+export interface IVertexBuffer extends IDisposable {
 
     /**
      * Indicates whether the vertex buffer is writable. 
