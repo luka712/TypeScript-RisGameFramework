@@ -1,5 +1,5 @@
 import type { IVertexBuffer } from "../../core/buffers/vertex-buffer-interface";
-import type { IFramework } from "../../core/framework-interface";
+import type { TempIFramework } from "../../core/framework-interface";
 import { BufferUsage } from "../../core/rendering/enums";
 import { asWebGLGraphicsDevice } from "../cast/cast";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
@@ -25,7 +25,7 @@ export class WebGLVertexBuffer implements IVertexBuffer {
      * @param framework The framework.
      * @param label An optional label for the vertex buffer, which can be used for debugging purposes.
      */
-    constructor(framework: IFramework, private readonly _label: string | null = null) {
+    constructor(framework: TempIFramework, private readonly _label: string | null = null) {
         this._graphicsDevice = asWebGLGraphicsDevice(framework.renderer.graphicsDevice);
         this._gl = this._graphicsDevice.gl;
     }

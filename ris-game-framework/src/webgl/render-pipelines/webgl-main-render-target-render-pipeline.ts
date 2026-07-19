@@ -1,5 +1,5 @@
 import { vec2 } from "gl-matrix";
-import type { IFramework } from "../../core/framework-interface";
+import type { TempIFramework } from "../../core/framework-interface";
 import type { IMainRenderTargetRenderPipeline } from "../../core/render-pipelines/main-render-target-render-pipeline-interface";
 import type { WebGLVertexBuffer } from "../buffers/webgl-vertex-buffer";
 import { GeometryFormat } from "../../core/geometry/geometry-format";
@@ -26,7 +26,7 @@ export class WebGlMainRenderTargetRenderPipeline extends AWebGlRenderPipeline im
      * @param framework The framework. 
      * @param mainRenderTarget The main render target texture. This is the texture that will be rendered to by this render pipeline. It should be the same texture as the one used in the swap chain's render pass descriptor for the main render target.
      */
-    public constructor(framework: IFramework, mainRenderTarget: ITexture2D) {
+    public constructor(framework: TempIFramework, mainRenderTarget: ITexture2D) {
         super(framework);
         this._mainRenderTarget = mainRenderTarget as WebGLTexture2D;
     }

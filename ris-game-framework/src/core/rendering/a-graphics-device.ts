@@ -1,7 +1,7 @@
 import { BlendStateDescriptor } from "./blending/blend-state-descriptor";
 import type { IBlendState } from "./blending/blend-state-interface";
 import { TextureSamplerFilteringPreset } from "./enums";
-import type { IGraphicsDevice } from "./graphics-device-interface";
+import type { TempIGraphicsDevice } from "./graphics-device-interface";
 import type { PrimitiveStateDescriptor } from "./primitive/primitive-state-descriptor";
 import type { IPrimitiveState } from "./primitive/primitve-interface";
 import type { RenderPassDescriptor } from "./render-pass/render-pass-descriptor";
@@ -28,7 +28,7 @@ export class GraphicsDeviceDescriptor {
 /**
  * The abstract base class for graphics devices.
  */
-export abstract class AGraphicsDevice implements IGraphicsDevice {
+export abstract class AGraphicsDevice implements TempIGraphicsDevice {
 
     protected readonly _descriptor: GraphicsDeviceDescriptor;
     protected _defaultTextureSampler: ISampler = null!;
@@ -74,7 +74,7 @@ export abstract class AGraphicsDevice implements IGraphicsDevice {
     public initialize(): void {
         this._defaultTextureSampler = this.configureAndCreateDefaultSampler();
         this._defaultBlendState = this.createBlendState(new BlendStateDescriptor());
-        this._defaultPrimitiveState = this.createPrimitiveState();
+       //  this._defaultPrimitiveState = this.createPrimitiveState();
     }
 
     /** @inheritdoc */

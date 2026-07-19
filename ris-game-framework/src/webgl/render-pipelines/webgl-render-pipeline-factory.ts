@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import type { IFramework } from "../../core/framework-interface";
+import type { TempIFramework } from "../../core/framework-interface";
 import type { IMainRenderTargetRenderPipeline } from "../../core/render-pipelines/main-render-target-render-pipeline-interface";
 import type { IRenderPipelineFactory } from "../../core/render-pipelines/render-pipeline-factory-interface";
 import type { ITexture2D } from "../../core/rendering/texture/texture";
@@ -20,7 +20,7 @@ export class WebGlRenderPipelineFactory implements IRenderPipelineFactory {
      * The constructor for the WebGLRenderPipelineFactory class.
      * @param _framework The framework instance.
      */
-    constructor(@inject(IFrameworkSymbol) private readonly _framework: IFramework) {
+    constructor(@inject(IFrameworkSymbol) private readonly _framework: TempIFramework) {
     }
 
     /** @inheritdoc */

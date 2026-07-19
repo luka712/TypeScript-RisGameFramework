@@ -2,7 +2,7 @@ import { vec2 } from "gl-matrix";
 import type { TextureFormat } from "../../common/texture-enums";
 import type { Color } from "../math/color";
 import type { RenderingLimits } from "./RenderingLimits";
-import type { IGraphicsDevice } from '../rendering/graphics-device-interface';
+import type { TempIGraphicsDevice } from '../rendering/graphics-device-interface';
 import { TextureSamplerFilteringPreset } from "../rendering/enums";
 
 export const RenderConfigurationSymbol = Symbol("RenderConfiguration");
@@ -44,7 +44,7 @@ export interface IRenderer {
      * The graphics device used by the renderer. 
      * This is used to create resources and manage the rendering context.
      */
-    readonly graphicsDevice: IGraphicsDevice;
+    readonly graphicsDevice: TempIGraphicsDevice;
 
     /**
      * The preferred texture format for the renderer.

@@ -1,7 +1,7 @@
 import { State } from "../../common/state";
 import type { IIndexBuffer } from "../buffers/index-buffer-interface";
 import type { IVertexBuffer } from "../buffers/vertex-buffer-interface";
-import type { IFramework } from "../framework-interface";
+import type { TempIFramework } from "../framework-interface";
 import type { BaseGeometry } from "../geometry/base-geometry";
 import { formatStride, type GeometryFormat } from "../geometry/geometry-format";
 import { BufferUsage } from "../rendering/enums";
@@ -10,7 +10,7 @@ import type { MeshParameters } from "./mesh-paramaters";
 
 export class Mesh implements IMesh {
 
-    protected readonly _framework: IFramework;
+    protected readonly _framework: TempIFramework;
     protected _vertexData: Float32Array = null!;
     protected _bufferUsage = BufferUsage.VERTEX;
     protected _state: State = State.Created;
@@ -26,7 +26,7 @@ export class Mesh implements IMesh {
      * The constructor for the Mesh class.
      * @param framework The framework instance.
      */
-    public constructor(framework: IFramework) {
+    public constructor(framework: TempIFramework) {
         this._framework = framework;
     }
 

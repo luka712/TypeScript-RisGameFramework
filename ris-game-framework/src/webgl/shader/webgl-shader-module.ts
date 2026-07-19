@@ -3,14 +3,14 @@ import { ShaderStage } from '../../core/rendering/enums';
 import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
 import { RenderingBackend } from "../../common/rendering-backend";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
-import type { IFramework } from "../../core/framework-interface";
+import type { TempIFramework } from "../../core/framework-interface";
 
 /**
  * The WebGL shader module.
  */
 export class WebGLShaderModule implements IShaderModule {
 
-    private readonly _framework: IFramework;
+    private readonly _framework: TempIFramework;
     private readonly _graphicsDevice: WebGlGraphicsDevice;
     private readonly _gl: WebGL2RenderingContext;
     private _program?: WebGLProgram;
@@ -20,7 +20,7 @@ export class WebGLShaderModule implements IShaderModule {
      * @param framework The framework.
      * @param shaderFilePath 
      */
-    public constructor(framework: IFramework, shaderFilePath: string) {
+    public constructor(framework: TempIFramework, shaderFilePath: string) {
         this._framework = framework;
         this._graphicsDevice = framework.renderer.graphicsDevice as WebGlGraphicsDevice;
         this._gl = this._graphicsDevice.gl;

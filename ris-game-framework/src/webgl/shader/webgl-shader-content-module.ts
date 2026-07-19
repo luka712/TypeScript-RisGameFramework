@@ -3,14 +3,14 @@ import { inject, injectable } from 'tsyringe';
 import type { IContent } from '../../core/content/content-interface';
 import type { IContentModule } from '../../core/content/content-module-interface';
 import { WebGLShaderModule } from './webgl-shader-module';
-import type { IFramework } from '../../core/framework-interface';
+import type { TempIFramework } from '../../core/framework-interface';
 import { IFrameworkSymbol } from '../../core/dependency-injection/register-services-interface';
 
 @injectable()
 export class WebGLShaderContentModule implements IContentModule {
     private readonly _shaderModules: Map<string, WebGLShaderModule> = new Map<string, WebGLShaderModule>();
 
-    private readonly _framework: IFramework;
+    private readonly _framework: TempIFramework;
 
     readonly contentTypes = [WebGLShaderModule.name];
 
@@ -18,7 +18,7 @@ export class WebGLShaderContentModule implements IContentModule {
      * The WebGL shader content module.
      * @param _framework 
      */
-    public constructor(@inject(IFrameworkSymbol) framework: IFramework) {
+    public constructor(@inject(IFrameworkSymbol) framework: TempIFramework) {
         this._framework = framework;
     }
 

@@ -1,5 +1,5 @@
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
-import type { IFramework } from "../../core/framework-interface";
+import type { TempIFramework } from "../../core/framework-interface";
 import type { vec2 } from "gl-matrix";
 import { asWebGLGraphicsDevice, asWebGLTexture2D } from '../cast/cast';
 import { State } from "../../common/state";
@@ -24,7 +24,7 @@ export class WebGLTexture2D extends ATexture2D {
      * @param _label The label.
      */
     constructor(
-        private readonly _framework: IFramework,
+        private readonly _framework: TempIFramework,
         size: vec2,
         private readonly _data: IImageData | null,
         textureUsage: TextureUsage,
@@ -94,7 +94,7 @@ export class WebGLTexture2D extends ATexture2D {
      * @param framework The framework instance.
      * @returns The default 1x1 white texture.
      */
-    public static getOrCreateDefault(framework: IFramework): WebGLTexture2D {
+    public static getOrCreateDefault(framework: TempIFramework): WebGLTexture2D {
         if (this._defaultFilled === null || this._defaultFilled.state === State.Disposed) {
             
             const imageData = new GenericImageData(new Uint8Array([255, 255, 255, 255]), 1, 1, 4);

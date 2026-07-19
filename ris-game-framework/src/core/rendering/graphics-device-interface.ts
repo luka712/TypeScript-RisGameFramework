@@ -8,6 +8,7 @@ import type { IBlendState } from './blending/blend-state-interface';
 import type { BlendStateDescriptor } from './blending/blend-state-descriptor';
 import type { IPrimitiveState } from './primitive/primitve-interface';
 import type { PrimitiveStateDescriptor } from './primitive/primitive-state-descriptor';
+import type {IGraphicsDevice} from "../../interfaces/rendering/IGraphicsDevice.ts";
 
 /**
  * This file defines the IGraphicsDevice interface,
@@ -16,7 +17,7 @@ import type { PrimitiveStateDescriptor } from './primitive/primitive-state-descr
  * specific rendering functionalities while maintaining a consistent API for the rest of the application.
  *  The IGraphicsDevice interface may include methods for creating render targets, managing resources, and handling rendering states.
  */
-export interface IGraphicsDevice {
+export interface TempIGraphicsDevice extends IGraphicsDevice {
 
     /**
      * The default texture sampler. 

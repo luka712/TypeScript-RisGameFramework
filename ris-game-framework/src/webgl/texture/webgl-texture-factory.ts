@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { IFrameworkSymbol } from "../../core/dependency-injection/register-services-interface";
-import type { IFramework } from "../../core/framework-interface";
+import type { TempIFramework } from "../../core/framework-interface";
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import { Color } from "../../core/math/color";
 import { WebGLTexture2D } from "./webgl-texture-2d";
@@ -16,7 +16,7 @@ export class WebGLTextureFactory implements ITextureFactory {
      * The constructor for the WebGLTextureFactory class.
      * @param _framework The framework instance.
      */
-    constructor(@inject(IFrameworkSymbol) private readonly _framework: IFramework) {
+    constructor(@inject(IFrameworkSymbol) private readonly _framework: TempIFramework) {
     }
 
     /** @inheritdoc */

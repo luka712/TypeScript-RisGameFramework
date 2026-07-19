@@ -1,4 +1,4 @@
-import type { IFramework } from '../../core/framework-interface';
+import type { TempIFramework } from '../../core/framework-interface';
 import type { IRenderPipeline } from '../../core/render-pipelines/render-pipeline-interface';
 import type { IBlendState } from '../../core/rendering/blending/blend-state-interface';
 import type { VertexBufferLayout } from '../../core/rendering/vertex-buffer-layout';
@@ -14,7 +14,7 @@ import { WebGLConverter } from '../utilities/webgl-converter';
 export abstract class AWebGlRenderPipeline implements IRenderPipeline {
 
     /** The framework instance. */
-    protected readonly _framework: IFramework;
+    protected readonly _framework: TempIFramework;
     protected readonly _gl: WebGL2RenderingContext;
     protected readonly _sampler: WebGlSampler;
     protected readonly _blendState: WebGlBlendState;
@@ -28,7 +28,7 @@ export abstract class AWebGlRenderPipeline implements IRenderPipeline {
      * The constructor.
      * @param framework The framework.
      */
-    public constructor(framework: IFramework) {
+    public constructor(framework: TempIFramework) {
         this._framework = framework;
         const graphicsDevice = asWebGLGraphicsDevice(framework.renderer.graphicsDevice);
         this._gl = graphicsDevice.gl;

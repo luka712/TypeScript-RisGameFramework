@@ -1,27 +1,35 @@
-import type { RenderPassDescriptor } from "../core/rendering/render-pass/render-pass-descriptor";
+import  { type RenderPassDescriptor } from "../core/rendering/render-pass/render-pass-descriptor";
 import type { IRenderPass } from "../core/rendering/render-pass/render-pass-interface";
 import type { ISampler } from "../core/rendering/sampler/sampler-interface";
-import type { SamplerDescriptor } from "../core/rendering/sampler/sampler-descriptor";
-import type { SwapChainDescriptor } from "../core/rendering/swap-chain/swap-chain-descriptor";
-import type { ISwapChain } from "../core/rendering/swap-chain/swap-chain-interface";
+import  { type SamplerDescriptor } from "../core/rendering/sampler/sampler-descriptor";
 import type { IWindowManager } from "../core/window/window-manager-interface";
-import { WebGLSwapChain } from "./swap-chain/webgl-swap-chain";
 import { WebGlSampler } from "./sampler/webgl-sampler";
 import { WebGLRenderPass } from "./render-pass/webgl-render-pass";
 import { AGraphicsDevice, GraphicsDeviceDescriptor } from "../core/rendering/a-graphics-device";
-import type { BlendStateDescriptor } from "../core/rendering/blending/blend-state-descriptor";
+import  { type BlendStateDescriptor } from "../core/rendering/blending/blend-state-descriptor";
 import type { IBlendState } from "../core/rendering/blending/blend-state-interface";
 import { WebGlBlendState } from "./blending/webgl-blend-state";
 import type { IPrimitiveState } from "../core/rendering/primitive/primitve-interface";
 import { WebGlPrimitiveState } from "./primitive/webgl-primitive-state";
 import { PrimitiveStateDescriptor } from "../core/rendering/primitive/primitive-state-descriptor";
+import  { type SwapChainDescriptor } from "../core/rendering/swap-chain/swap-chain-descriptor";
+import type { ISwapChain } from "../core/rendering/swap-chain/swap-chain-interface";
+import {WebGLGraphicsDeviceFeatures} from "./WebGLGraphicsDeviceFeatures.ts";
+import {WebGLSwapChain} from "./swap-chain/webgl-swap-chain.ts";
 
 export class WebGlGraphicsDevice extends AGraphicsDevice {
+
+
+    // @ts-ignore
+    public createSwapChain(canvas: HTMLCanvasElement, swapChainDescriptor: SwapChainDescriptor): ISwapChain {
+       return new WebGLSwapChain(canvas);
+    }
 
 
     private readonly _windowManager: IWindowManager;
     private _canvas: HTMLCanvasElement = null!;
     private _gl: WebGL2RenderingContext = null!;
+    private _features: WebGLGraphicsDeviceFeatures = null!;
 
     /**
      * The constructor.
@@ -63,13 +71,15 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
             throw new Error("WebGL not supported.");
         }
 
+        this._features = new WebGLGraphicsDeviceFeatures(this._gl);
+
         super.initialize();
     }
 
     /** @inheritdoc */
-    public createSwapChain(canvas: HTMLCanvasElement, swapChainDescriptor: SwapChainDescriptor): ISwapChain {
-        return new WebGLSwapChain(canvas);
-    }
+    //public createSwapChain(canvas: HTMLCanvasElement, swapChainDescriptor: SwapChainDescriptor): ISwapChain {
+    //    return new WebGLSwapChain(canvas);
+   // }
 
     /** @inheritdoc */
     public createSampler(descriptor?: SamplerDescriptor): ISampler {
@@ -90,5 +100,10 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
        public createPrimitiveState(descriptor?: PrimitiveStateDescriptor): IPrimitiveState {
         descriptor = descriptor || new PrimitiveStateDescriptor();
         return new WebGlPrimitiveState(this._gl, descriptor);
+    }
+
+    /** @inheritdoc */
+    public get features() {
+        return this._features;
     }
 }

@@ -6,8 +6,9 @@ import type { IRenderPipelineFactory } from "./render-pipelines/render-pipeline-
 import type { ITextureFactory } from "./rendering/texture/texture-factory";
 import type { ShaderLoader } from "./shader/shader-loader";
 import type { IContentManager } from "./content/content-manager-interface";
+import type {IFramework} from "../interfaces/IFramework.ts";
 
-export interface IFramework {
+export interface TempIFramework extends IFramework {
 
     /**
      * Gets the window manager associated with this framework.
@@ -56,10 +57,4 @@ export interface IFramework {
      * @return The IContentManager instance.
      */
     get content(): IContentManager;
-
-    /**
-     * Initializes the framework.
-     */
-    initalize(): void;
-
 }

@@ -1,6 +1,6 @@
 import { IndexBufferType } from "../../common/enums";
 import type { IIndexBuffer } from "../../core/buffers/index-buffer-interface";
-import type { IFramework } from "../../core/framework-interface";
+import type { TempIFramework } from "../../core/framework-interface";
 import { BufferUsage } from "../../core/rendering/enums";
 import { asWebGLGraphicsDevice, asWebGLRenderer } from "../cast/cast";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
@@ -24,7 +24,7 @@ export class WebGLIndexBuffer implements IIndexBuffer {
      * @param framework The framework.
      * @param label An optional label for the index buffer, which can be used for debugging purposes.
      */
-    constructor(framework: IFramework, label: string | null = null) {
+    constructor(framework: TempIFramework, label: string | null = null) {
         this._gl = asWebGLGraphicsDevice(framework.renderer.graphicsDevice).gl;
         this._label = label;
     }

@@ -1,11 +1,11 @@
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import { Color } from "../math/color";
-import type { IGraphicsDevice } from "../rendering/graphics-device-interface";
+import type { TempIGraphicsDevice } from "../rendering/graphics-device-interface";
 import type { IRenderer } from "./renderer-interface";
 import { SwapChainDescriptor } from "../rendering/swap-chain/swap-chain-descriptor";
 import type { ISwapChain } from "../rendering/swap-chain/swap-chain-interface";
 import type { IWindowManager } from "../window/window-manager-interface";
-import type { IFramework } from "../framework-interface";
+import type { TempIFramework } from "../framework-interface";
 import type { IRenderPass } from "../rendering/render-pass/render-pass-interface";
 import type { IMainRenderTargetRenderPipeline } from "../render-pipelines/main-render-target-render-pipeline-interface";
 import { RenderPassColorAttachment, RenderPassDepthStencilAttachment, RenderPassDescriptor } from '../rendering/render-pass/render-pass-descriptor';
@@ -15,9 +15,9 @@ import type { RenderingLimits } from "./rendering-limits";
 
 export abstract class ARendererer implements IRenderer {
 
-    protected readonly _framework: IFramework;
+    protected readonly _framework: TempIFramework;
     private readonly _windowManager: IWindowManager;
-    private _graphicsDevice: IGraphicsDevice = null!;
+    private _graphicsDevice: TempIGraphicsDevice = null!;
     private _preferredTextureFormat: TextureFormat = TextureFormat.BGRA_8_UNORM;
     private _preferredDepthStencilFormat: TextureFormat = TextureFormat.DEPTH_24_STENCIL_8;
     private readonly _currentBackBufferSize: vec2 = [0, 0];
@@ -34,7 +34,7 @@ export abstract class ARendererer implements IRenderer {
     protected _mainRenderTargetPipeline?: IMainRenderTargetRenderPipeline;
 
     /** @inheritdoc */
-    public get graphicsDevice(): IGraphicsDevice {
+    public get graphicsDevice(): TempIGraphicsDevice {
         return this._graphicsDevice;
     }
 
@@ -88,7 +88,7 @@ export abstract class ARendererer implements IRenderer {
      * The constrcutor.
      * @param framework The framework. 
      */
-    constructor(framework: IFramework) {
+    constructor(framework: TempIFramework) {
         this._framework = framework;
         this._windowManager = framework.windowManager;
         this._currentBackBufferSize[0] = this._windowManager.canvas.width;
@@ -100,7 +100,7 @@ export abstract class ARendererer implements IRenderer {
      *  This is an abstract method that must be implemented by subclasses to provide the specific graphics device implementation for the renderer.
      * @returns The graphics device for the renderer.
      */
-    protected abstract createGraphicsDevice(): IGraphicsDevice;
+    protected abstract createGraphicsDevice(): TempIGraphicsDevice;
 
     /** @inheritdoc */
     public initialize(): void {

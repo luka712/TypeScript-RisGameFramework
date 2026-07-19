@@ -1,5 +1,5 @@
 import type { IUniformBuffer } from "../../../core/buffers/uniform-buffer-interface";
-import type { IFramework } from "../../../core/framework-interface";
+import type { TempIFramework } from "../../../core/framework-interface";
 import type { ISpriteRenderPipeline } from "../../../core/render-pipelines/sprite-render-pipeline";
 import type { ITexture2D } from "../../../core/rendering/texture/texture";
 import { VertexBufferLayout } from "../../../core/rendering/vertex-buffer-layout";
@@ -31,7 +31,7 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
      * The constructor.
      * @param framework The framework. 
      */
-    constructor(framework: IFramework, projectionViewBuffer: IUniformBuffer) {
+    constructor(framework: TempIFramework, projectionViewBuffer: IUniformBuffer) {
         super(framework);
         this._projectionViewBuffer = asWebGLUniformBuffer(projectionViewBuffer);
     }

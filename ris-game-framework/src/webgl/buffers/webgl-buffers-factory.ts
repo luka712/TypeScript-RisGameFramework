@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import type { IBuffersFactory } from "../../core/buffers/buffers-factory-interface";
 import type { IVertexBuffer } from "../../core/buffers/vertex-buffer-interface";
 import { IFrameworkSymbol } from "../../core/dependency-injection/register-services-interface";
-import type { IFramework } from "../../core/framework-interface";
+import type { TempIFramework } from "../../core/framework-interface";
 import { BufferUsage } from "../../core/rendering/enums";
 import { WebGLVertexBuffer as WebGlVertexBuffer } from "./webgl-vertex-buffer";
 import type { IIndexBuffer } from "../../core/buffers/index-buffer-interface";
@@ -20,7 +20,7 @@ export class WebGLBuffersFactory implements IBuffersFactory {
      * The constructor of the WebGLBuffersFactory class.
      * @param _framework The framework instance to use for creating buffers.
      */
-    public constructor(@inject(IFrameworkSymbol) private readonly _framework: IFramework) {
+    public constructor(@inject(IFrameworkSymbol) private readonly _framework: TempIFramework) {
         this._graphicsDevice = this._framework.renderer.graphicsDevice as WebGlGraphicsDevice;
     }
 

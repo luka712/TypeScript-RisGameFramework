@@ -1,5 +1,5 @@
 import { container, type DependencyContainer } from "tsyringe";
-import type { IFramework } from "../core/framework-interface";
+import type { TempIFramework } from "../core/framework-interface";
 import { WindowManager } from "../core/window/window-manager";
 import type { IWindowManager } from "../core/window/window-manager-interface";
 import { WebGLRegisterServices } from "../webgl/webgl-register-services";
@@ -16,8 +16,9 @@ import { ShaderLoader, ShaderLoaderSymbol } from "../core/shader/shader-loader";
 import { ContentManager } from "../core/content/content-manager";
 import { IContentManagerSymbol, type IContentManager } from "../core/content/content-manager-interface";
 import { IContentModuleSymbol, type IContentModule } from "../core/content/content-module-interface";
+import type {IGraphicsDevice} from "../interfaces/rendering/IGraphicsDevice.ts";
 
-export class Framework implements IFramework {
+export class Framework implements TempIFramework {
 
   private readonly _container: DependencyContainer;
   private readonly _windowManager: IWindowManager;
@@ -55,6 +56,11 @@ export class Framework implements IFramework {
     this._renderPipelineFactory = this._container.resolve(IRenderPipelineFactorySymbol);
     this._shaderLoader = this._container.resolve(ShaderLoaderSymbol);
     this._contentManager = this._container.resolve(IContentManagerSymbol);
+  }
+
+  /** @inheritdoc */
+  public get graphicsDevice() : IGraphicsDevice {
+    return this._renderer.graphicsDevice;
   }
 
   /** @inheritdoc */
@@ -105,7 +111,7 @@ export class Framework implements IFramework {
   }
 
   /** @inheritdoc */
-  public initalize(): void {
+  public initialize(): void {
 
     this._initializeSelf();
 
