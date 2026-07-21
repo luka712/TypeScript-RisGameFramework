@@ -157,7 +157,6 @@ export abstract class ARendererer implements IRenderer {
         const renderPassDesc = new RenderPassDescriptor();
         const colorAttachment = new RenderPassColorAttachment(this._mainRenderTarget);
         colorAttachment.clearColor = this._clearColor;
-        debugger;
         renderPassDesc.colorAttachments.push(colorAttachment);
         renderPassDesc.depthStencilAttachment = new RenderPassDepthStencilAttachment(this._depthStencilBuffer);
         this._mainRenderTargetRenderPass = this._graphicsDevice.createRenderPass(renderPassDesc);

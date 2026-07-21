@@ -5,7 +5,7 @@ import type { IWindowManager } from "../core/window/window-manager-interface";
 import { WebGLRegisterServices } from "../webgl/webgl-register-services";
 import { FrameworkOptions } from "./framework-options";
 
-import { IBuffersFactorySymbol, IFrameworkSymbol, IRendererSymbol, ITextureFactorySymbol } from "../core/dependency-injection/register-services-interface";
+import { IBuffersFactorySymbol, IFrameworkSymbol, ITextureFactorySymbol } from "../core/dependency-injection/register-services-interface";
 import { RenderConfiguration, RenderConfigurationSymbol, type IRenderer } from "../core/renderer/renderer-interface";
 import { IGeometryBuilderSymbol, type IGeometryBuilder } from "../core/geometry/geometry-builder-interface";
 import { GeometryBuilder } from "../core/geometry/geometry-builder";
@@ -17,6 +17,7 @@ import { ContentManager } from "../core/content/content-manager";
 import { IContentManagerSymbol, type IContentManager } from "../core/content/content-manager-interface";
 import { IContentModuleSymbol, type IContentModule } from "../core/content/content-module-interface";
 import type {IGraphicsDevice} from "../interfaces/rendering/IGraphicsDevice.ts";
+import {WebGLRenderer} from "../webgl/webgl-renderer.ts";
 
 export class Framework implements TempIFramework {
 
@@ -49,7 +50,7 @@ export class Framework implements TempIFramework {
     this._container.registerInstance(ShaderLoaderSymbol, new ShaderLoader());
     this._container.registerInstance(IContentManagerSymbol, new ContentManager());
     (new WebGLRegisterServices).register(this._container);
-    this._renderer = this._container.resolve(IRendererSymbol);
+    this._renderer = new WebGLRenderer(this, rendererConfig);
     this._textureFactory = this._container.resolve(ITextureFactorySymbol);
     this._buffersFactory = this._container.resolve(IBuffersFactorySymbol);
     this._geometryBuilder = this._container.resolve(IGeometryBuilderSymbol);

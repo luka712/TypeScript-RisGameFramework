@@ -1,5 +1,3 @@
-import {IGraphicsDevice} from "../../src";
-
 /**
  * The framework interface.
  */

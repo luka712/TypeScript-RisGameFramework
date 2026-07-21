@@ -1,7 +1,7 @@
 {
   "name": "ris-ktx2-viewer",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,10 +14,14 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^9.2.0",
     "@mui/material": "^9.2.0",
+    "@mui/x-tree-view": "^9.10.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-dropzone": "^19.1.1",
     "reflect-metadata": "^0.2.2",
-    "ris-game-framework": "file:../ris-game-framework"
+    "ris-game-framework": "file:../ris-game-framework",
+    "ris-ktx2": "file:../ris-ktx2",
+    "zustand": "^5.0.14"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

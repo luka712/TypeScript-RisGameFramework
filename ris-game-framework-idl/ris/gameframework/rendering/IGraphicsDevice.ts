@@ -1,5 +1,3 @@
-import {IGraphicsDeviceFeatures} from "../../../src";
-
 /**
  * The interface for a graphics device.
  */

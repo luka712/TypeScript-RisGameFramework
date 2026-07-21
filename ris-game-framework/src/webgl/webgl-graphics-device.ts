@@ -19,7 +19,6 @@ import {WebGLSwapChain} from "./swap-chain/webgl-swap-chain.ts";
 
 export class WebGlGraphicsDevice extends AGraphicsDevice {
 
-
     // @ts-ignore
     public createSwapChain(canvas: HTMLCanvasElement, swapChainDescriptor: SwapChainDescriptor): ISwapChain {
        return new WebGLSwapChain(canvas);
@@ -29,7 +28,10 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
     private readonly _windowManager: IWindowManager;
     private _canvas: HTMLCanvasElement = null!;
     private _gl: WebGL2RenderingContext = null!;
+    private _name: string = "Unknown";
+    private _vendor: string = "Unknown";
     private _features: WebGLGraphicsDeviceFeatures = null!;
+
 
     /**
      * The constructor.
@@ -50,6 +52,20 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
         return this._gl;
     }
 
+    /** @inheritdoc */
+    public get features() {
+        return this._features;
+    }
+
+    /** @inheritdoc */
+    public get name(): string {
+        return this._name;
+    }
+
+    /** @inheritdoc */
+    public get vendor(): string {
+        return this._vendor;
+    }
 
     /** @inheritdoc */
     public initialize(): void {
@@ -58,7 +74,7 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
 
         const contextOptions: WebGLContextAttributes = {
             antialias: false,
-            // powerPreference: "high-performance", // TODO: Make configurable.
+            powerPreference: "high-performance", // TODO: Make configurable.
         };
 
         this._gl = this._canvas.getContext(
@@ -71,6 +87,16 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
             throw new Error("WebGL not supported.");
         }
 
+        // Get name of the graphics device.
+        const debugExt = this._gl.getExtension("WEBGL_debug_renderer_info");
+        if(debugExt) {
+            this._name = this._gl.getParameter(debugExt.UNMASKED_RENDERER_WEBGL);
+            this._vendor = this._gl.getParameter(debugExt.UNMASKED_VENDOR_WEBGL);
+        }
+        else {
+            this._name = this._gl.getParameter(this._gl.RENDERER);
+            this._vendor = this._gl.getParameter(this._gl.VENDOR);
+        }
         this._features = new WebGLGraphicsDeviceFeatures(this._gl);
 
         super.initialize();
@@ -102,8 +128,5 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
         return new WebGlPrimitiveState(this._gl, descriptor);
     }
 
-    /** @inheritdoc */
-    public get features() {
-        return this._features;
-    }
+
 }

@@ -1,16 +1,17 @@
-import { BlendStateDescriptor } from "./blending/blend-state-descriptor";
-import type { IBlendState } from "./blending/blend-state-interface";
-import { TextureSamplerFilteringPreset } from "./enums";
-import type { TempIGraphicsDevice } from "./graphics-device-interface";
-import type { PrimitiveStateDescriptor } from "./primitive/primitive-state-descriptor";
-import type { IPrimitiveState } from "./primitive/primitve-interface";
-import type { RenderPassDescriptor } from "./render-pass/render-pass-descriptor";
-import type { IRenderPass } from "./render-pass/render-pass-interface";
-import { MipmapSamplerFilter, SamplerFilter } from "./sampler/enums";
-import { SamplerDescriptor } from "./sampler/sampler-descriptor";
-import type { ISampler } from "./sampler/sampler-interface";
-import type { SwapChainDescriptor } from "./swap-chain/swap-chain-descriptor";
-import type { ISwapChain } from "./swap-chain/swap-chain-interface";
+import type { IGraphicsDeviceFeatures } from "../../interfaces/rendering/IGraphicsDeviceFeatures";
+import {BlendStateDescriptor} from "./blending/blend-state-descriptor";
+import type {IBlendState} from "./blending/blend-state-interface";
+import {TextureSamplerFilteringPreset} from "./enums";
+import type {TempIGraphicsDevice} from "./graphics-device-interface";
+import type {PrimitiveStateDescriptor} from "./primitive/primitive-state-descriptor";
+import type {IPrimitiveState} from "./primitive/primitve-interface";
+import type {RenderPassDescriptor} from "./render-pass/render-pass-descriptor";
+import type {IRenderPass} from "./render-pass/render-pass-interface";
+import {MipmapSamplerFilter, SamplerFilter} from "./sampler/enums";
+import {SamplerDescriptor} from "./sampler/sampler-descriptor";
+import type {ISampler} from "./sampler/sampler-interface";
+import type {SwapChainDescriptor} from "./swap-chain/swap-chain-descriptor";
+import type {ISwapChain} from "./swap-chain/swap-chain-interface";
 
 /**
  * The descriptor for the graphics device. This is used to configure the graphics device during initialization.
@@ -18,7 +19,7 @@ import type { ISwapChain } from "./swap-chain/swap-chain-interface";
 export class GraphicsDeviceDescriptor {
 
     /**
-     * Defines the preset for texture sampler filtering. 
+     * Defines the preset for texture sampler filtering.
      * This is used to configure the default texture sampler in the graphics device.
      *  The default texture sampler is used when a texture is sampled without a specific sampler being bound.
      */
@@ -42,6 +43,13 @@ export abstract class AGraphicsDevice implements TempIGraphicsDevice {
     constructor(descriptor: GraphicsDeviceDescriptor) {
         this._descriptor = descriptor;
     }
+
+
+    /** @inheritdoc */
+    abstract readonly name: string;
+
+    /** @inheritdoc */
+    abstract readonly features : IGraphicsDeviceFeatures;
 
     /** @inheritdoc */
     public get defaultTextureSampler(): ISampler {
