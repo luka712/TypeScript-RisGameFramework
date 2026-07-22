@@ -1,6 +1,6 @@
-import { VertexFormat } from "../../common/vertex-format";
 import { VertexStepMode } from "../../common/vertex-step-mode";
 import type {  VertexAttribute } from "./vertex-attribute";
+import {VertexFormat} from "../../VertexFormat.ts";
 
 /**
  * Describes the layout of a vertex buffer, including the stride, step mode, and attributes.
@@ -43,12 +43,12 @@ export class VertexBufferLayout {
             VertexStepMode.Vertex,
             [
                 {
-                    format: VertexFormat.Float32x3,
+                    format: VertexFormat.FLOAT_32X3,
                     offset: 0,
                     shaderLocation: 0,
                 },
                 {
-                    format: VertexFormat.Float32x2,
+                    format: VertexFormat.FLOAT_32X2,
                     offset: 3 * floatSize,
                     shaderLocation: 1,
                 },
@@ -64,17 +64,17 @@ export class VertexBufferLayout {
             VertexStepMode.Vertex,
             [
                 {
-                    format: VertexFormat.Float32x3,
+                    format: VertexFormat.FLOAT_32X3,
                     offset: 0,
                     shaderLocation: 0,
                 },
                 {
-                    format: VertexFormat.Float32x4,
+                    format: VertexFormat.FLOAT_32X4,
                     offset: 3 * floatSize,
                     shaderLocation: 1,
                 },
                 {
-                    format: VertexFormat.Float32x2,
+                    format: VertexFormat.FLOAT_32X2,
                     offset: (3 + 4) * floatSize,
                     shaderLocation: 2,
                 },

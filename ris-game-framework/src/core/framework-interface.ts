@@ -1,12 +1,12 @@
-import type { IBuffersFactory } from "./buffers/buffers-factory-interface";
-import type { IRenderer } from "./renderer/renderer-interface";
+import type { ITempBuffersFactory } from "./buffers/buffers-factory-interface";
+import type { ITempRenderer } from "./renderer/renderer-interface";
 import type { IWindowManager } from "./window/window-manager-interface";
-import type { IGeometryBuilder } from "./geometry/geometry-builder-interface";
 import type { IRenderPipelineFactory } from "./render-pipelines/render-pipeline-factory-interface";
 import type { ITextureFactory } from "./rendering/texture/texture-factory";
 import type { ShaderLoader } from "./shader/shader-loader";
 import type { IContentManager } from "./content/content-manager-interface";
 import type {IFramework} from "../interfaces/IFramework.ts";
+import type {IGeometryBuilder} from "../geometry/IGeometryBuilder.ts";
 
 export interface TempIFramework extends IFramework {
 
@@ -20,7 +20,7 @@ export interface TempIFramework extends IFramework {
      * Gets the renderer associated with this framework.
      * @returns The IRenderer instance.
      */
-    get renderer(): IRenderer;
+    get renderer(): ITempRenderer;
 
     /**
      * The texture factory associated with this framework. This is used to create textures for the renderer.
@@ -32,7 +32,7 @@ export interface TempIFramework extends IFramework {
      * The buffers factory associated with this framework. This is used to create buffers for the renderer.
      * @returns The IBuffersFactory instance.
      */
-    get buffersFactory(): IBuffersFactory;
+    get buffersFactory(): ITempBuffersFactory;
 
     /**
      * Gets the geometry builder associated with this framework. This is used to create geometries for the renderer.

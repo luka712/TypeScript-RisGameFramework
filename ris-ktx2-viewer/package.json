@@ -20,7 +20,6 @@
     "react-dropzone": "^19.1.1",
     "reflect-metadata": "^0.2.2",
     "ris-game-framework": "file:../ris-game-framework",
-    "ris-ktx2": "file:../ris-ktx2",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

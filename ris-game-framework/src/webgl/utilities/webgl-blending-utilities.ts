@@ -1,6 +1,3 @@
-import type { BlendState } from "../../common/blend-state";
-import { WebGLConverter } from "./webgl-converter";
-
 /**
  * The utility class for WebGL blending operations.
  */
@@ -41,14 +38,11 @@ export class WebGLBlendingUtilities {
         gl.blendEquationSeparate(colorFunc, alphaFunc);
     }
 
-    /**
-     * Sets the blend state.
-     * @param gl The WebGL2RenderingContext context.
-     * @param blendState The blend state.
-     */
+
+    /*
     public setBlend(
         gl: WebGL2RenderingContext,
-        blendState: BlendState,
+        blendState: WebGlBlendState,
     ): void {
         if (!blendState.blendingEnabled) {
             gl.disable(gl.BLEND);
@@ -85,4 +79,7 @@ export class WebGLBlendingUtilities {
         );
         gl.blendEquationSeparate(colorFunc, alphaFunc);
     }
+
+
+     */
 }

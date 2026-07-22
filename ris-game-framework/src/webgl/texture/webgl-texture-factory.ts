@@ -25,7 +25,7 @@ export class WebGLTextureFactory implements ITextureFactory {
         width: number, height: number, channels: number,
         label: string | null | undefined = null,
         useMipMaps = false,
-        textureUsage = TextureUsage.COPY_DST_TEXTURE_BINDING): ITexture2D {
+        textureUsage = TextureUsage.COPY_DST | TextureUsage.TEXTURE_BINDING): ITexture2D {
 
         if (!data) {
             throw new Error("Data must not be null.");
@@ -58,7 +58,7 @@ export class WebGLTextureFactory implements ITextureFactory {
     public createEmpty(
         width: number, height: number,
         color: Color | null = null,
-        textureUsage = TextureUsage.COPY_DST_TEXTURE_BINDING,
+        textureUsage = TextureUsage.COPY_DST | TextureUsage.TEXTURE_BINDING,
         textureFormat = TextureFormat.UNDEFINED,
         label: string | null = null,
         useMipmap = false): ITexture2D {

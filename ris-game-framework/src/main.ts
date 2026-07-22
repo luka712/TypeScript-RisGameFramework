@@ -3,8 +3,9 @@ import "reflect-metadata";
 
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.ts'
-import { Framework } from './gameframework/framework';
+import {setupCounter} from './counter.ts'
+import {Framework} from './gameframework/framework';
+import {TextureSamplerFilteringPreset} from "./core/rendering/enums.ts";
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -27,6 +28,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
 
 var framework = new Framework({
-  canvas: document.getElementById("game-canvas") as HTMLCanvasElement
+  canvas: document.getElementById("game-canvas") as HTMLCanvasElement,
+  textureFiltering: TextureSamplerFilteringPreset.BILINEAR
 });
-framework.initalize();
+framework.initialize();

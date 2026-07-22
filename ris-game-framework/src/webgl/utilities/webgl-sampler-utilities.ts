@@ -16,19 +16,19 @@ export class WebGLSamplerUtilities {
      * @param addressModeV The address mode of the sampler for the V coordinate.
      * @param addressModeW The address mode of the sampler for the W coordinate.
      * @param compareFunction The compare function of the sampler. This is used for shadow samplers.
-     * @param anisotropy The anisotropy level of the sampler. This is used for anisotropic filtering. The default value is 1, which means no anisotropic filtering.
+     * @param _anisotropy The anisotropy level of the sampler. This is used for anisotropic filtering. The default value is 1, which means no anisotropic filtering.
      * @param label The label of the sampler. This is used for debugging purposes and can be viewed in graphics debuggers like SpectorJS.
-     * @returns 
+     * @returns
      */
-    public create( gl: WebGL2RenderingContext,
-        minFilter: SamplerFilter = SamplerFilter.LINEAR,
-        magFilter: SamplerFilter = SamplerFilter.LINEAR,
-        mipMapFilter: MipmapSamplerFilter = MipmapSamplerFilter.NONE,
-        addressModeU: SamplerAddressMode = SamplerAddressMode.CLAMP_TO_EDGE,
-        addressModeV: SamplerAddressMode = SamplerAddressMode.CLAMP_TO_EDGE,
-        addressModeW: SamplerAddressMode = SamplerAddressMode.CLAMP_TO_EDGE,
-        compareFunction: SamplerCompareFunction = SamplerCompareFunction.Never,
-        anisotropy: number = 1,
+    public create(gl: WebGL2RenderingContext,
+                  minFilter: SamplerFilter = SamplerFilter.LINEAR,
+                  magFilter: SamplerFilter = SamplerFilter.LINEAR,
+                  mipMapFilter: MipmapSamplerFilter = MipmapSamplerFilter.NONE,
+                  addressModeU: SamplerAddressMode = SamplerAddressMode.CLAMP_TO_EDGE,
+                  addressModeV: SamplerAddressMode = SamplerAddressMode.CLAMP_TO_EDGE,
+                  addressModeW: SamplerAddressMode = SamplerAddressMode.CLAMP_TO_EDGE,
+                  compareFunction: SamplerCompareFunction = SamplerCompareFunction.Never,
+                  _anisotropy: number = 1,
         label: string = "") : WebGLSampler
     {
         const sampler = gl.createSampler();

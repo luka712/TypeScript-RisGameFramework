@@ -1,13 +1,12 @@
-import { AVertexAttribute } from "../../core/rendering/vertex-attribute";
 
 /**
  * The WebGL implementation of a vertex attribute.
  */
-export class WebGLVertexAttribute extends AVertexAttribute {
+export class WebGLVertexAttribute {
     constructor(
         public gl: WebGL2RenderingContext,
     ) {
-        super();
+
     }
 
     /** @inheritdoc */

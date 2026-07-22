@@ -1,3 +1,6 @@
+
+
+/*
 export class SpriteBatchDrawable {
 
     private readonly _framework : IFramework;
@@ -228,3 +231,4 @@ export class SpriteBatchDrawable {
 }
 
 }
+ */

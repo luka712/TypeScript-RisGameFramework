@@ -1,13 +1,13 @@
 import type { BufferUsage } from "../rendering/enums";
-import type { IIndexBuffer } from "./index-buffer-interface";
 import type { IUniformBuffer } from "./uniform-buffer-interface";
 import type { IVertexBuffer } from "./vertex-buffer-interface";
+import type {IBufferFactory} from "../../buffers/IBufferFactory.ts";
 
 
 /**
  * The interface for the buffers factory, which is responsible for creating vertex buffers.
  */
-export interface IBuffersFactory {
+export interface ITempBuffersFactory extends IBufferFactory{
 
     /**
      * Creates a vertex buffer.
@@ -19,19 +19,11 @@ export interface IBuffersFactory {
      * @returns The created vertex buffer.
      */
     createVertexBuffer(
-        dataOrByteSize: Float32Array | number,
+        dataOrByteSize: Float32Array | number[] | number,
         byteStride: number,
         vertexCount: number,
         bufferUsage: BufferUsage,
         label?: string): IVertexBuffer;
-
-    /**
-     * Creates an index buffer.
-     * @param data The index data to initialize the buffer with, which can be either a Uint16Array or a Uint32Array depending on the size of the indices.
-     * @param label The label for the buffer, which can be used for debugging purposes to identify the buffer in graphics debugging tools.
-     * @return The created index buffer.
-     */
-    createIndexBuffer(data: Uint16Array | Uint32Array, label?: string): IIndexBuffer;
 
     /**
      * Creates a uniform buffer.
@@ -40,5 +32,5 @@ export interface IBuffersFactory {
      * @param label The label for the buffer, which can be used for debugging purposes to identify the buffer in graphics debugging tools.
      * @returns The created uniform buffer.
      */
-    createUniformBuffer(dataOrByteLength: ArrayBuffer | ArrayBufferView | number, bufferUsage: BufferUsage, label?: string): IUniformBuffer;
+    createUniformBuffer(dataOrByteLength: ArrayBuffer | ArrayBufferView | number[], bufferUsage: BufferUsage, label?: string): IUniformBuffer;
 }

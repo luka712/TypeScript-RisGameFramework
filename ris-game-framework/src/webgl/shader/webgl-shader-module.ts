@@ -40,7 +40,7 @@ export class WebGLShaderModule implements IShaderModule {
      */
     public webGlProgramPromise: Promise<WebGLProgram> | null = null;
 
-    private async _loadShaders(shaderFilePath: string): Promise<WebGLProgram> {
+    private async _loadShaders(_shaderFilePath: string): Promise<WebGLProgram> {
 
         const VERTEX_SHADER_FILE_PATH = "shaders/glsl/main_render_target_flip_y_vs.glsl";
         const FRAGMENT_SHADER_FILE_PATH = "shaders/glsl/main_render_target_flip_y_fs.glsl";

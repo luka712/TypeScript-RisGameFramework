@@ -1,12 +1,12 @@
 import { State } from "../../common/state";
-import type { IIndexBuffer } from "../buffers/index-buffer-interface";
 import type { IVertexBuffer } from "../buffers/vertex-buffer-interface";
 import type { TempIFramework } from "../framework-interface";
-import type { BaseGeometry } from "../geometry/base-geometry";
-import { formatStride, type GeometryFormat } from "../geometry/geometry-format";
+import type { BaseGeometry } from "../../geometry/BaseGeometry.ts";
+import { type GeometryFormat } from "../../geometry/GeometryFormat.ts";
 import { BufferUsage } from "../rendering/enums";
 import type { IMesh } from "./mesh-interface";
 import type { MeshParameters } from "./mesh-paramaters";
+import type {IIndexBuffer} from "../../buffers/IIndexBuffer.ts";
 
 export class Mesh implements IMesh {
 
@@ -15,7 +15,7 @@ export class Mesh implements IMesh {
     protected _bufferUsage = BufferUsage.VERTEX;
     protected _state: State = State.Created;
     protected _positions: Float32Array | null = null;
-    protected _indices: Uint16Array | null = null;
+    protected _indices: number[] | null = null;
     protected _colors: Float32Array | null = null;
     protected _textureCoords: Float32Array | null = null;
     protected _normals: Float32Array | null = null;
@@ -28,6 +28,16 @@ export class Mesh implements IMesh {
      */
     public constructor(framework: TempIFramework) {
         this._framework = framework;
+    }
+
+    /** @inheritdoc */
+    public get vertexBuffer(): IVertexBuffer {
+        return this._vertexBuffer!;
+    }
+
+    /** @inheritdoc */
+    public get indexBuffer(): IIndexBuffer | null {
+        return this._indexBuffer;
     }
 
     /**
@@ -47,7 +57,7 @@ export class Mesh implements IMesh {
     /**
      * The indices of the mesh. This can be null if the mesh is not indexed and should be rendered using non-indexed drawing calls.
      */
-    public get indices(): Uint16Array | null {
+    public get indices(): number[] | null {
         return this._indices;
     }
 
@@ -81,6 +91,10 @@ export class Mesh implements IMesh {
         this._state = State.Initialized;
     }
 
+    private _formatStride(_format: GeometryFormat): number {
+        return 0;
+    }
+
     /**
      * Sets the geometry of the mesh from a BaseGeometry object. This method will create the vertex and index buffers for the mesh based on the provided geometry and format.
      * @param geometry The BaseGeometry object that contains the vertex data for the mesh. This should have the positions, indices, colors, texture coordinates, and normals (if applicable) set up according to the provided format.
@@ -95,13 +109,13 @@ export class Mesh implements IMesh {
         }
 
         const interleavedData = geometry.toInterleaved(format);
-        const stride = formatStride(format);
+        // const stride = formatStride(format);
 
         // Vertices
         this._vertexBuffer?.dispose();
         this._vertexBuffer = this._framework.buffersFactory.createVertexBuffer(
             interleavedData,
-            formatStride(format),
+            this._formatStride(format),
             geometry.vertexCount,
             this._bufferUsage);
 
@@ -124,9 +138,6 @@ export class Mesh implements IMesh {
         }
 
         let indices = meshParameters.indices;
-        if (indices instanceof Array) {
-            indices = new Uint16Array(indices);
-        }
 
         let textureCoords = meshParameters.textureCoords;
         if (textureCoords instanceof Array) {

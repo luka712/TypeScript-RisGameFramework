@@ -19,6 +19,11 @@ function App() {
         const framework = new Framework();
         framework.initialize();
 
+        const quadGeometry = framework.geometryBuilder.quadGeometry();
+        console.dir(quadGeometry);
+
+        // TODO: create mesh
+
         const ktxLoader = new Ktx2Loader();
         ktxLoader.initializeAsync();
 

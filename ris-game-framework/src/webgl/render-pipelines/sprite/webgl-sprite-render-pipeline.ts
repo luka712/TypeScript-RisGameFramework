@@ -8,11 +8,11 @@ import {  asWebGLTexture2D, asWebGLUniformBuffer } from "../../cast/cast";
 import { WebGLShaderModule } from "../../shader/webgl-shader-module";
 import { WebGLTexture2D } from "../../texture/webgl-texture-2d";
 import { WebGLVertexBuffer } from '../../buffers/webgl-vertex-buffer';
-import type { IIndexBuffer } from "../../../core/buffers/index-buffer-interface";
 import type { IVertexBuffer } from "../../../core/buffers/vertex-buffer-interface";
 import { AWebGlRenderPipeline } from "../a-webgl-render-pipeline";
 import type { WebGLIndexBuffer } from "../../buffers/webgl-index-buffer";
-import { IndexBufferType } from "../../../common/enums";
+import type {IIndexBuffer} from "../../../buffers/IIndexBuffer.ts";
+import {IndexBufferType} from "../../../buffers/IndexBufferType.ts";
 
 /**
  * The WebGL implementation of the sprite render pipeline. 
@@ -122,7 +122,7 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
         this._gl.bindSampler(0, this._sampler.glSampler);
 
         // We can only really use two types uint16 and uint32. Boolean check to see which one to use.
-        const type = indexBuffer.type == IndexBufferType.Uint16
+        const type = indexBuffer.type == IndexBufferType.UINT_16
             ? this._gl.UNSIGNED_SHORT
             : this._gl.UNSIGNED_INT;
 

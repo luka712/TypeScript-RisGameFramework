@@ -1,4 +1,3 @@
-import type { vec2 } from "gl-matrix";
 import { TextureFormat } from "../../common/texture-enums";
 
 

@@ -8,7 +8,7 @@ export class MeshParameters {
     /**
      * The indices of the mesh.
      */
-    public indices: Uint16Array | number[] | null = null;
+    public indices: number[] | null = null;
 
     /**
      * The uv texture coordinates of the mesh. 

@@ -1,10 +1,11 @@
-import { VertexFormat } from '../../common/vertex-format';
+import {VertexFormat} from "../../VertexFormat.ts";
+
 export  class VertexAttribute  {
    
     /**
      * The format of the vertex attribute.
      */
-    format: VertexFormat = VertexFormat.Float32;
+    format: VertexFormat = VertexFormat.FLOAT_32;
 
     /**
      * The offset, in bytes, of the vertex attribute from the start of the vertex.

@@ -1,9 +1,9 @@
-import { IndexBufferType } from "../../common/enums";
-import type { IIndexBuffer } from "../../core/buffers/index-buffer-interface";
 import type { TempIFramework } from "../../core/framework-interface";
 import { BufferUsage } from "../../core/rendering/enums";
-import { asWebGLGraphicsDevice, asWebGLRenderer } from "../cast/cast";
+import { asWebGLGraphicsDevice } from "../cast/cast";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
+import type {IIndexBuffer} from "../../buffers/IIndexBuffer.ts";
+import {IndexBufferType} from "../../buffers/IndexBufferType.ts";
 
 /**
  * The WebGLIndexBuffer class is an implementation of the IIndexBuffer interface for WebGL.
@@ -13,7 +13,7 @@ export class WebGLIndexBuffer implements IIndexBuffer {
 
     private readonly _gl: WebGL2RenderingContext;
 
-    private _type = IndexBufferType.Uint16;
+    private _type = IndexBufferType.UINT_16;
     private _elementByteSize = 0;
     private _label: string | null | undefined = null
     private _indicesCount = 0;
@@ -27,7 +27,11 @@ export class WebGLIndexBuffer implements IIndexBuffer {
     constructor(framework: TempIFramework, label: string | null = null) {
         this._gl = asWebGLGraphicsDevice(framework.renderer.graphicsDevice).gl;
         this._label = label;
+        this.usage = BufferUsage.INDEX;
     }
+
+    /** @inheritdoc */
+    public usage: BufferUsage;
 
     /**
      * The WebGL buffer object that represents the index buffer in WebGL.
@@ -46,8 +50,8 @@ export class WebGLIndexBuffer implements IIndexBuffer {
     }
 
     /** @inheritdoc */
-    public get label(): string | null | undefined {
-        return this._label;
+    public get label(): string {
+        return this._label ?? "";
     }
 
     /** @inheritdoc */
@@ -60,13 +64,31 @@ export class WebGLIndexBuffer implements IIndexBuffer {
         return this._byteSize;
     }
 
+    private _canUseUint16(values: number[]): boolean {
+        let max = 0;
+
+        for (const v of values) {
+            if (v < 0 || v > 0xFFFF) {
+                return false;
+            }
+            if (v > max) {
+                max = v;
+            }
+        }
+
+        return max <= 0xFFFF;
+    }
+
     /** @inheritdoc */
-    public initialize(data: Uint16Array | Uint32Array): void {
-        if (data instanceof Uint16Array) {
-            this._type = IndexBufferType.Uint16;
+    public initialize(data: number[]): void {
+
+        const typedData = this._canUseUint16(data) ? new Uint16Array(data) : new Uint32Array(data);
+
+        if (typedData instanceof Uint16Array) {
+            this._type = IndexBufferType.UINT_16;
             this._elementByteSize = Uint16Array.BYTES_PER_ELEMENT;
-        } else if (data instanceof Uint32Array) {
-            this._type = IndexBufferType.Uint32;
+        } else if (typedData instanceof Uint32Array) {
+            this._type = IndexBufferType.UINT_32;
             this._elementByteSize = Uint32Array.BYTES_PER_ELEMENT;
         } else {
             throw new Error("Invalid data type for index buffer. Expected Uint16Array or Uint32Array.");
@@ -74,7 +96,7 @@ export class WebGLIndexBuffer implements IIndexBuffer {
 
         this._indicesCount = data.length;
         this._byteSize = this._indicesCount * this._elementByteSize;
-        this.buffer = WebGLUtilities.buffer.createIndexBuffer(this._gl, data, BufferUsage.INDEX);
+        this.buffer = WebGLUtilities.buffer.createIndexBuffer(this._gl, typedData, BufferUsage.INDEX);
     }
 
 

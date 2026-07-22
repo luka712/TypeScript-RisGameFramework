@@ -1,9 +1,10 @@
 import { vec2 } from "gl-matrix";
 import type { TextureFormat } from "../../common/texture-enums";
 import type { Color } from "../math/color";
-import type { RenderingLimits } from "./RenderingLimits";
 import type { TempIGraphicsDevice } from '../rendering/graphics-device-interface';
 import { TextureSamplerFilteringPreset } from "../rendering/enums";
+import type {IRenderer} from "../../rendering/IRenderer.ts";
+import type {RenderingLimits} from "./rendering-limits.ts";
 
 export const RenderConfigurationSymbol = Symbol("RenderConfiguration");
 
@@ -28,7 +29,7 @@ export class RenderConfiguration {
 /**
  * The interface for renderers.
  */
-export interface IRenderer {
+export interface ITempRenderer extends IRenderer {
 
     /**
      * The clear color used by the renderer.

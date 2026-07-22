@@ -1,7 +1,6 @@
-import type { IIndexBuffer } from "../../core/buffers/index-buffer-interface";
 import type { IUniformBuffer } from "../../core/buffers/uniform-buffer-interface";
 import type { IVertexBuffer } from "../../core/buffers/vertex-buffer-interface";
-import type { IRenderer } from "../../core/renderer/renderer-interface";
+import type { ITempRenderer } from "../../core/renderer/renderer-interface";
 import type { IBlendState } from "../../core/rendering/blending/blend-state-interface";
 import type { ITexture2D } from "../../core/rendering/texture/texture";
 import { WebGlBlendState } from "../blending/webgl-blend-state";
@@ -11,13 +10,14 @@ import { WebGLVertexBuffer } from "../buffers/webgl-vertex-buffer";
 import { WebGLTexture2D } from "../texture/webgl-texture-2d";
 import { WebGlGraphicsDevice } from "../webgl-graphics-device";
 import { WebGLRenderer } from "../webgl-renderer";
+import type {IIndexBuffer} from "../../buffers/IIndexBuffer.ts";
 
 /**
  * Casts the given renderer to a WebGLRenderer. If the renderer is not a WebGLRenderer, an error is thrown.
  * @param renderer The renderer to cast.
  * @returns The given renderer casted to a WebGLRenderer.
  */
-export function asWebGLRenderer(renderer: IRenderer): WebGLRenderer {
+export function asWebGLRenderer(renderer: ITempRenderer): WebGLRenderer {
     if (renderer instanceof WebGLRenderer) {
         return renderer;
     } else {
@@ -54,7 +54,7 @@ export function asWebGLVertexBuffer(vertexBuffer: IVertexBuffer): WebGLVertexBuf
 /**
  * Casts the given index buffer to a WebGLIndexBuffer. If the index buffer is not a WebGLIndexBuffer, an error is thrown.
  * @param indexBuffer The index buffer to cast.
- * @returns The given index buffer casted to a WebGLIndexBuffer.
+ * @returns The given index buffer cast to a WebGLIndexBuffer.
  */
 export function asWebGLIndexBuffer(indexBuffer: IIndexBuffer): WebGLIndexBuffer {
     if (indexBuffer instanceof WebGLIndexBuffer) {
@@ -82,7 +82,7 @@ export function asWebGLUniformBuffer(uniformBuffer: IUniformBuffer): WebGlUnifor
  * @param graphicsDevice The graphics device to cast.
  * @returns The given graphics device casted to a WebGLGraphicsDevice.
  */
-export function asWebGLGraphicsDevice(graphicsDevice: IRenderer["graphicsDevice"]): WebGlGraphicsDevice {
+export function asWebGLGraphicsDevice(graphicsDevice: ITempRenderer["graphicsDevice"]): WebGlGraphicsDevice {
     if (graphicsDevice instanceof WebGlGraphicsDevice   ) {
         return graphicsDevice as WebGlGraphicsDevice;
     } else {

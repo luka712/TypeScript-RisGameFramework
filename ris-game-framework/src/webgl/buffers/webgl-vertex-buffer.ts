@@ -18,7 +18,7 @@ export class WebGLVertexBuffer implements IVertexBuffer {
     private _byteStride = 0;
     private _vertexCount = 0;
     private _byteSize = 0;
-    private _bufferUsage = BufferUsage.NONE;
+   // private _bufferUsage = BufferUsage.NONE;
 
     /**
      * The constructor.
@@ -28,6 +28,10 @@ export class WebGLVertexBuffer implements IVertexBuffer {
     constructor(framework: TempIFramework, private readonly _label: string | null = null) {
         this._graphicsDevice = asWebGLGraphicsDevice(framework.renderer.graphicsDevice);
         this._gl = this._graphicsDevice.gl;
+    }
+
+    dispose(): void {
+        throw new Error("Method not implemented.");
     }
 
     /**
@@ -63,7 +67,7 @@ export class WebGLVertexBuffer implements IVertexBuffer {
     public initialize(dataOrByteSize: Float32Array | number, byteStride: number, vertexCount: number, bufferUsage: BufferUsage): void {
         this._byteStride = byteStride;
         this._vertexCount = vertexCount;
-        this._bufferUsage = bufferUsage;
+       // this._bufferUsage = bufferUsage;
         
         if (typeof dataOrByteSize === "number") {
             this._byteSize = dataOrByteSize;

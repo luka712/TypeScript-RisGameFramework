@@ -1,6 +1,6 @@
 import type { IDisposable } from "../../common/disposable";
-import type { IIndexBuffer } from "../buffers/index-buffer-interface";
 import type { IVertexBuffer } from "../buffers/vertex-buffer-interface";
+import type {IIndexBuffer} from "../../buffers/IIndexBuffer.ts";
 
 /**
  * The IMesh interface represents a mesh in the rendering system.

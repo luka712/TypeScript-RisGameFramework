@@ -1,8 +1,8 @@
-import type { IIndexBuffer } from "../buffers/index-buffer-interface";
 import type { IUniformBuffer } from "../buffers/uniform-buffer-interface";
 import type { IVertexBuffer } from "../buffers/vertex-buffer-interface";
 import type { ITexture2D } from "../rendering/texture/texture";
 import type { IRenderPipeline } from "./render-pipeline-interface";
+import type {IIndexBuffer} from "../../buffers/IIndexBuffer.ts";
 
 /**
  * The pipeline for sprite rendering. This pipeline is used for rendering 2D sprites in the game. 

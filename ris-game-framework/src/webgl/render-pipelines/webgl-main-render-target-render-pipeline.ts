@@ -2,7 +2,7 @@ import { vec2 } from "gl-matrix";
 import type { TempIFramework } from "../../core/framework-interface";
 import type { IMainRenderTargetRenderPipeline } from "../../core/render-pipelines/main-render-target-render-pipeline-interface";
 import type { WebGLVertexBuffer } from "../buffers/webgl-vertex-buffer";
-import { GeometryFormat } from "../../core/geometry/geometry-format";
+import { GeometryFormat } from "../../geometry/GeometryFormat.ts";
 import { BufferUsage } from "../../core/rendering/enums";
 import { asWebGLIndexBuffer, asWebGLVertexBuffer } from "../cast/cast";
 import type { WebGLIndexBuffer } from "../buffers/webgl-index-buffer";
@@ -65,8 +65,8 @@ export class WebGlMainRenderTargetRenderPipeline extends AWebGlRenderPipeline im
 
         // By default, quad is from [-0.5, 0.5] space. We want to move it to
         // [-1, 1] space to cover the whole screen.
-        var geometry = this._framework.geometryBuilder.quadGeometry(vec2.fromValues(2, 2));
-        const data = geometry.toInterleaved(GeometryFormat.Pos3_TextureCoords2);
+        const geometry = this._framework.geometryBuilder.quadGeometry(vec2.fromValues(2, 2));
+        const data = geometry.toInterleaved(GeometryFormat.POS3_TEXTURECOORDS2);
 
         this._vertexBuffer = asWebGLVertexBuffer(this._framework.buffersFactory.createVertexBuffer(
             data,

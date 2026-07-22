@@ -1,7 +1,13 @@
+import type {IGraphicsDeviceFeatures} from "../interfaces/rendering/IGraphicsDeviceFeatures.ts";
+
 /**
  * The interface for a graphics device.
  */
 export interface IGraphicsDevice {
+  /**
+   * The vendor of the graphics device.
+   */
+  readonly vendor: string;
 
   /**
    * The name of the graphics device.

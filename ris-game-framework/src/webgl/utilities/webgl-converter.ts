@@ -1,5 +1,4 @@
 import { TextureFormat } from "../../common/texture-enums";
-import { VertexFormat } from "../../common/vertex-format";
 import { Culling } from "../../core/renderer/enums";
 import { BlendFactor, BlendOperation } from "../../core/rendering/blending/enums";
 import { BufferUsage } from "../../core/rendering/enums";
@@ -7,6 +6,7 @@ import { PrimitiveTopology } from "../../core/rendering/primitive/enums";
 import { CullMode } from "../../core/rendering/primitive/enums";
 import { FrontFace } from "../../core/rendering/primitive/enums";
 import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from "../../core/rendering/sampler/enums";
+import {VertexFormat} from "../../VertexFormat.ts";
 
 export class WebGLConverter {
 
@@ -274,15 +274,15 @@ export class WebGLConverter {
      */
     public static convertVertexFormat(vertexFormat: VertexFormat): number {
         switch (vertexFormat) {
-            case VertexFormat.Float32:
+            case VertexFormat.FLOAT_32:
                 return 1;
-            case VertexFormat.Float32x2:
+            case VertexFormat.FLOAT_32X2:
                 return 2;
-            case VertexFormat.Float32x3:
+            case VertexFormat.FLOAT_32X3:
                 return 3;
-            case VertexFormat.Float32x4:
+            case VertexFormat.FLOAT_32X4:
                 return 4;
-            case VertexFormat.Float32x16:
+            case VertexFormat.FLOAT_32X16:
                 return 16;
             default:
                 throw new Error("NotImplementedException");

@@ -1,6 +1,6 @@
 {
   "name": "ris-ktx2",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "The RIS KTX2 library.",
   "type": "module",
   "main": "index.ts",

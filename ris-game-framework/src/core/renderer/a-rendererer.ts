@@ -1,7 +1,7 @@
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import { Color } from "../math/color";
 import type { TempIGraphicsDevice } from "../rendering/graphics-device-interface";
-import type { IRenderer } from "./renderer-interface";
+import type { ITempRenderer } from "./renderer-interface";
 import { SwapChainDescriptor } from "../rendering/swap-chain/swap-chain-descriptor";
 import type { ISwapChain } from "../rendering/swap-chain/swap-chain-interface";
 import type { IWindowManager } from "../window/window-manager-interface";
@@ -13,7 +13,7 @@ import type { ITexture2D } from "../rendering/texture/texture";
 import type { vec2 } from "gl-matrix";
 import type { RenderingLimits } from "./rendering-limits";
 
-export abstract class ARendererer implements IRenderer {
+export abstract class ARendererer implements ITempRenderer {
 
     protected readonly _framework: TempIFramework;
     private readonly _windowManager: IWindowManager;

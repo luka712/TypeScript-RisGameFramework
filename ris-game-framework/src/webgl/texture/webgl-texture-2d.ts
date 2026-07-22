@@ -1,7 +1,7 @@
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import type { TempIFramework } from "../../core/framework-interface";
 import type { vec2 } from "gl-matrix";
-import { asWebGLGraphicsDevice, asWebGLTexture2D } from '../cast/cast';
+import { asWebGLGraphicsDevice } from '../cast/cast';
 import { State } from "../../common/state";
 import { WebGLUtilities } from "../utilities/webgl-utilities";
 import { GenericImageData, type IImageData } from "../../core/data/image-data";
@@ -69,7 +69,7 @@ export class WebGLTexture2D extends ATexture2D {
     }
 
     /** @inheritdoc */
-    public createView(descriptor?: TextureViewDescriptor): ITextureView {
+    public createView(_descriptor?: TextureViewDescriptor): ITextureView {
         throw new Error("Method not implemented.");
     }
 
@@ -89,7 +89,7 @@ export class WebGLTexture2D extends ATexture2D {
     private static _defaultFilled: WebGLTexture2D | null = null;
 
     /**
-     * Creates a default 1x1 white texture if it doesn't already exist, and returns it. 
+     * Creates a default 1x1 white texture if it doesn't already exist and returns it.
      * This can be used as a placeholder texture when a texture is expected but not available.
      * @param framework The framework instance.
      * @returns The default 1x1 white texture.

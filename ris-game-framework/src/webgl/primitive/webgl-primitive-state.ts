@@ -4,7 +4,7 @@ import type { IPrimitiveState } from "../../core/rendering/primitive/primitve-in
 import { WebGLConverter } from "../utilities/webgl-converter";
 
 /**
-* The WebGL implementation of primitive state.
+* The WebGL implementation of a primitive state.
 */
 export class WebGlPrimitiveState implements IPrimitiveState {
     private readonly _cullingEnabled: boolean;
@@ -17,7 +17,7 @@ export class WebGlPrimitiveState implements IPrimitiveState {
     * @param gl The WebGL rendering context.
         * @param descriptor The descriptor of the primitive state.
     */
-    public constructor(gl: WebGL2RenderingContext, descriptor: PrimitiveStateDescriptor) {
+    public constructor(_gl: WebGL2RenderingContext, descriptor: PrimitiveStateDescriptor) {
         this.topology = descriptor.topology;
         this.cullFace = descriptor.cullFace;
         this.frontFace = descriptor.frontFace;

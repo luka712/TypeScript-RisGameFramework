@@ -44,6 +44,9 @@ export abstract class AGraphicsDevice implements TempIGraphicsDevice {
         this._descriptor = descriptor;
     }
 
+    /** @inheritdoc */
+    abstract readonly vendor: string;
+
 
     /** @inheritdoc */
     abstract readonly name: string;

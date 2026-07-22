@@ -1,4 +1,3 @@
-import type { Color } from "../../math/color";
 import { BlendComponentDescriptor } from "./blend-component-descriptor";
 import { BlendFactor, BlendOperation } from "./enums";
 

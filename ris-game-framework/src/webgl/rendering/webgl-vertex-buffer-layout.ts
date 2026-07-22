@@ -1,10 +1,7 @@
-import { AVertexBufferLayout } from "../../core/rendering/vertex-buffer-layout";
-import { WebGLConverter } from "../utilities/webgl-converter";
-
 /**
  * The WebGL implementation of a vertex buffer layout.
  */
-export class WebGLVertexBufferLayout extends AVertexBufferLayout {
+export class WebGLVertexBufferLayout {
 
     private readonly _gl: WebGL2RenderingContext;
     private _bufferTarget: number = 0;
@@ -20,7 +17,6 @@ export class WebGLVertexBufferLayout extends AVertexBufferLayout {
         buffer: WebGLBuffer,
         bufferTarget: number
     ) {
-        super();
         this._gl = gl;
         this.buffer = buffer;
         this._bufferTarget = bufferTarget;
@@ -44,6 +40,7 @@ export class WebGLVertexBufferLayout extends AVertexBufferLayout {
     public initialize(): void {
         this._gl.bindBuffer(this._bufferTarget, this.buffer);
 
+        /*
         for (const attribute of this.attributes) {
 
             const index = attribute.shaderLocation;
@@ -61,5 +58,7 @@ export class WebGLVertexBufferLayout extends AVertexBufferLayout {
                 offset
             );
         }
+
+         */
     }
 }
