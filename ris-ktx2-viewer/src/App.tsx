@@ -1,4 +1,4 @@
-import {Box, Button, createTheme, Grid, Paper, Stack, Tab, Tabs, ThemeProvider} from "@mui/material";
+import {Box, createTheme, Grid, Paper, Stack, Tab, Tabs, ThemeProvider} from "@mui/material";
 import './App.css'
 import {useEffect, useRef, useState} from "react";
 import {Framework} from "ris-game-framework/src/gameframework/framework.ts";

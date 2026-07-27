@@ -6,6 +6,7 @@ import viteLogo from '/vite.svg'
 import {setupCounter} from './counter.ts'
 import {Framework} from './gameframework/framework';
 import {TextureSamplerFilteringPreset} from "./core/rendering/enums.ts";
+import type {IFramework} from "./IFramework.ts";
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -27,7 +28,7 @@ document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
 
 setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
 
-var framework = new Framework({
+const framework : IFramework = new Framework({
   canvas: document.getElementById("game-canvas") as HTMLCanvasElement,
   textureFiltering: TextureSamplerFilteringPreset.BILINEAR
 });

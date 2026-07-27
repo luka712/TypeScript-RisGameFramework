@@ -1,0 +1,35 @@
+{
+  "name": "RisFramework.API.csproj",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "description": "TypeScript types generated from RisFramework.API.csproj",
+  "license": "MIT",
+  "keywords": [
+    "types",
+    "typescript",
+    "generated"
+  ],
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.4.4"
+  }
+}

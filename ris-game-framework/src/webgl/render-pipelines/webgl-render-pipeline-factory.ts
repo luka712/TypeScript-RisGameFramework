@@ -3,7 +3,7 @@ import type { TempIFramework } from "../../core/framework-interface";
 import type { IMainRenderTargetRenderPipeline } from "../../core/render-pipelines/main-render-target-render-pipeline-interface";
 import type { IRenderPipelineFactory } from "../../core/render-pipelines/render-pipeline-factory-interface";
 import type { ITexture2D } from "../../core/rendering/texture/texture";
-import { WebGlMainRenderTargetRenderPipeline } from "./webgl-main-render-target-render-pipeline";
+import { WebGlMainRenderTargetRenderPipeline } from "./WebGlMainRenderTargetRenderPipeline.ts";
 import { IFrameworkSymbol } from "../../core/dependency-injection/register-services-interface";
 import type { IUniformBuffer } from "../../core/buffers/uniform-buffer-interface";
 import type { ISpriteRenderPipeline } from "../../core/render-pipelines/sprite-render-pipeline";
