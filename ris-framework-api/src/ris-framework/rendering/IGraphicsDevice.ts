@@ -1,3 +1,5 @@
+import {IGraphicsDeviceFeatures} from "./IGraphicsDeviceFeatures";
+
 /**
  * The interface for a graphics device.
  */
@@ -17,10 +19,5 @@ export interface IGraphicsDevice {
  * The features of the graphics device.
  */
   readonly features: IGraphicsDeviceFeatures;
-
-/**
- * The geometry builder.
- */
-  readonly geometryBuilder: IGeometryBuilder;
 
 }

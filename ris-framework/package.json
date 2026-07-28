@@ -1,0 +1,22 @@
+{
+  "name": "ris-framework",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vite": "^7.2.4"
+  },
+  "dependencies": {
+    "gl-matrix": "^3.4.4",
+    "reflect-metadata": "^0.2.2",
+    "tsyringe": "^4.10.0",
+    "ris-ktx2": "file:../ris-ktx2",
+    "ris-framework-api": "file:../ris-framework-api"
+  }
+}

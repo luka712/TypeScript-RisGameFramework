@@ -3,7 +3,9 @@ import { vec3, vec4 } from 'gl-matrix';
 /**
  * The color.
  */
-export class Color {
+export class Color implements Iterable<number>{
+
+    private _colors = [0,0,0,0];
 
     /**
      * Create a new color.
@@ -13,100 +15,153 @@ export class Color {
      * @param a - The alpha value. By default, it is 1.0.
      */
     public constructor(
-        public r: number,
-        public g: number,
-        public b: number,
-        public a = 1) {
+         r: number,
+         g: number,
+         b: number,
+         a = 1) {
+
+        this._colors[0] = r;
+        this._colors[1] = g;
+        this._colors[2] = b;
+        this._colors[3] = a;
+    }
+
+    [Symbol.iterator](): Iterator<number, any, any> {
+        return this._colors[Symbol.iterator]();
+    }
+
+    /**
+     * The red color.
+     */
+    public get r() : number {
+        return this._colors[0];
+    }
+
+    public set r(value: number) {
+        this._colors[0] = value;
+    }
+
+    /**
+     * The green color.
+     */
+    public get g() : number {
+        return this._colors[1];
+    }
+
+    public set g(value: number) {
+        this._colors[1] = value;
+    }
+
+    /**
+     * The green color.
+     */
+    public get b() : number {
+        return this._colors[2];
+    }
+
+    public set b(value: number) {
+        this._colors[2] = value;
+    }
+
+    /**
+     * The alpha.
+     */
+    public get a() : number {
+        return this._colors[3];
+    }
+
+    public set a(value: number) {
+        this._colors[3] = value;
     }
 
     /**
      * Returns the Black color.
      */
-    public static get black(): Color {
+    public static black(): Color {
         return new Color(0, 0, 0);
     }
 
     /**
      * Returns the White color.
      */
-    public static get white(): Color {
+    public static white(): Color {
         return new Color(1, 1, 1);
     }
 
     /**
      * Returns the Light Pink color.
      */
-    public static get lightPink(): Color {
+    public static lightPink(): Color {
         return new Color(1.0, 0.71, 0.76);
     }
 
     /**
      * Returns the Red color.
      */
-    public static get red(): Color {
+    public static red(): Color {
         return new Color(1, 0, 0);
     }
 
     /**
      * Returns the Green color.
      */
-    public static get green(): Color {
+    public static green(): Color {
         return new Color(0, 1, 0);
     }
 
     /**
      * Returns the Blue color.
      */
-    public static get blue(): Color {
+    public static blue(): Color {
         return new Color(0, 0, 1);
     }
 
     /**
      * Returns the Gray color.
      */
-    public static get gray(): Color {
+    public static gray(): Color {
         return new Color(0.5, 0.5, 0.5);
     }
 
     /**
      * Returns the Yellow color.
      */
-    public static get yellow(): Color {
+    public static yellow(): Color {
         return new Color(1, 1, 0);
     }
 
     /**
      * Returns the Wheat color.
      */
-    public static get wheat(): Color {
+    public static wheat(): Color {
         return new Color(0.96, 0.87, 0.7);
     }
 
     /**
      * Returns the White Smoke color.
      */
-    public static get whiteSmoke(): Color {
+    public static whiteSmoke(): Color {
         return new Color(0.96, 0.96, 0.96);
     }
 
     /**
      * Returns the Slate Gray color.
      */
-    public static get slateGray(): Color {
+    public static slateGray(): Color {
         return new Color(0.439, 0.502, 0.565);
     }
 
     /**
      * Returns the Cornflower Blue color.
      */
-    public static get cornerFlowerBlue(): Color {
+    public static cornerFlowerBlue(): Color {
         return new Color(0.39, 0.58, 0.93);
     }
 
     /**
      * Returns the Orange color.
      */
-    public static get orange(): Color {
+    public static orange(): Color {
         return new Color(1.0, 0.647, 0.0);
     }
 
