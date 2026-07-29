@@ -3,7 +3,7 @@
  *     It contains the parameters that are used to create a texture view.
  */
 import {TextureViewDimension} from "./TextureViewDimension";
-import {TextureFormat} from "../TextureFormat";
+import {TextureFormat} from "./TextureFormat";
 
 export class TextureViewDescriptor {
 

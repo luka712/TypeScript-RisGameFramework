@@ -1,4 +1,4 @@
-import {TextureFormat} from "../rendering/TextureFormat";
+import {TextureFormat} from "../rendering/texture/TextureFormat";
 
 /**
  * The interface for the KTX2 container.

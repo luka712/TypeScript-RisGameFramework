@@ -2,6 +2,7 @@ import {IRenderer} from "./rendering/IRenderer";
 import {IGeometryBuilder} from "./geometry/IGeometryBuilder";
 import {ISpriteBatch} from "./sprites/ISpriteBatch";
 import {IRenderPipelineFactory} from "./rendering/render-pipelines/IRenderPipelineFactory";
+import {IBufferFactory} from "./rendering/buffers/IBufferFactory";
 
 /**
  * The framework interface.
@@ -27,6 +28,11 @@ export interface IFramework {
      * The render pipeline factory.
      */
     readonly renderPipelineFactory: IRenderPipelineFactory;
+
+    /**
+     * The buffer factory.
+     */
+    readonly bufferFactory: IBufferFactory;
 
     /**
      * Called when the framework is rendered.

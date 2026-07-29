@@ -1,7 +1,7 @@
 import {TextureViewDescriptor} from "./TextureViewDescriptor";
 import {ITextureView} from "./ITextureView";
 import {State} from "../../data/State";
-import {TextureFormat} from "../TextureFormat";
+import {TextureFormat} from "./TextureFormat";
 import {TextureUsage} from "./TextureUsage";
 import {IContent} from "../../content/IContent";
 

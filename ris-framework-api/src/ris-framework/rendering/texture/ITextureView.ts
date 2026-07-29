@@ -1,4 +1,4 @@
-import {TextureFormat} from "../TextureFormat";
+import {TextureFormat} from "./TextureFormat";
 import {IDisposable} from "../../core/IDisposable";
 import {TextureViewDimension} from "./TextureViewDimension";
 

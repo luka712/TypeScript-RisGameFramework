@@ -1,19 +1,15 @@
-import { State } from "../../common/state";
-import type { IVertexBuffer } from "../buffers/vertex-buffer-interface";
-import type { TempIFramework } from "../framework-interface";
-import type { BaseGeometry } from "../../geometry/BaseGeometry.ts";
-import { type GeometryFormat } from "../../geometry/GeometryFormat.ts";
-import { BufferUsage } from "../rendering/enums";
-import type { IMesh } from "./mesh-interface";
-import type { MeshParameters } from "./mesh-paramaters";
-import type {IIndexBuffer} from "../../buffers/IIndexBuffer.ts";
+import type {BaseGeometry} from "../../geometry/BaseGeometry.ts";
+import {type GeometryFormat} from "../../geometry/GeometryFormat.ts";
+import type {IMesh} from "./mesh-interface";
+import type {MeshParameters} from "./mesh-paramaters";
+import {BufferUsage, type IFramework, type IIndexBuffer, State, type IVertexBuffer} from "ris-framework-api";
 
 export class Mesh implements IMesh {
 
-    protected readonly _framework: TempIFramework;
-    protected _vertexData: Float32Array = null!;
+    protected readonly _framework: IFramework;
+    protected _vertexData: number[] = null!;
     protected _bufferUsage = BufferUsage.VERTEX;
-    protected _state: State = State.Created;
+    protected _state: State = State.CREATED;
     protected _positions: Float32Array | null = null;
     protected _indices: number[] | null = null;
     protected _colors: Float32Array | null = null;
@@ -26,7 +22,7 @@ export class Mesh implements IMesh {
      * The constructor for the Mesh class.
      * @param framework The framework instance.
      */
-    public constructor(framework: TempIFramework) {
+    public constructor(framework: IFramework) {
         this._framework = framework;
     }
 
@@ -48,7 +44,7 @@ export class Mesh implements IMesh {
     }
 
     /**
-     * The positions of the mesh. 
+     * The positions of the mesh.
      */
     public get positions(): Float32Array | null {
         return this._positions;
@@ -88,11 +84,7 @@ export class Mesh implements IMesh {
      */
     public initialize(): void {
         this.applyChanges();
-        this._state = State.Initialized;
-    }
-
-    private _formatStride(_format: GeometryFormat): number {
-        return 0;
+        this._state = State.INITIALIZED;
     }
 
     /**
@@ -113,16 +105,16 @@ export class Mesh implements IMesh {
 
         // Vertices
         this._vertexBuffer?.dispose();
-        this._vertexBuffer = this._framework.buffersFactory.createVertexBuffer(
+        this._vertexBuffer = this._framework.bufferFactory.createVertexBuffer(
             interleavedData,
-            this._formatStride(format),
             geometry.vertexCount,
-            this._bufferUsage);
+            this._bufferUsage,
+            "");
 
         // Indices
         this._indexBuffer?.dispose();
         if (geometry.indices != null) {
-            this._indexBuffer = this._framework.buffersFactory.createIndexBuffer(geometry.indices);
+            this._indexBuffer = this._framework.bufferFactory.createIndexBuffer(geometry.indices, "");
         }
     }
 
@@ -157,7 +149,7 @@ export class Mesh implements IMesh {
     }
 
     private _fillColors(index: { vertexDataIndex: number, colorIndex: number }, colors: Float32Array) {
-        let { vertexDataIndex, colorIndex } = index;
+        let {vertexDataIndex, colorIndex} = index;
 
         // If there is still colour to fill.
         if (colors.length > colorIndex) {
@@ -165,8 +157,7 @@ export class Mesh implements IMesh {
             this._vertexData[vertexDataIndex++] = colors[colorIndex++];
             this._vertexData[vertexDataIndex++] = colors[colorIndex++];
             this._vertexData[vertexDataIndex++] = colors[colorIndex++];
-        }
-        else {
+        } else {
             // Just prefill with white colour.
             this._vertexData[vertexDataIndex++] = 1;
             this._vertexData[vertexDataIndex++] = 1;
@@ -191,14 +182,14 @@ export class Mesh implements IMesh {
         const vertexCount = this._positions.length / 3;
 
         // 3 for vertex, 4 for color and 2 for uvs.
-        const vertexData = new Float32Array((3 + 4 + 2) * vertexCount);
+        const vertexData = new Array((3 + 4 + 2) * vertexCount);
 
         let vertexIndex = 0;
         let positionsIndex = 0;
         let normalIndex = 0;
         let uvsIndex = 0;
 
-        let index = { vertexDataIndex: 0, colorIndex: 0 };
+        let index = {vertexDataIndex: 0, colorIndex: 0};
         let byteStride = 3 * Float32Array.BYTES_PER_ELEMENT;
 
         for (let i = 0; i < vertexCount; i++) {
@@ -231,12 +222,16 @@ export class Mesh implements IMesh {
 
         // Vertices
         this._vertexBuffer?.dispose();
-        this._vertexBuffer = this._framework.buffersFactory.createVertexBuffer(vertexData, byteStride, vertexCount, this._bufferUsage);
+        this._vertexBuffer = this._framework.bufferFactory.createVertexBuffer(
+            vertexData,
+            vertexCount,
+            this._bufferUsage,
+            "");
 
         // Indices
         this._indexBuffer?.dispose();
         if (this._indices != null && this._indices.length > 0) {
-            this._indexBuffer = this._framework.buffersFactory.createIndexBuffer(this._indices);
+            this._indexBuffer = this._framework.bufferFactory.createIndexBuffer(this._indices, "");
         }
     }
 
@@ -244,6 +239,6 @@ export class Mesh implements IMesh {
     public dispose() {
         this._vertexBuffer?.dispose();
         this._indexBuffer?.dispose();
-        this._state = State.Disposed;
+        this._state = State.DISPOSED;
     }
 }

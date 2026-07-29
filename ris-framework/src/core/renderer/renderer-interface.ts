@@ -1,9 +1,10 @@
 import { vec2 } from "gl-matrix";
-import type { TextureFormat } from "../../common/texture-enums";
 import type { TempIGraphicsDevice } from '../rendering/graphics-device-interface';
 import { TextureSamplerFilteringPreset } from "../rendering/enums";
 import type {RenderingLimits} from "./rendering-limits.ts";
-import type {Color, IRenderer} from "ris-framework-api";
+import type {Color} from "ris-framework-api";
+import type {IRenderer} from "ris-framework-api";
+import type {TextureFormat} from "../../TextureFormat.ts";
 
 export const RenderConfigurationSymbol = Symbol("RenderConfiguration");
 

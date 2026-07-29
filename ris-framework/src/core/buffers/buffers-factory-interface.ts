@@ -1,7 +1,6 @@
-import type { BufferUsage } from "../rendering/enums";
 import type { IUniformBuffer } from "./uniform-buffer-interface";
 import type { IVertexBuffer } from "./vertex-buffer-interface";
-import type {IBufferFactory} from "ris-framework-api";
+import type {BufferUsage, IBufferFactory} from "ris-framework-api";
 
 
 /**
