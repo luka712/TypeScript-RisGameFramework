@@ -3,7 +3,7 @@ import { LoadAction, StoreAction } from "../../core/rendering/enums";
 import type { RenderPassColorAttachment, RenderPassDepthStencilAttachment, RenderPassDescriptor } from "../../core/rendering/render-pass/render-pass-descriptor";
 import type { IRenderPass } from "../../core/rendering/render-pass/render-pass-interface";
 import { asWebGLTexture2D } from "../cast/cast";
-import { WebGLUtilities } from "../utilities/webgl-utilities";
+import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
 import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
 import { Color } from "ris-framework-api"
 
@@ -73,7 +73,7 @@ export class WebGlRenderPass implements IRenderPass {
         }
 
         // TODO : pass label
-        this._frameBuffer = WebGLUtilities.framebuffer.create(this._gl, glColorAttachments)
+        this._frameBuffer = WebGlUtilities.framebuffer.create(this._gl, glColorAttachments)
     }
 
     private _setupDepthStencilAttachment(depthStencilAttachment?: RenderPassDepthStencilAttachment, colorAttachments: RenderPassColorAttachment[] = []): void {
@@ -118,14 +118,14 @@ export class WebGlRenderPass implements IRenderPass {
                     format = TextureFormat.DEPTH_32_FLOAT;
                 }
                 var colorTex = colorAttachments[0].texture!;
-                this._depthStencilRenderBuffer = WebGLUtilities.renderBuffer.create(this._gl, format, colorTex.width, colorTex.height, null);
-                WebGLUtilities.framebuffer.attachDepthStencilRenderBuffer(this._gl, this._frameBuffer!, this._depthStencilRenderBuffer, format);
+                this._depthStencilRenderBuffer = WebGlUtilities.renderBuffer.create(this._gl, format, colorTex.width, colorTex.height, null);
+                WebGlUtilities.framebuffer.attachDepthStencilRenderBuffer(this._gl, this._frameBuffer!, this._depthStencilRenderBuffer, format);
             }
         }
         // Otherwise, we attach the provided depth-stencil texture to the framebuffer.
         else {
             var glTexture = asWebGLTexture2D(texture);
-            WebGLUtilities.framebuffer.attachDepthStencilTexture(this._gl, this._frameBuffer!, glTexture.glTexture, glTexture.textureFormat);
+            WebGlUtilities.framebuffer.attachDepthStencilTexture(this._gl, this._frameBuffer!, glTexture.glTexture, glTexture.textureFormat);
         }
     }
 

@@ -1,7 +1,7 @@
 import type { IUniformBuffer } from "../../core/buffers/uniform-buffer-interface";
 import type { BufferUsage } from "../../core/rendering/enums";
 import type { TempIGraphicsDevice } from "../../core/rendering/graphics-device-interface";
-import { WebGLUtilities } from "../utilities/webgl-utilities";
+import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
 import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
 
 /**
@@ -41,7 +41,7 @@ export class WebGlUniformBuffer implements IUniformBuffer {
     public initialize(dataOrByteLength: ArrayBuffer | ArrayBufferView | number): void {
 
         this._byteLength = typeof dataOrByteLength === "number" ? dataOrByteLength : dataOrByteLength.byteLength;
-        const glBuffer = WebGLUtilities.buffer.createUniformBuffer(this._gl, dataOrByteLength ?? this.byteLength, this.bufferUsage, this.label);
+        const glBuffer = WebGlUtilities.buffer.createUniformBuffer(this._gl, dataOrByteLength ?? this.byteLength, this.bufferUsage, this.label);
         this.glBuffer = glBuffer;
     }
 

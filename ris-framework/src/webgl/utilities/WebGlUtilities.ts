@@ -6,13 +6,13 @@ import { WebGLFrameBufferUtilities } from "./webgl-framebuffer-utilities";
 import { WebGLProgramUtilities } from "./webgl-program-utilities";
 import { WebGLRenderbufferUtilities } from "./webgl-renderbuffer-utilities";
 import { WebGLSamplerUtilities } from "./webgl-sampler-utilities";
-import { WebGLShaderUtilities } from "./webgl-shader-utilities";
+import { WebGlShaderUtilities } from "./WebGlShaderUtilities.ts";
 import { WebGLTextureUtilities } from "./webgl-texture-utilities";
 
 /**
  * The utility class for WebGL operations.
  */
-export class WebGLUtilities {
+export class WebGlUtilities {
 
     /**
      * The WebGL blending utilities.
@@ -62,7 +62,7 @@ export class WebGLUtilities {
     /**
      * The WebGL shader utilities.
      */
-    public static readonly shader = new WebGLShaderUtilities();
+    public static readonly shader = new WebGlShaderUtilities();
 
     /**
      * The WebGL program utilities.

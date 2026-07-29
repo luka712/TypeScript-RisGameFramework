@@ -7,7 +7,7 @@ import { WebGlBlendState } from "../blending/webgl-blend-state";
 import { WebGLIndexBuffer } from "../buffers/webgl-index-buffer";
 import { WebGlUniformBuffer } from "../buffers/webgl-uniform-buffer";
 import { WebGlVertexBuffer } from "../buffers/WebGlVertexBuffer.ts";
-import { WebGLTexture2D } from "../texture/webgl-texture-2d";
+import { WebGlTexture2D } from "../texture/WebGlTexture2D.ts";
 import { WebGlGraphicsDevice } from "../webgl-graphics-device";
 import { WebGlRenderer } from "../WebGlRenderer.ts";
 import type {IIndexBuffer} from "../../buffers/IIndexBuffer.ts";
@@ -30,8 +30,8 @@ export function asWebGLRenderer(renderer: ITempRenderer): WebGlRenderer {
  * @param texture The texture to cast.
  * @returns The given texture casted to a WebGLTexture2D.
  */
-export function asWebGLTexture2D(texture: ITexture2D): WebGLTexture2D {
-    if (texture instanceof WebGLTexture2D) {
+export function asWebGLTexture2D(texture: ITexture2D): WebGlTexture2D {
+    if (texture instanceof WebGlTexture2D) {
         return texture;
     } else {
         throw new Error("Texture is not a WebGLTexture2D.");

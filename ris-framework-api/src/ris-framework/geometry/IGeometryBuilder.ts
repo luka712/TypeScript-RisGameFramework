@@ -1,4 +1,5 @@
 import {IGeometry} from "./IGeometry";
+import {vec2} from "gl-matrix";
 
 /**
  * The geometry builder.
@@ -11,6 +12,6 @@ export interface IGeometryBuilder {
  * @param counterClockWise - The winding order of the quad.
  * @returns The geometry.
  */
-  quadGeometry(scale?: number, counterClockWise?: boolean): IGeometry;
+  quadGeometry(scale?: vec2, counterClockWise?: boolean): IGeometry;
 
 }

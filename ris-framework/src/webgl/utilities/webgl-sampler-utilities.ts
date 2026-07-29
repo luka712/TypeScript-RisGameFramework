@@ -1,7 +1,7 @@
 import { SamplerCompareFunction } from '../../common/sampler-enums';
 import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from '../../core/rendering/sampler/enums';
 import { SpectorJSUtilities } from './spector-js-utilities';
-import { WebGlConverter } from './web-gl-converter.ts';
+import { WebGlConverter } from './WebGlConverter.ts';
 
 export class WebGLSamplerUtilities {
 

@@ -1,6 +1,6 @@
 import type {TempIFramework} from "../../core/framework-interface";
 import {asWebGLGraphicsDevice} from "../cast/cast";
-import {WebGLUtilities} from "../utilities/webgl-utilities";
+import {WebGlUtilities} from "../utilities/WebGlUtilities.ts";
 import {BufferUsage, type IIndexBuffer, IndexBufferType} from "ris-framework-api";
 
 /**
@@ -94,7 +94,7 @@ export class WebGLIndexBuffer implements IIndexBuffer {
 
         this._indicesCount = data.length;
         this._byteSize = this._indicesCount * this._elementByteSize;
-        this.buffer = WebGLUtilities.buffer.createIndexBuffer(this._gl, typedData, BufferUsage.INDEX, this._label);
+        this.buffer = WebGlUtilities.buffer.createIndexBuffer(this._gl, typedData, BufferUsage.INDEX, this._label);
     }
 
 

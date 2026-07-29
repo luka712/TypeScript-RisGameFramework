@@ -1,6 +1,6 @@
 import type { IUniformBuffer } from "../buffers/uniform-buffer-interface";
 import type { IVertexBuffer } from "../buffers/vertex-buffer-interface";
-import type { ITexture2D } from "../rendering/texture/texture";
+import type { ITexture2D } from "ris-framework-api";
 import type { IRenderPipeline } from "./render-pipeline-interface";
 import type {IIndexBuffer} from "../../../../ris-framework-api";
 

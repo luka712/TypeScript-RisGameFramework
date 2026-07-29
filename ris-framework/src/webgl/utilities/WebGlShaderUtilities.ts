@@ -2,7 +2,7 @@
 /**
  * This module provides utility functions for working with WebGL shaders, including shader creation and compilation.
  */
-export class WebGLShaderUtilities {
+export class WebGlShaderUtilities {
 
     /**
      * Creates a WebGL shader of the specified type using the provided shader source code.

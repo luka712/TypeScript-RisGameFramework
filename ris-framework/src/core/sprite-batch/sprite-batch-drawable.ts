@@ -1,12 +1,15 @@
+import type {IFramework, ITexture2D} from "ris-framework-api";
+import type {IUniformBuffer} from "../buffers/uniform-buffer-interface.ts";
+import type {SpriteBatchMesh} from "./sprite-batch-mesh.ts";
+import type {ISpriteRenderPipeline} from "../render-pipelines/sprite-render-pipeline.ts";
 
 
-/*
 export class SpriteBatchDrawable {
 
     private readonly _framework : IFramework;
     private readonly _texture: ITexture2D;
     private _maxBatchSize: number;
-    private _projectionViewBuffer: IUniformBuffer<Matrix4X4<float>>;
+    private _projectionViewBuffer: IUniformBuffer;
    private _drawingMesh: SpriteBatchMesh = null!;
    private _renderPipeline: ISpriteRenderPipeline = null!;
 
@@ -15,45 +18,34 @@ export class SpriteBatchDrawable {
    private int fromInstance;
    private int toInstance;
 
-   /// <summary>
-   /// The constructor.
-   /// </summary>
-   /// <param name="framework">The <see cref="IFramework"/>.</param>
-   /// <param name="texture">The <see cref="ITexture2D"/>.</param>
-   /// <param name="projectionViewBuffer">The projection view <see cref="IUniformBuffer{T}"/>.</param>
-   /// <param name="maxBatchSize">The max size of a batch.</param>
-   public SpriteBatchDrawable(
-        IFramework framework,
-        ITexture2D texture,
-        IUniformBuffer < Matrix4X4 < float >> projectionViewBuffer,
-        int maxBatchSize)
+    /**
+     * The constructor.
+     * @param framework
+     * @param texture
+     * @param projectionViewBuffer
+     * @param maxBatchSize
+     */
+   public constructor(
+        framework: IFramework,
+        texture: ITexture2D ,
+         projectionViewBuffer: IUniformBuffer,
+         maxBatchSize: number)
 {
-    this.framework = framework;
+    this._framework = framework;
     this.texture = texture;
     this.maxBatchSize = maxBatchSize;
     this.projectionViewBuffer = projectionViewBuffer;
 }
 
-   /// <summary>
-   /// The orthographic camera.
-   /// </summary>
-   public IUniformBuffer < Matrix4X4 < float >> ProjectionViewBuffer
-{
-    get => projectionViewBuffer;
-    set
-    {
-        projectionViewBuffer = value;
-        renderPipeline.ProjectionViewBuffer = projectionViewBuffer;
-    }
-}
+    /**
+     * The projection view buffer.
+     */
+    public readonly projectionViewBuffer: IUniformBuffer;
 
-   /// <summary>
-   /// Initializes the sprite batch.
-   /// </summary>
-   public void Initialize()
+   public initialize(): void
 {
-    renderPipeline = framework.PipelineFactory.CreateSpriteRenderPipeline(projectionViewBuffer);
-    renderPipeline.SpriteTexture = texture;
+    this._renderPipeline = this._framework.pipelineFactory.createSpriteRenderPipeline(projectionViewBuffer);
+    this._renderPipeline.SpriteTexture = texture;
 
     drawingMesh = new (framework, (uint)maxBatchSize);
     drawingMesh.Initialize();
@@ -231,4 +223,3 @@ export class SpriteBatchDrawable {
 }
 
 }
- */

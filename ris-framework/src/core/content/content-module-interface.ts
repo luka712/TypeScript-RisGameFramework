@@ -1,6 +1,5 @@
 import type { IContent } from "./content-interface";
 
-export const IContentModuleSymbol = Symbol.for("IContentModule");
 
 export interface IContentModule {
 

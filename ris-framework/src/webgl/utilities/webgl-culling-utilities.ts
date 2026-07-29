@@ -1,5 +1,5 @@
 import { Culling } from "../../core/renderer/enums";
-import { WebGlConverter } from "./web-gl-converter.ts";
+import { WebGlConverter } from "./WebGlConverter.ts";
 
 /**
  * The WebGL culling utilities.

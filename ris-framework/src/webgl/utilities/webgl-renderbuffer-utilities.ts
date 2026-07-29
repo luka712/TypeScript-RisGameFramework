@@ -1,6 +1,6 @@
 import type { TextureFormat } from "../../common/texture-enums";
 import { SpectorJSUtilities } from "./spector-js-utilities";
-import { WebGlConverter } from "./web-gl-converter.ts";
+import { WebGlConverter } from "./WebGlConverter.ts";
 
 /**
  * The utility class for WebGL render buffer operations. It provides methods for creating render buffers with specified formats, dimensions, and labels. Render buffers are used in WebGL for off-screen rendering, particularly for depth and stencil attachments in framebuffers. This class abstracts the details of creating and configuring render buffers, making it easier to manage them in a WebGL application.

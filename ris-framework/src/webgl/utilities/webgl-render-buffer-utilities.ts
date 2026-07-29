@@ -1,5 +1,5 @@
 import type { TextureFormat } from "../../common/texture-enums";
-import { WebGlConverter } from "./web-gl-converter.ts";
+import { WebGlConverter } from "./WebGlConverter.ts";
 
 export class WebGLRenderBufferUtilities {
 

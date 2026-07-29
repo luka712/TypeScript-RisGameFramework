@@ -1,5 +1,5 @@
 import type { BufferUsage } from "../../core/rendering/enums";
-import { WebGlConverter } from "./web-gl-converter.ts";
+import { WebGlConverter } from "./WebGlConverter.ts";
 
 /**
  * This file contains utility functions for working with WebGL buffers, 

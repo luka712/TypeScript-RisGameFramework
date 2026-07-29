@@ -1,29 +1,22 @@
 // Auto-generated barrel file - exports all types
 
-// Ris.Framework
-export * from './ris-framework/IFramework';
+// Ris.Framework.Rendering.Blending
+export * from './ris-framework/rendering/blending/IBlendState';
 
-// Ris.Framework.Buffers
-export * from './ris-framework/buffers/BufferUsage';
-export * from './ris-framework/buffers/IBufferFactory';
-export * from './ris-framework/buffers/IIndexBuffer';
-export * from './ris-framework/buffers/IndexBufferType';
+// Ris.Framework.Rendering.Buffers
+export * from './ris-framework/rendering/buffers/IVertexBuffer';
+export * from './ris-framework/rendering/buffers/IVertexBufferLayout';
+export * from './ris-framework/rendering/buffers/VertexAttribute';
+export * from './ris-framework/rendering/buffers/VertexStepMode';
 
-// Ris.Framework.Content
-export * from './ris-framework/content/IContentManager';
-export * from './ris-framework/content/IKtx2Container';
+// Ris.Framework.Rendering.Primitive
+export * from './ris-framework/rendering/primitive/CullMode';
+export * from './ris-framework/rendering/primitive/FrontFace';
+export * from './ris-framework/rendering/primitive/IPrimitiveState';
+export * from './ris-framework/rendering/primitive/PrimitiveTopology';
 
-// Ris.Framework.Data
-export * from './ris-framework/data/Color';
-
-// Ris.Framework.Geometry
-export * from './ris-framework/geometry/GeometryFormat';
-export * from './ris-framework/geometry/IGeometry';
-export * from './ris-framework/geometry/IGeometryBuilder';
-export * from './ris-framework/geometry/VertexFormat';
-
-// Ris.Framework.Rendering
-export * from './ris-framework/rendering/IGraphicsDevice';
-export * from './ris-framework/rendering/IGraphicsDeviceFeatures';
-export * from './ris-framework/rendering/IRenderer';
-export * from './ris-framework/rendering/TextureFormat';
+// Ris.Framework.Rendering.RenderPipelines
+export * from './ris-framework/rendering/render-pipelines/IMainRenderTargetRenderPipeline';
+export * from './ris-framework/rendering/render-pipelines/IRenderPipeline';
+export * from './ris-framework/rendering/render-pipelines/IRenderPipelineFactory';
+export * from './ris-framework/rendering/render-pipelines/ISpriteRenderPipeline';

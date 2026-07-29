@@ -34,3 +34,12 @@ const framework : IFramework = new Framework({
 });
 framework.initialize();
 framework.renderer.clearColor = Color.lightPink();
+
+
+// We need to load geometry and create vertex buffer and index buffer from it.
+// const geometry = framework.geometryBuilder.quadGeometry();
+// const vertexBuffer =
+// const indexBuffer =
+
+// Next we need to create unlit pipeline for geometry.
+

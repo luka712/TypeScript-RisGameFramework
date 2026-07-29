@@ -8,7 +8,7 @@ import type { IBlendState } from './blending/blend-state-interface';
 import type { BlendStateDescriptor } from './blending/blend-state-descriptor';
 import type { IPrimitiveState } from './primitive/primitve-interface';
 import type { PrimitiveStateDescriptor } from './primitive/primitive-state-descriptor';
-import type {IGraphicsDevice} from "../../interfaces/rendering/IGraphicsDevice.ts";
+import type {IGraphicsDevice} from "../../../../ris-framework-api";
 
 /**
  * This file defines the IGraphicsDevice interface,

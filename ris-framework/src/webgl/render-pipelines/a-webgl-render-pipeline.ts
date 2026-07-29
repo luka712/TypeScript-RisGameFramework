@@ -6,7 +6,7 @@ import type { WebGlBlendState } from '../blending/webgl-blend-state';
 import { asWebGLGraphicsDevice } from '../cast/cast';
 import type { WebGlPrimitiveState } from '../primitive/webgl-primitive-state';
 import type { WebGlSampler } from '../sampler/webgl-sampler';
-import { WebGlConverter } from '../utilities/web-gl-converter.ts';
+import { WebGlConverter } from '../utilities/WebGlConverter.ts';
 
 /**
  * The base class for WebGL render pipelines. This class provides common functionality for all WebGL render pipelines.

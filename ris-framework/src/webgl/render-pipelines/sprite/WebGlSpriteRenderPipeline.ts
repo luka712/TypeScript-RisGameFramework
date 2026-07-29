@@ -1,17 +1,17 @@
 import type { IUniformBuffer } from "../../../core/buffers/uniform-buffer-interface";
 import type { TempIFramework } from "../../../core/framework-interface";
 import type { ISpriteRenderPipeline } from "../../../core/render-pipelines/sprite-render-pipeline";
-import type { ITexture2D } from "../../../core/rendering/texture/texture";
+import type { ITexture2D } from "ris-framework-api";
 import { VertexBufferLayout } from "../../../core/rendering/vertex-buffer-layout";
 import type { WebGlUniformBuffer } from "../../buffers/webgl-uniform-buffer";
 import {  asWebGLTexture2D, asWebGLUniformBuffer } from "../../cast/cast";
-import { WebGLShaderModule } from "../../shader/webgl-shader-module";
-import { WebGLTexture2D } from "../../texture/webgl-texture-2d";
+import WebGlShaderModule from "../../shader/WebGlShaderModule.ts";
+import { WebGlTexture2D } from "../../texture/WebGlTexture2D.ts";
 import { WebGlVertexBuffer } from '../../buffers/WebGlVertexBuffer.ts';
 import type { IVertexBuffer } from "../../../core/buffers/vertex-buffer-interface";
 import { AWebGlRenderPipeline } from "../a-webgl-render-pipeline";
 import type { WebGLIndexBuffer } from "../../buffers/webgl-index-buffer";
-import {type IIndexBuffer, IndexBufferType} from "../../../../../ris-framework-api";
+import {type IIndexBuffer, IndexBufferType} from "ris-framework-api";
 
 /**
  * The WebGL implementation of the sprite render pipeline. 
@@ -20,7 +20,7 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
 
     private static readonly CAMERA_BINDING_POINT: number = 0;
 
-    private _texture: WebGLTexture2D | null = null;
+    private _texture: WebGlTexture2D | null = null;
     private _projectionViewBuffer: WebGlUniformBuffer;
     private _cameraBlockIndex: number = -1;
     private _buffersArray: WebGLBuffer[] = [null!];
@@ -28,7 +28,8 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
 
     /**
      * The constructor.
-     * @param framework The framework. 
+     * @param framework The framework.
+     * @param projectionViewBuffer The projection view buffer.
      */
     constructor(framework: TempIFramework, projectionViewBuffer: IUniformBuffer) {
         super(framework);
@@ -59,7 +60,7 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
     /** @inheritdoc */
     public override initialize(): void {
 
-        this._framework.content.load<WebGLShaderModule>(WebGLShaderModule.name, "sprite").webGlProgramPromise!.then(program => {
+        this._framework.content.load<WebGlShaderModule>(WebGlShaderModule.name, "sprite").webGlProgramPromise!.then(program => {
             this._program = program;
         }).catch(error => {
             console.error("Failed to load shader module for main render target render pipeline.", error);
@@ -72,7 +73,7 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
 
     private _createResources(): void {
         {
-            this._texture = WebGLTexture2D.getOrCreateDefault(this._framework);
+            this._texture = WebGlTexture2D.getOrCreateDefault(this._framework);
 
             this._cameraBlockIndex = this._gl.getUniformBlockIndex(this._program, "_MatrixStorage_float4x4_ColMajorstd140");
             this._gl.uniformBlockBinding(this._program, this._cameraBlockIndex, WebGlSpriteRenderPipeline.CAMERA_BINDING_POINT);

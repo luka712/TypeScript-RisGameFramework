@@ -2,7 +2,7 @@ import { SamplerCompareFunction } from "../../common/sampler-enums";
 import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from "../../core/rendering/sampler/enums";
 import { SamplerDescriptor } from "../../core/rendering/sampler/sampler-descriptor";
 import type { ISampler } from "../../core/rendering/sampler/sampler-interface";
-import { WebGLUtilities } from "../utilities/webgl-utilities";
+import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
 import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
 
 /**
@@ -83,7 +83,7 @@ export class WebGlSampler implements ISampler {
     /** @inheritdoc */
     public _createSampler(): void {
 
-        this.glSampler = WebGLUtilities.sampler.create(this._gl,
+        this.glSampler = WebGlUtilities.sampler.create(this._gl,
             this._minFilter,
             this._magFilter,
             this._mipMapFilter,

@@ -1,8 +1,6 @@
 import type { ShaderStage } from "../rendering/enums";
 import { RenderingBackend } from "../../common/rendering-backend";
 
-export const ShaderLoaderSymbol = Symbol("ShaderLoader");
-
 export class ShaderLoader {
 
     /**
@@ -25,7 +23,6 @@ export class ShaderLoader {
         }
 
         const shaderSource = await fetch(shaderFilePath);
-        const shaderText = await shaderSource.text();
-        return shaderText;
+        return await shaderSource.text();
     }
 }

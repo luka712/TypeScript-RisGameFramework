@@ -1,6 +1,6 @@
 import {IndexBufferType} from "./IndexBufferType";
 import {BufferUsage} from "./BufferUsage";
-import {IDisposable} from "../core/IDisposable";
+import {IDisposable} from "../../core/IDisposable";
 
 /**
  * The index buffer.

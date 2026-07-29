@@ -7,7 +7,7 @@ import { WebGlMainRenderTargetRenderPipeline } from "./WebGlMainRenderTargetRend
 import { IFrameworkSymbol } from "../../core/dependency-injection/register-services-interface";
 import type { IUniformBuffer } from "../../core/buffers/uniform-buffer-interface";
 import type { ISpriteRenderPipeline } from "../../core/render-pipelines/sprite-render-pipeline";
-import { WebGlSpriteRenderPipeline } from "./sprite/webgl-sprite-render-pipeline";
+import { WebGlSpriteRenderPipeline } from "./sprite/WebGlSpriteRenderPipeline.ts";
 
 /**
  * The WebGL implementation of the IRenderPipelineFactory interface. 

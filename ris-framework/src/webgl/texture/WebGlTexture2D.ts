@@ -1,14 +1,14 @@
-import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import type { TempIFramework } from "../../core/framework-interface";
 import type { vec2 } from "gl-matrix";
 import { asWebGLGraphicsDevice } from '../cast/cast';
-import { State } from "../../common/state";
-import { WebGLUtilities } from "../utilities/webgl-utilities";
+import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
 import { GenericImageData, type IImageData } from "../../core/data/image-data";
 import { ATexture2D } from "../../core/rendering/texture/texture";
 import type { TextureViewDescriptor, ITextureView } from "../../core/rendering/texture/texture-view/texture-view";
+import {State, TextureUsage} from "ris-framework-api";
+import {TextureFormat} from "../../TextureFormat.ts";
 
-export class WebGLTexture2D extends ATexture2D {
+export class WebGlTexture2D extends ATexture2D {
 
 
     private readonly _gl: WebGL2RenderingContext;
@@ -17,11 +17,12 @@ export class WebGLTexture2D extends ATexture2D {
     /**
      * The constructor.
      * @param _framework The framework instance.
-     * @param _size The size of the texture.
+     * @param size
      * @param _data The texture data. It can be null, in which case an empty texture will be created.
-     * @param _usage The texture usage.
-     * @param _format The texture format.
-     * @param _label The label.
+     * @param textureUsage
+     * @param textureFormat
+     * @param useMipMaps
+     * @param label
      */
     constructor(
         private readonly _framework: TempIFramework,
@@ -48,16 +49,16 @@ export class WebGLTexture2D extends ATexture2D {
 
     /** @inheritdoc */
     public initialize(): void {
-        if (this._state == State.Initialized) {
+        if (this._state == State.INITIALIZED) {
             throw new Error("Texture is already initialized.");
         }
-        else if (this._state == State.Disposed) {
+        else if (this._state == State.DISPOSED) {
             throw new Error("Texture is already disposed.");
         }
 
-        this._state = State.Initialized;
+        this._state = State.INITIALIZED;
         const data = this._data?.data;
-        this._texture = WebGLUtilities.texture.createTexture2D(
+        this._texture = WebGlUtilities.texture.createTexture2D(
             this._gl,
             this.width, this.height,
             data,
@@ -77,16 +78,16 @@ export class WebGLTexture2D extends ATexture2D {
     /** @inheritdoc */
     public dispose(): void {
 
-        if (this._state == State.Disposing || this._state == State.Disposed) {
+        if (this._state == State.DISPOSING || this._state == State.DISPOSED) {
             return;
         }
 
         this._gl.deleteTexture(this._texture);
         this._texture = null;
-        this._state = State.Disposed;
+        this._state = State.DISPOSED;
     }
 
-    private static _defaultFilled: WebGLTexture2D | null = null;
+    private static _defaultFilled: WebGlTexture2D | null = null;
 
     /**
      * Creates a default 1x1 white texture if it doesn't already exist and returns it.
@@ -94,12 +95,12 @@ export class WebGLTexture2D extends ATexture2D {
      * @param framework The framework instance.
      * @returns The default 1x1 white texture.
      */
-    public static getOrCreateDefault(framework: TempIFramework): WebGLTexture2D {
-        if (this._defaultFilled === null || this._defaultFilled.state === State.Disposed) {
+    public static getOrCreateDefault(framework: TempIFramework): WebGlTexture2D {
+        if (this._defaultFilled === null || this._defaultFilled.state === State.DISPOSED) {
             
             const imageData = new GenericImageData(new Uint8Array([255, 255, 255, 255]), 1, 1, 4);
                         
-            this._defaultFilled = new WebGLTexture2D(framework, [1, 1], imageData, TextureUsage.TEXTURE_BINDING, TextureFormat.RGBA_8_UNORM, false, "DefaultFilledTexture");
+            this._defaultFilled = new WebGlTexture2D(framework, [1, 1], imageData, TextureUsage.TEXTUREBINDING, TextureFormat.RGBA_8_UNORM, false, "DefaultFilledTexture");
             this._defaultFilled.initialize();
         }
 

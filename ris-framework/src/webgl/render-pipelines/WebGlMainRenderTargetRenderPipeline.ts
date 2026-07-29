@@ -7,8 +7,8 @@ import { asWebGLIndexBuffer, asWebGLVertexBuffer } from "../cast/cast";
 import type { WebGLIndexBuffer } from "../buffers/webgl-index-buffer";
 import { VertexBufferLayout } from "../../core/rendering/vertex-buffer-layout";
 import type { ITexture2D } from "../../core/rendering/texture/texture";
-import type { WebGLTexture2D } from "../texture/webgl-texture-2d";
-import { WebGLShaderModule } from "../shader/webgl-shader-module";
+import type { WebGlTexture2D } from "../texture/WebGlTexture2D.ts";
+import WebGlShaderModule from "../shader/WebGlShaderModule.ts";
 import { AWebGlRenderPipeline } from "./a-webgl-render-pipeline";
 import {BufferUsage} from "ris-framework-api";
 
@@ -19,7 +19,7 @@ export class WebGlMainRenderTargetRenderPipeline extends AWebGlRenderPipeline im
 
     private _vertexBuffer: WebGlVertexBuffer = null!;
     private _indexBuffer: WebGLIndexBuffer = null!;
-    private _mainRenderTarget: WebGLTexture2D = null!;
+    private _mainRenderTarget: WebGlTexture2D = null!;
 
     /**
      * The constructor.
@@ -28,7 +28,7 @@ export class WebGlMainRenderTargetRenderPipeline extends AWebGlRenderPipeline im
      */
     public constructor(framework: TempIFramework, mainRenderTarget: ITexture2D) {
         super(framework);
-        this._mainRenderTarget = mainRenderTarget as WebGLTexture2D;
+        this._mainRenderTarget = mainRenderTarget as WebGlTexture2D;
     }
 
     /** @inheritdoc */
@@ -46,12 +46,12 @@ export class WebGlMainRenderTargetRenderPipeline extends AWebGlRenderPipeline im
 
     /** @inheritdoc */
     public set mainRenderTarget(value: ITexture2D) {
-        this._mainRenderTarget = value as WebGLTexture2D;
+        this._mainRenderTarget = value as WebGlTexture2D;
     }
 
     /** @inheritdoc */
     public initialize(): void {
-        this._framework.content.load<WebGLShaderModule>(WebGLShaderModule.name, "main_render_target_flip_y").webGlProgramPromise!.then(program => {
+        this._framework.content.load<WebGlShaderModule>(WebGlShaderModule.name, "main_render_target_flip_y").webGlProgramPromise!.then(program => {
             this._program = program;
         }).catch(error => {
             console.error("Failed to load shader module for main render target render pipeline.", error);

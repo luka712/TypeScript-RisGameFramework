@@ -3,7 +3,7 @@ import { IFrameworkSymbol } from "../../core/dependency-injection/register-servi
 import type { TempIFramework } from "../../core/framework-interface";
 import { TextureFormat, TextureUsage } from "../../common/texture-enums";
 import { Color } from "ris-framework-api"
-import { WebGLTexture2D } from "./webgl-texture-2d";
+import { WebGlTexture2D } from "./WebGlTexture2D.ts";
 import { vec2 } from "gl-matrix";
 import { GenericImageData } from "../../core/data/image-data";
 import type { ITextureFactory } from "../../core/rendering/texture/texture-factory";
@@ -40,7 +40,7 @@ export class WebGLTextureFactory implements ITextureFactory {
 
         const imageData = new GenericImageData(data, width, height, channels);
 
-        const texture = new WebGLTexture2D(
+        const texture = new WebGlTexture2D(
             this._framework,
             vec2.fromValues(width, height),
             imageData,
@@ -73,7 +73,7 @@ export class WebGLTextureFactory implements ITextureFactory {
 
         // Fast path: avoid generating & uploading a big CPU-side buffer when not needed.
         if (!color || color.equals(Color.black())) {
-            const texture = new WebGLTexture2D(
+            const texture = new WebGlTexture2D(
                 this._framework,
                 vec2.fromValues(width, height),
                 null,

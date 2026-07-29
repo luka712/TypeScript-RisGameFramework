@@ -17,5 +17,5 @@ export class FrameworkOptions {
      * The texture filtering preset to use for textures created by the framework. 
      * By default, it is set to BILINEAR, which provides a good balance between performance and quality.
      */
-    textureFiltering = TextureSamplerFilteringPreset.BILINEAR;
+    textureFiltering? = TextureSamplerFilteringPreset.BILINEAR;
 }
