@@ -1,7 +1,6 @@
-import type {IFramework, ITexture2D} from "ris-framework-api";
-import type {IUniformBuffer} from "../buffers/uniform-buffer-interface.ts";
-import SpriteBatchMesh from "./SpriteBatchMesh.ts";
-import type {ISpriteRenderPipeline} from "../render-pipelines/sprite-render-pipeline.ts";
+import type {IFramework, ISpriteRenderPipeline, ITexture2D, IUniformBuffer, Color} from "ris-framework-api";
+import {SpriteBatchMesh} from "./SpriteBatchMesh.ts";
+import type {vec2, vec3} from "gl-matrix";
 
 /**
  * The drawable class for sprite batch.
@@ -11,7 +10,6 @@ export class SpriteBatchDrawable {
     private readonly _framework: IFramework;
     private readonly _texture: ITexture2D;
     private _maxBatchSize: number;
-    private _projectionViewBuffer: IUniformBuffer;
     private _drawingMesh: SpriteBatchMesh = null!;
     private _renderPipeline: ISpriteRenderPipeline = null!;
 
@@ -43,12 +41,15 @@ export class SpriteBatchDrawable {
      */
     public readonly projectionViewBuffer: IUniformBuffer;
 
+    /** Initialize the drawable */
     public initialize(): void {
-        this._renderPipeline = this._framework.pipelineFactory.createSpriteRenderPipeline(projectionViewBuffer);
+        this._renderPipeline = this._framework
+            .renderPipelineFactory
+            .createSpriteRenderPipeline(this.projectionViewBuffer);
         this._renderPipeline.spriteTexture = this._texture;
 
-        this._drawingMesh = new SpriteBatchMesh(framework, (uint)maxBatchSize);
-        drawingMesh.Initialize();
+        this._drawingMesh = new SpriteBatchMesh(this._framework, this._maxBatchSize);
+        this._drawingMesh.initialize();
     }
 
     /**
@@ -60,213 +61,68 @@ export class SpriteBatchDrawable {
         this._toInstance = 0;
     }
 
-    /// <summary>
-    /// Write a sprite to the batch sprite mesh.
-    /// </summary>
-    /// <param name="position">The position of a sprite.</param>
-    /// <param name="size">The size of a sprite.</param>
-    /// <param name="u0">The u0 texture coordinate. By default, <c>0</c>.</param>
-    /// <param name="v0">The v0 texture coordinate. By default, <c>0</c>.</param>
-    /// <param name="u1">The u1 texture coordinate. By default, <c>1</c>.</param>
-    /// <param name="v1">The v1 texture coordinate. By default, <c>1</c>.</param>
+    /**
+     * Writes a sprite to the batch sprite mesh.
+     *
+     * @param position - The position of the sprite.
+     * @param size - The size of the sprite.
+     * @param color - The color of the sprite.
+     * @param u0 - The minimum U texture coordinate. Defaults to `0`.
+     * @param v0 - The minimum V texture coordinate. Defaults to `0`.
+     * @param u1 - The maximum U texture coordinate. Defaults to `1`.
+     * @param v1 - The maximum V texture coordinate. Defaults to `1`.
+     * @param flipY - Whether to vertically flip the texture coordinates. Defaults to `false`.
+     */
+    public writeSprite(
+        position: vec3, size: vec2, color: Color,
+        u0 = 0, v0 = 0, u1 = 1, v1 = 1,
+        flipY = false
+    ): void {
+        // We must wait for frame end to resize.
+        if (this._toInstance >= this._maxBatchSize) {
+            this._needsResize = true;
+            return;
+        }
 
-    public writeSprite(position: vec3, size: vec2, u0 =0, v0 = 0, u1 = 1, v1 = 1)
+        this._drawingMesh.writeSprite(this._toInstance, position, size, color, u0, v0, u1, v1, flipY);
 
-    WriteSprite(position, size, Color
-
-.
-    White
-,
-    u0
-,
-    v0
-,
-    u1
-,
-    v1
-);
-
-    /// <summary>
-    /// Write a sprite to the batch sprite mesh.
-    /// </summary>
-    /// <param name="position">The position of a sprite.</param>
-    /// <param name="size">The size of a sprite.</param>
-    /// <param name="color">The color of a sprite.</param>
-    /// <param name="u0">The u0 texture coordinate. By default, <c>0</c>.</param>
-    /// <param name="v0">The v0 texture coordinate. By default, <c>0</c>.</param>
-    /// <param name="u1">The u1 texture coordinate. By default, <c>1</c>.</param>
-    /// <param name="v1">The v1 texture coordinate. By default, <c>1</c>.</param>
-
-    public void
-
-    WriteSprite(
-        Vector3D
-
-<
-    float
->
-    position
-,
-
-    Vector2D<float>
-
-    size
-,
-    Color
-    color
-,
-    float
-    u0 = 0
-,
-    float
-    v0 = 0
-,
-    float
-    u1 = 1
-,
-    float
-    v1 = 1
-) {
-    // We must wait for frame end to resize.
-    if(toInstance
-
->=
-    maxBatchSize
-) {
-    needsResize = true;
-    return;
-}
-
-drawingMesh.WriteSprite(toInstance, position, size, color, u0, v0, u1, v1);
-
-// Write at correct position.
-toInstance++;
-}
-
-/// <summary>
-/// Write a sprite to the batch sprite mesh.
-/// </summary>
-/// <param name="position">The position of a sprite.</param>
-/// <param name="size">The size of a sprite.</param>
-/// <param name="color">The color of a sprite.</param>
-/// <param name="rotation">The rotation in counter-clockwise direction.</param>
-/// <param name="rotationOrigin">The rotation origin.</param>
-/// <param name="u0">The u0 texture coordinate. By default, <c>0</c>.</param>
-/// <param name="v0">The v0 texture coordinate. By default, <c>0</c>.</param>
-/// <param name="u1">The u1 texture coordinate. By default, <c>1</c>.</param>
-/// <param name="v1">The v1 texture coordinate. By default, <c>1</c>.</param>
-
-public
-void WriteSprite(
-    Vector3D < float > position,
-    Vector2D < float > size,
-    Color
-color,
-    float
-rotation,
-Vector2D < float > rotationOrigin,
-    float
-u0 = 0,
-    float
-v0 = 0,
-    float
-u1 = 1,
-    float
-v1 = 1
-)
-{
-    // We must wait for frame end to resize.
-    if (toInstance >= maxBatchSize) {
-        needsResize = true;
-        return;
+        // Write at correct position.
+        this._toInstance++;
     }
 
-    drawingMesh.WriteSprite(toInstance, position, size, color, rotation, rotationOrigin, u0, v0, u1, v1);
+    /** Draws the mesh */
+    public draw(): void {
+        // Nothing to draw.
+        if (this._toInstance <= 0 || this._fromInstance > this._toInstance) {
+            return;
+        }
 
-    // Write at correct position.
-    toInstance++;
-}
+        // Clamp instance to max batch size.
+        if (this._toInstance >= this._maxBatchSize) {
+            this._toInstance = this._maxBatchSize - 1;
+        }
 
-/// <summary>
-/// Write a sprite to the batch sprite mesh.
-/// </summary>
-/// <param name="position">The position of a sprite.</param>
-/// <param name="size">The size of a sprite.</param>
-/// <param name="texCoords0">The texture coordinates for first vertex.</param>
-/// <param name="texCoords1">The texture coordinates for second vertex.</param>
-/// <param name="texCoords2">The texture coordinates for third vertex.</param>
-/// <param name="texCoords3">The texture coordinates for fourth vertex.</param>
-/// <param name="color">The color of a sprite.</param>
-public
-void WriteSprite(
-    Vector3D < float > position,
-    Vector2D < float > size,
-    Vector2D < float > texCoords0,
-    Vector2D < float > texCoords1,
-    Vector2D < float > texCoords2,
-    Vector2D < float > texCoords3,
-    Color
-color
-)
-{
-    // We must wait for frame end to resize.
-    if (toInstance >= maxBatchSize) {
-        needsResize = true;
-        return;
+        // Draw mesh.
+        const indicesOffset = this._fromInstance * 6;
+        const indicesCount = this._toInstance * 6 - indicesOffset;
+        this._drawingMesh.applyChanges();
+        this._renderPipeline.render(
+            this._drawingMesh.vertexBuffer!,
+            this._drawingMesh.indexBuffer!,
+            indicesCount,
+            indicesOffset);
+        this._fromInstance = this._toInstance;
     }
 
-    drawingMesh.WriteSprite(
-        toInstance,
-        position,
-        size,
-        texCoords0, texCoords1, texCoords2, texCoords3,
-        color);
+    /**
+     * Call on frame end to handle any potential resize request.
+     */
+    public frameEnd(): void {
+        if (this._needsResize) {
+            this._maxBatchSize *= 2;
+            this._drawingMesh.resize(this._maxBatchSize);
+        }
 
-    // Write at correct position.
-    toInstance += 1;
-}
-
-/**
- * Draws the batch.
- */
-public draw() : void
-{
-    // Nothing to draw.
-    if (toInstance <= 0 || fromInstance > toInstance) {
-        return;
+        this._needsResize = false;
     }
-
-    // Clamp instance to max batch size.
-    if (toInstance >= maxBatchSize) {
-        toInstance = maxBatchSize - 1;
-    }
-
-    // Draw mesh.
-    int
-    indicesOffset = fromInstance * 6;
-    int
-    indicesCount = toInstance * 6 - indicesOffset;
-    drawingMesh.ApplyChanges();
-    renderPipeline.Render(drawingMesh.VertexBuffer!, drawingMesh.IndexBuffer!,
-        indicesCount,
-        (uint)
-    indicesOffset
-)
-    ;
-    fromInstance = toInstance;
-}
-
-public frameEnd(): void
-{
-    if (needsResize) {
-        maxBatchSize *= 2;
-        drawingMesh.Resize((uint)
-        maxBatchSize
-    )
-        ;
-    }
-
-    needsResize = false;
-}
-
 }

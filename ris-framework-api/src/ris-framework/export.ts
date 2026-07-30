@@ -4,3 +4,7 @@ export * from "./rendering/buffers/_export-buffers";
 export * from "./data/export-data";
 export * from "./geometry/_export-geometry";
 export * from "./rendering/_export-rendering";
+export * from "./rendering/render-pipelines/_export-render-pipelines";
+export * from "./sprites/_export_sprites";
+export * from "./camera/_export_camera";
+export * from "./time/_export_time";

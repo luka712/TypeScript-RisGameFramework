@@ -1,6 +1,11 @@
 // Auto-generated barrel file - exports all types
 
-// Ris.Framework.Rendering.Buffers
-export * from './ris-framework/rendering/buffers/IBufferFactory';
+// Ris.Framework.Camera
+export * from './ris-framework/camera/ICamera';
+export * from './ris-framework/camera/IOrthographicCamera';
 
-export * from "./ris-framework/export";
+// Ris.Framework.Data
+export * from './ris/framework/data/MatrixExtensions';
+
+// Ris.Framework.Time
+export * from './ris-framework/time/GameTime';
