@@ -1,18 +1,36 @@
-import type { ITempBuffersFactory } from "../../core/buffers/buffers-factory-interface";
-import type { IVertexBuffer } from "../../core/buffers/vertex-buffer-interface";
-import type { TempIFramework } from "../../core/framework-interface";
 import { WebGlVertexBuffer as WebGlVertexBuffer } from "./WebGlVertexBuffer.ts";
-import type { IUniformBuffer } from "../../core/buffers/uniform-buffer-interface";
 import {WebGLIndexBuffer} from "./webgl-index-buffer.ts";
-import {BufferUsage, type IIndexBuffer} from "ris-framework-api";
+import {
+    BufferUsage,
+    type IBufferFactory,
+    type IFramework,
+    type IIndexBuffer,
+    type IUniformBuffer,
+    type IVertexBuffer
+} from "ris-framework-api";
+import {WebGlUniformBuffer} from "./WebGlUniformBuffer.ts";
 
-export class WebGlBuffersFactory implements ITempBuffersFactory {
+export class WebGlBuffersFactory implements IBufferFactory {
 
     /**
      * The constructor of the WebGLBuffersFactory class.
      * @param _framework The framework instance to use for creating buffers.
      */
-    public constructor(private readonly _framework: TempIFramework) {
+    public constructor(private readonly _framework: IFramework) {
+    }
+
+    /** @inheritDoc */
+    public createVertexBuffer(data: number[], vertexStride: number, usage: BufferUsage, label?: string): IVertexBuffer {
+        const vertexBuffer = new WebGlVertexBuffer(this._framework, data, vertexStride, usage, label );
+        vertexBuffer.initialize();
+        return vertexBuffer;
+    }
+
+    /** @inheritDoc */
+    public createUniformBuffer(data: number[], usage: BufferUsage, label?: string): IUniformBuffer {
+        const uniformBuffer = new WebGlUniformBuffer(this._framework, data, usage, label);
+        uniformBuffer.initialize();
+        return uniformBuffer;
     }
 
     /** @inheritdoc */
@@ -22,10 +40,6 @@ export class WebGlBuffersFactory implements ITempBuffersFactory {
         return buffer;
     }
 
-    /** @inheritdoc */
-    createUniformBuffer(_dataOrByteLength: ArrayBuffer | ArrayBufferView | number[], _bufferUsage: BufferUsage, _label?: string): IUniformBuffer {
-        throw new Error("Method not implemented.");
-    }
 
     /** @inheritdoc */
     /*
@@ -35,9 +49,8 @@ export class WebGlBuffersFactory implements ITempBuffersFactory {
         return indexBuffer;
     }
 
-     */
 
-    /** @inheritdoc */
+
     public createVertexBuffer(
         dataOrByteSize: number[] | number,
         byteStride: number,

@@ -1,12 +1,9 @@
-import { TextureFormat } from "../../common/texture-enums";
-import { Culling } from "../../core/renderer/enums";
-import { BlendFactor, BlendOperation } from "../../core/rendering/blending/enums";
-import { PrimitiveTopology } from "../../core/rendering/primitive/enums";
-import { CullMode } from "../../core/rendering/primitive/enums";
-import { FrontFace } from "../../core/rendering/primitive/enums";
-import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from "../../core/rendering/sampler/enums";
+import {Culling} from "../../core/renderer/enums";
+import {BlendFactor, BlendOperation} from "../../core/rendering/blending/enums";
+import {CullMode, FrontFace, PrimitiveTopology} from "../../core/rendering/primitive/enums";
+import {MipmapSamplerFilter, SamplerAddressMode, SamplerFilter} from "../../core/rendering/sampler/enums";
 import {VertexFormat} from "../../VertexFormat.ts";
-import {BufferUsage} from "ris-framework-api";
+import {BufferUsage, TextureFormat} from "ris-framework-api";
 
 export class WebGlConverter {
 
@@ -24,6 +21,8 @@ export class WebGlConverter {
                 return WebGL2RenderingContext.LINES;
             case PrimitiveTopology.LINE_STRIP:
                 return WebGL2RenderingContext.LINE_STRIP;
+            case PrimitiveTopology.POINT_LIST:
+                return WebGL2RenderingContext.POINTS;
             default:
                 throw new Error("Method not implemented.");
         }
@@ -70,9 +69,12 @@ export class WebGlConverter {
      * @return The WebGL enum.
      */
     public static convertBufferUsage(usage: BufferUsage): GLenum {
+
         switch (usage) {
             case BufferUsage.VERTEX:
             case BufferUsage.INDEX:
+            case BufferUsage.UNIFORM:
+                case BufferUsage.VERTEX | BufferUsage.COPY_DST:
                 return WebGL2RenderingContext.STATIC_DRAW;
             default:
                 throw new Error("NotImplementedException");

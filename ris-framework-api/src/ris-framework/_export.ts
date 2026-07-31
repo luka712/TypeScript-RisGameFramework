@@ -1,10 +1,13 @@
 export * from "./IFramework";
 export * from "./rendering/texture/_export-texture";
 export * from "./rendering/buffers/_export-buffers";
-export * from "./data/export-data";
+export * from "./data/_export-data";
 export * from "./geometry/_export-geometry";
 export * from "./rendering/_export-rendering";
 export * from "./rendering/render-pipelines/_export-render-pipelines";
 export * from "./sprites/_export_sprites";
 export * from "./camera/_export_camera";
 export * from "./time/_export_time";
+export * from "./core/_export-core";
+export * from "./shader/_export-shader";
+    export * from "./content/_export-content";

@@ -4,9 +4,9 @@ import "reflect-metadata";
 import typescriptLogo from './typescript.svg'
 import viteLogo from '/vite.svg'
 import {setupCounter} from './counter.ts'
-import {Framework} from './gameframework/framework';
+import {Framework} from './core/Framework.ts';
 import {TextureSamplerFilteringPreset} from "./core/rendering/enums.ts";
-import {Color, type IFramework} from "ris-framework-api";
+import {Color, type IFramework, Rect} from "ris-framework-api";
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -31,6 +31,18 @@ setupCounter(document.querySelector<HTMLButtonElement>('#counter')!)
 const framework : IFramework = new Framework({
   canvas: document.getElementById("game-canvas") as HTMLCanvasElement,
   textureFiltering: TextureSamplerFilteringPreset.BILINEAR
+});
+
+const rect = new Rect(200, 200, 200, 200);
+const color = Color.blue();
+
+framework.addOnRenderListener(() =>
+{
+  let spriteBatch = framework.spriteBatch;
+
+  spriteBatch.begin();
+  spriteBatch.drawRect(rect, color);
+  spriteBatch.end();
 });
 framework.initialize();
 framework.renderer.clearColor = Color.lightPink();

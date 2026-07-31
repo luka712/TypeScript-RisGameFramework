@@ -1,12 +1,12 @@
-import type { BufferUsage } from "../../core/rendering/enums";
 import { WebGlConverter } from "./WebGlConverter.ts";
+import type {BufferUsage} from "ris-framework-api";
 
 /**
  * This file contains utility functions for working with WebGL buffers, 
  * such as creating and managing vertex buffers, index buffers, and uniform buffers.
  * It provides a higher-level abstraction over the raw WebGL API to simplify buffer management in a WebGL application.
  */
-export class WebGLBufferUtilities {
+export class WebGlBufferUtilities {
 
     /**
      * Creates a vertex buffer in WebGL with the given data and usage.
@@ -96,5 +96,29 @@ export class WebGLBufferUtilities {
 
         gl.bindBuffer(gl.UNIFORM_BUFFER, null);
         return buffer;
+    }
+
+    /**
+     * Updates the vertex buffer.
+     * @param gl
+     * @param buffer
+     * @param data The data.
+     * @param destOffset Offset into destination.
+     * @param srcOffset
+     * @param srcLength
+     */
+    public updateVertexBuffer(
+        gl: WebGL2RenderingContext,
+        buffer: WebGLBuffer,
+        data: Float32Array,
+        destOffset: number = 0,
+        srcOffset: number = 0,
+        srcLength: number = 0) {
+
+        srcLength = srcLength > 0 ? srcLength : data.length;
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferSubData(gl.ARRAY_BUFFER, destOffset, data, srcOffset, srcLength );
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
     }
 }

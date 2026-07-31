@@ -1,11 +1,7 @@
-import type {IShaderModule} from "../../core/shader/shader-module-interface";
-import type {WebGlGraphicsDevice} from "../webgl-graphics-device";
+import type {WebGlGraphicsDevice} from "../WebGlGraphicsDevice.ts";
 import {WebGlUtilities} from "../utilities/WebGlUtilities.ts";
-import {RenderingBackend} from "../../common/rendering-backend.ts";
-import {ShaderStage} from "../../core/rendering/enums.ts";
-import type {IFramework} from "ris-framework-api";
-import {ShaderLoader} from "../../core/shader/shader-loader.ts";
-import {ShaderContent} from "../../content/ShaderContent.ts";
+import {type IFramework, type IShaderModule, ShaderStage} from "ris-framework-api";
+import {ShaderModuleContent} from "../../content/ShaderModuleContent.ts";
 
 interface WebGlInternalShader {
     vertex: string;
@@ -16,13 +12,12 @@ interface WebGlInternalShader {
 /**
  * The WebGL shader module.
  */
-class WebGlShaderModule implements IShaderModule {
+export class WebGlShaderModule implements IShaderModule {
 
     private readonly _framework: IFramework;
     private readonly _graphicsDevice: WebGlGraphicsDevice;
     private readonly _gl: WebGL2RenderingContext;
     private _program?: WebGLProgram;
-    private readonly _shaderLoader = new ShaderLoader();
 
     /**
      * The constructor of the WebGL shader module.
@@ -33,54 +28,62 @@ class WebGlShaderModule implements IShaderModule {
         this._framework = framework;
         this._graphicsDevice = framework.renderer.graphicsDevice as WebGlGraphicsDevice;
         this._gl = this._graphicsDevice.gl;
-        this.webGlProgramPromise = new Promise<WebGLProgram>(async (resolve, reject) => {
-            try {
-                this._program = await this._loadShaders(shaderFilePath);
-                resolve(this._program);
-            } catch (error) {
-                reject(error);
-            }
-        });
+        this._program = this._loadShaders(shaderFilePath);
+
     }
+
+    /** @inheritDoc */
+    public stages: ShaderStage[] = [];
+    
+    /** @inheritDoc */
+    public nativeHandle?: any;
 
     /**
      * Tries to framework shader.
      * These shaders are part of framework.
      * @param id The id of internal shader.
      */
-    private _tryResolveFrameworkShader(id: string): WebGlInternalShader| null {
-        if(ShaderContent[id]) {
+    private _tryResolveFrameworkShader(id: string): WebGlInternalShader | null {
+        if (ShaderModuleContent[id]) {
+            
+            this.stages = [ShaderStage.VERTEX, ShaderStage.FRAGMENT];
+            
             return {
-                vertex: ShaderContent[id]["vertex"],
-                fragment: ShaderContent[id]["fragment"],
-                reflection: ShaderContent[id]["reflection"],
+                vertex: ShaderModuleContent[id]["vertex"],
+                fragment: ShaderModuleContent[id]["fragment"],
+                reflection: ShaderModuleContent[id]["reflection"],
             }
         }
 
-        return  null;
+        return null;
     }
 
     /**
-     * The promise that resolves to the WebGL program created from the shader module.
-     *  This is used to ensure that the shader module is fully loaded and compiled before it is used in the render pipeline.
+     * The program of this shader module
      */
-    public webGlProgramPromise: Promise<WebGLProgram> | null = null;
+    public get program(): WebGLProgram | null | undefined {
+        return this._program;
+    }
 
-    private async _loadShaders(shaderFilePath: string): Promise<WebGLProgram> {
+    private _loadShaders(shaderFilePath: string): WebGLProgram {
 
         const internalShader = this._tryResolveFrameworkShader(shaderFilePath);
 
         let vertexShaderSource = "";
         let fragmentShaderSource = "";
-        if(internalShader) {
+        if (internalShader) {
             vertexShaderSource = internalShader.vertex;
             fragmentShaderSource = internalShader.fragment;
-        }
-        else {
+        } else {
+
+            throw new Error("Not implemented");
+
+            // TODO: THIS API SUCKS, WE NEED BETTER WAY TO LOAD SHADER
+
             // TODO: this is not complete we need to determine how it will be loaded from files.
             // Most likely content pipeline will be source of truth
-            vertexShaderSource = await this._shaderLoader.load(shaderFilePath, RenderingBackend.WEB_GL, [ShaderStage.VERTEX]);
-            fragmentShaderSource = await this._shaderLoader.load(shaderFilePath, RenderingBackend.WEB_GL, [ShaderStage.FRAGMENT]);
+            // vertexShaderSource = await this._shaderLoader.load(shaderFilePath, RenderingBackend.WEB_GL, [ShaderStage.VERTEX]);
+            // fragmentShaderSource = await this._shaderLoader.load(shaderFilePath, RenderingBackend.WEB_GL, [ShaderStage.FRAGMENT]);
         }
 
 
@@ -102,7 +105,6 @@ class WebGlShaderModule implements IShaderModule {
         if (this._program) {
             this._gl.deleteProgram(this._program);
             this._program = undefined;
-            this.webGlProgramPromise = null;
         }
     }
 }

@@ -1,7 +1,7 @@
 import type { BlendStateDescriptor } from "../../core/rendering/blending/blend-state-descriptor";
 import type { IBlendState } from "../../core/rendering/blending/blend-state-interface";
 import { WebGlConverter } from "../utilities/WebGlConverter.ts";
-import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
+import type { WebGlGraphicsDevice } from "../WebGlGraphicsDevice.ts";
 
 export class WebGlBlendState implements IBlendState {
 

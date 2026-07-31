@@ -1,16 +1,20 @@
-import type { TempIFramework } from "../../core/framework-interface";
 import type { vec2 } from "gl-matrix";
-import { asWebGLGraphicsDevice } from '../cast/cast';
 import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
 import { GenericImageData, type IImageData } from "../../core/data/image-data";
 import { ATexture2D } from "../../core/rendering/texture/texture";
-import type { TextureViewDescriptor, ITextureView } from "../../core/rendering/texture/texture-view/texture-view";
-import {State, TextureUsage} from "ris-framework-api";
-import {TextureFormat} from "../../TextureFormat.ts";
+import {
+    type IFramework,
+    State,
+    TextureFormat,
+    TextureUsage,
+    type TextureViewDescriptor
+} from "ris-framework-api";
+import type {WebGlGraphicsDevice} from "../WebGlGraphicsDevice.ts";
+import type {ITextureView} from "../../../../ris-framework-api/dist/ris-framework/rendering/texture/ITextureView";
 
 export class WebGlTexture2D extends ATexture2D {
 
-
+    private readonly _graphicsDevice: WebGlGraphicsDevice;
     private readonly _gl: WebGL2RenderingContext;
     private _texture: WebGLTexture | null = null;
 
@@ -25,7 +29,7 @@ export class WebGlTexture2D extends ATexture2D {
      * @param label
      */
     constructor(
-        private readonly _framework: TempIFramework,
+        private readonly _framework: IFramework,
         size: vec2,
         private readonly _data: IImageData | null,
         textureUsage: TextureUsage,
@@ -36,7 +40,8 @@ export class WebGlTexture2D extends ATexture2D {
         super(size[0], size[1], textureUsage, textureFormat,
             label, useMipMaps);
 
-        this._gl = asWebGLGraphicsDevice(this._framework.renderer.graphicsDevice).gl!;
+        this._graphicsDevice = this._framework.renderer.graphicsDevice as WebGlGraphicsDevice;
+        this._gl = this._graphicsDevice.gl!;
     }
 
     /**
@@ -62,7 +67,7 @@ export class WebGlTexture2D extends ATexture2D {
             this._gl,
             this.width, this.height,
             data,
-            this._textureFormat,
+            this.textureFormat,
             this._useMipMaps,
             this._anisotropy,
             this._label
@@ -95,12 +100,12 @@ export class WebGlTexture2D extends ATexture2D {
      * @param framework The framework instance.
      * @returns The default 1x1 white texture.
      */
-    public static getOrCreateDefault(framework: TempIFramework): WebGlTexture2D {
+    public static getOrCreateDefault(framework: IFramework): WebGlTexture2D {
         if (this._defaultFilled === null || this._defaultFilled.state === State.DISPOSED) {
             
             const imageData = new GenericImageData(new Uint8Array([255, 255, 255, 255]), 1, 1, 4);
                         
-            this._defaultFilled = new WebGlTexture2D(framework, [1, 1], imageData, TextureUsage.TEXTUREBINDING, TextureFormat.RGBA_8_UNORM, false, "DefaultFilledTexture");
+            this._defaultFilled = new WebGlTexture2D(framework, [1, 1], imageData, TextureUsage.TEXTURE_BINDING, TextureFormat.RGBA_8_UNORM, false, "DefaultFilledTexture");
             this._defaultFilled.initialize();
         }
 

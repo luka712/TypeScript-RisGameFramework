@@ -1,22 +1,16 @@
-import { inject, injectable } from "tsyringe";
-import { IFrameworkSymbol } from "../../core/dependency-injection/register-services-interface";
-import type { TempIFramework } from "../../core/framework-interface";
-import { TextureFormat, TextureUsage } from "../../common/texture-enums";
-import { Color } from "ris-framework-api"
+import {Color, type IFramework, type ITexture2D, TextureFormat, TextureUsage} from "ris-framework-api"
 import { WebGlTexture2D } from "./WebGlTexture2D.ts";
 import { vec2 } from "gl-matrix";
 import { GenericImageData } from "../../core/data/image-data";
 import type { ITextureFactory } from "../../core/rendering/texture/texture-factory";
-import type { ITexture2D } from "../../core/rendering/texture/texture";
 
-@injectable()
-export class WebGLTextureFactory implements ITextureFactory {
+export class WebGlTextureFactory implements ITextureFactory {
 
     /**
      * The constructor for the WebGLTextureFactory class.
      * @param _framework The framework instance.
      */
-    constructor(@inject(IFrameworkSymbol) private readonly _framework: TempIFramework) {
+    constructor( private readonly _framework: IFramework) {
     }
 
     /** @inheritdoc */

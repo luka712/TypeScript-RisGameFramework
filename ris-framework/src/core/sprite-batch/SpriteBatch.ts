@@ -1,148 +1,111 @@
-import {vec2} from "gl-matrix";
-import type { SpriteBatchDrawable } from "./SpriteBatchDrawable";
-import type {IFramework, ITexture2D, ISpriteBatch} from "ris-framework-api";
+import {type mat4, vec2, vec3} from "gl-matrix";
+import {SpriteBatchDrawable} from "./SpriteBatchDrawable";
+import {
+    type IFramework,
+    type ITexture2D,
+    type ISpriteBatch,
+    type IOrthographicCamera,
+    type IUniformBuffer,
+    Color, Rect
+} from "ris-framework-api";
 
 /**
  * The implementation of sprite batch.
  */
-export class SpriteBatch implements ISpriteBatch
-{
-     const MAX_BATCH_SIZE = 1000;
-     const ZERO_VECTOR = vec2.fromValues(0, 0);
-     const CENTER_VECTOR = vec2.fromValues(0.5, 0.5);
+export class SpriteBatch implements ISpriteBatch {
+    static MAX_BATCH_SIZE = 1000;
+    static ZERO_VECTOR = vec2.fromValues(0, 0);
+    static CENTER_VECTOR = vec2.fromValues(0.5, 0.5);
 
-private readonly _framework : IFramework;
-private readonly  _spriteBatchDrawables : { ITexture2D : SpriteBatchDrawable } = {};
-private  _currentTexture?: ITexture2D;
-private _currentSpriteBatchDrawable: SpriteBatchDrawable = null!;
-private _defaultCamera: OrthographicCamera = null!;
+    private readonly _tempPosition = vec3.create();
+    private readonly _tempSize = vec2.create();
+
+    private readonly _spriteBatchDrawables: Map<ITexture2D, SpriteBatchDrawable> = new Map();
+    private _currentTexture: ITexture2D | null = null;
+    private _currentSpriteBatchDrawable: SpriteBatchDrawable = null!;
+    private _defaultCamera: IOrthographicCamera = null!;
 
     // It is set on Begin and reset back to the default camera on End.
-private IUniformBuffer _currentProjectionViewBuffer = null!;
+    private _currentProjectionViewBuffer: IUniformBuffer = null!;
 
-    /// <summary>
-    /// The default texture to use for "texture less" draw calls.
-    /// It is white so that color multiplication works correctly.
-    /// </summary>
-private ITexture2D _defaultWhiteTexture = null!;
+    /**
+     * The default texture to use for "texture less" draw calls.
+     * It is white so that color multiplication works correctly.
+     */
+    private _defaultWhiteTexture: ITexture2D = null!;
 
-    /// <summary>
-    /// The constructor.
-    /// </summary>
-    /// <param name="tempFramework">The <see cref="ITempFramework"/>.</param>
-public SpriteBatch(ITempFramework tempFramework)
-    {
-        _tempFramework = tempFramework;
+    /**
+     * The constructor.
+     * @param _framework The framework.
+     */
+    public constructor(private readonly _framework: IFramework) {
     }
 
-private void CheckIfNewDrawableShouldBeCreated(ITexture2D texture)
-    {
+    private _checkIfNewDrawableShouldBeCreated(texture: ITexture2D): void {
         // If there was a texture change, we need to end the current sprite batch drawable and start a new one.
-        if (texture != _currentTexture)
-        {
+        if (texture != this._currentTexture) {
             // End will draw. This draws with a previously set sprite batch drawable.
-            End();
+            this.end();
+
+            this._currentTexture = texture;
 
             // Create a new sprite batch drawable if needed.
-            if (!_spriteBatchDrawables.TryGetValue(texture, out SpriteBatchDrawable? spriteBatchDrawable))
-            {
-                spriteBatchDrawable = new SpriteBatchDrawable(_tempFramework, texture, _currentProjectionViewBuffer, MAX_BATCH_SIZE);
-                spriteBatchDrawable.Initialize();
-                _spriteBatchDrawables.Add(texture, spriteBatchDrawable);
+            let spriteBatchDrawable = this._spriteBatchDrawables.get(texture);
+
+            if (!spriteBatchDrawable) {
+                spriteBatchDrawable = new SpriteBatchDrawable(
+                    this._framework, texture,
+                    this._currentProjectionViewBuffer, SpriteBatch.MAX_BATCH_SIZE);
+                spriteBatchDrawable.initialize();
+                this._spriteBatchDrawables.set(texture, spriteBatchDrawable);
             }
 
             // Assign current.
-            _currentSpriteBatchDrawable = spriteBatchDrawable;
+            this._currentSpriteBatchDrawable = spriteBatchDrawable;
         }
     }
 
-
-    /// <summary>
-    /// Initialize the sprite batch.
-    /// </summary>
-public void Initialize()
-    {
-        _defaultCamera = _tempFramework.CameraFactory.CreateDefaultOrthographicCamera();
-        _currentProjectionViewBuffer = _defaultCamera.ProjectionViewBuffer;
-        _defaultWhiteTexture = _tempFramework.TextureFactory.CreateEmpty(1, 1, Color.White);
+    /** @inheritDoc */
+    public initialize() {
+        this._defaultCamera = this._framework.cameraFactory.createDefaultOrthographicCamera();
+        this._currentProjectionViewBuffer = this._defaultCamera.projectionViewBuffer;
+        this._defaultWhiteTexture = this._framework.textureFactory.createEmpty(1, 1, Color.white());
     }
+    
+    /** @inheritDoc */
+    public begin(projectionViewMatrix?: mat4) {
+        this.end();
 
-    /// <inheritdoc />
-public void Begin()
-    {
-        Begin(_currentProjectionViewBuffer);
-    }
-
-    /// <inheritdoc />
-public void Begin(IUniformBuffer projectionViewBuffer)
-    {
-        if(_currentProjectionViewBuffer != projectionViewBuffer)
-        {
-            End();
-            _currentProjectionViewBuffer = projectionViewBuffer;
+        if (projectionViewMatrix) {
+            this._currentProjectionViewBuffer.update(projectionViewMatrix);
         }
 
-        foreach (SpriteBatchDrawable spriteBatchDrawable in _spriteBatchDrawables.Values)
-        {
-            spriteBatchDrawable.Reset();
-
-            // Set the buffer again if it is different.
-            if (spriteBatchDrawable.ProjectionViewBuffer != projectionViewBuffer)
-            {
-                spriteBatchDrawable.ProjectionViewBuffer = projectionViewBuffer;
-            }
+        for (let kvp of this._spriteBatchDrawables) {
+            kvp[1].reset();
         }
 
         // Clear current texture.
-        _currentTexture = null;
+        this._currentTexture = null;
     }
 
-    /// <inheritdoc />
-public void Begin(Matrix4X4<float> projectionViewMatrix)
-    {
-        End();
-        _currentProjectionViewBuffer.Update(projectionViewMatrix);
 
-        foreach (SpriteBatchDrawable spriteBatchDrawable in _spriteBatchDrawables.Values)
-        {
-            spriteBatchDrawable.Reset();
-        }
+    /** @inheritDoc */
 
-        // Clear current texture.
-        _currentTexture = null;
-    }
+    public drawRect(drawRect: Rect, color: Color, __: number = 0, _: vec2 | undefined = undefined) {
+        this._checkIfNewDrawableShouldBeCreated(this._defaultWhiteTexture);
 
-    /// <inheritdoc />
-    // public void Draw(ITexture2D texture, Vector2 position, Vector2D size)
-    //     => Draw(texture, new Rect(0, 0, texture.Width, texture.Height), position, size);
+        this._tempPosition[0] = drawRect.x;
+        this._tempPosition[1] = drawRect.y;
+        this._tempPosition[2] = 0;
+        this._tempSize[0] = drawRect.width;
+        this._tempSize[1] = drawRect.height;
 
-    /// <inheritdoc />
-public void Draw(ITexture2D texture, Rect drawRect, Rect sourceRect, Color color)
-    {
-        CheckIfNewDrawableShouldBeCreated(texture);
-
-        // Safe to assign current texture.
-        _currentTexture = texture;
-
-        float u0 = (float)sourceRect.X / texture.Width;
-        float v0 = (float)sourceRect.Y / texture.Height;
-        float u1 = (float)(sourceRect.X + sourceRect.Width) / texture.Width;
-        float v1 = (float)(sourceRect.Y + sourceRect.Height) / texture.Height;
-
-        _currentSpriteBatchDrawable.WriteSprite(
-            new Vector3D<float>(drawRect.X, drawRect.Y, 0),
-            new Vector2D<float>(drawRect.Width, drawRect.Height),
-            color,
-            u0, v0, u1, v1
+        this._currentSpriteBatchDrawable.writeSprite(
+            this._tempPosition, this._tempSize, color
         );
     }
 
-    /// <inheritdoc />
-public void Draw(ITexture2D texture, Rect<float> drawRect, Rect<float> sourceRect, Color color, float rotation)
-    {
-        Draw(texture, drawRect, sourceRect, color, ZeroVector, rotation, CenterVector, 0);
-    }
-
+    /*
     /// <inheritdoc />
 public void Draw(ITexture2D texture, Rect<float>drawRect, Rect<float>sourceRect, Color color,
 Vector2D<float> origin,
@@ -342,24 +305,20 @@ Vector2D<float> scale)
             nextCharX += spriteFontCharacter.Advance;
         }
     }
+    */
 
-    /// <inheritdoc />
-public void End()
-    {
-        if (_currentTexture != null)
-        {
-            _currentSpriteBatchDrawable.Draw();
+
+    /** @inheritDoc */
+    public end(): void {
+        if (this._currentTexture != null) {
+            this._currentSpriteBatchDrawable.draw();
         }
     }
 
-    /// <summary>
-    /// Called on end of frame.
-    /// </summary>
-public void FrameEnd()
-    {
-        foreach (SpriteBatchDrawable drawable in _spriteBatchDrawables.Values)
-        {
-            drawable.FrameEnd();
+    /** @inheritDoc */
+    public frameEnd(): void {
+        for (let drawable of this._spriteBatchDrawables) {
+            drawable[1].frameEnd();
         }
     }
 }

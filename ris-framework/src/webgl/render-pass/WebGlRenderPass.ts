@@ -1,11 +1,10 @@
-import { TextureFormat } from '../../common/texture-enums';
 import { LoadAction, StoreAction } from "../../core/rendering/enums";
 import type { RenderPassColorAttachment, RenderPassDepthStencilAttachment, RenderPassDescriptor } from "../../core/rendering/render-pass/render-pass-descriptor";
 import type { IRenderPass } from "../../core/rendering/render-pass/render-pass-interface";
 import { asWebGLTexture2D } from "../cast/cast";
 import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
-import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
-import { Color } from "ris-framework-api"
+import type { WebGlGraphicsDevice } from "../WebGlGraphicsDevice.ts";
+import {Color, TextureFormat} from "ris-framework-api"
 
 /**
  * The WeGL implementation of the IRenderPass interface. 

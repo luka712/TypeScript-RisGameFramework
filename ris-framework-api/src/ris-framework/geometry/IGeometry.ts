@@ -44,7 +44,7 @@ export interface IGeometry {
     /**
      * The normals of a vertex.
      */
-    readonly normals: number[];
+    readonly normals?: number[];
 
     /**
      * The vertex format of normal property.

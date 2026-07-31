@@ -1,21 +1,19 @@
-import { TextureFormat, TextureUsage } from "../../common/texture-enums";
-import { Color } from "ris-framework-api";
-import type { TempIGraphicsDevice } from "../rendering/graphics-device-interface";
-import type { ITempRenderer } from "./renderer-interface";
-import { SwapChainDescriptor } from "../rendering/swap-chain/swap-chain-descriptor";
-import type { ISwapChain } from "../rendering/swap-chain/swap-chain-interface";
-import type { IWindowManager } from "../window/window-manager-interface";
-import type { TempIFramework } from "../framework-interface";
-import type { IRenderPass } from "../rendering/render-pass/render-pass-interface";
-import type { IMainRenderTargetRenderPipeline } from "../render-pipelines/main-render-target-render-pipeline-interface";
-import { RenderPassColorAttachment, RenderPassDepthStencilAttachment, RenderPassDescriptor } from '../rendering/render-pass/render-pass-descriptor';
-import type { ITexture2D } from "../rendering/texture/texture";
+import type { TempIGraphicsDevice } from "./graphics-device-interface.ts";
+import type { ITempRenderer } from "../renderer/renderer-interface.ts";
+import { SwapChainDescriptor } from "./swap-chain/swap-chain-descriptor.ts";
+import type { ISwapChain } from "./swap-chain/swap-chain-interface.ts";
+import type { IWindowManager } from "../window/window-manager-interface.ts";
+import type { IRenderPass } from "./render-pass/render-pass-interface.ts";
+import type { IMainRenderTargetRenderPipeline } from "../render-pipelines/main-render-target-render-pipeline-interface.ts";
+import { RenderPassColorAttachment, RenderPassDepthStencilAttachment, RenderPassDescriptor } from './render-pass/render-pass-descriptor.ts';
 import type { vec2 } from "gl-matrix";
-import type { RenderingLimits } from "./rendering-limits";
+import type { RenderingLimits } from "../renderer/rendering-limits.ts";
+import {type IFramework, type ITexture2D, TextureUsage} from "ris-framework-api";
+import {TextureFormat, Color} from "ris-framework-api";
 
-export abstract class ARendererer implements ITempRenderer {
+export abstract class ARenderer implements ITempRenderer {
 
-    protected readonly _framework: TempIFramework;
+    protected readonly _framework: IFramework;
     private readonly _windowManager: IWindowManager;
     private _graphicsDevice: TempIGraphicsDevice = null!;
     private _preferredTextureFormat: TextureFormat = TextureFormat.BGRA_8_UNORM;
@@ -88,7 +86,7 @@ export abstract class ARendererer implements ITempRenderer {
      * The constrcutor.
      * @param framework The framework. 
      */
-    constructor(framework: TempIFramework) {
+    constructor(framework: IFramework) {
         this._framework = framework;
         this._windowManager = framework.windowManager;
         this._currentBackBufferSize[0] = this._windowManager.canvas.width;

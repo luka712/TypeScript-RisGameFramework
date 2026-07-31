@@ -1,10 +1,10 @@
-import { TextureFormat } from "../../common/texture-enums";
 import { WebGlConverter } from "./WebGlConverter.ts";
+import {TextureFormat} from "ris-framework-api";
 
 /**
  * The utilities for working with WebGL textures.
  */
-export class WebGLTextureUtilities {
+export class WebGlTextureUtilities {
 
     /**
      * Creates a 2D texture.

@@ -1,5 +1,3 @@
-import type { TempIFramework } from '../../core/framework-interface';
-import type { IRenderPipeline } from '../../core/render-pipelines/render-pipeline-interface';
 import type { IBlendState } from '../../core/rendering/blending/blend-state-interface';
 import type { VertexBufferLayout } from '../../core/rendering/vertex-buffer-layout';
 import type { WebGlBlendState } from '../blending/webgl-blend-state';
@@ -7,6 +5,9 @@ import { asWebGLGraphicsDevice } from '../cast/cast';
 import type { WebGlPrimitiveState } from '../primitive/webgl-primitive-state';
 import type { WebGlSampler } from '../sampler/webgl-sampler';
 import { WebGlConverter } from '../utilities/WebGlConverter.ts';
+import type {IFramework, IRenderPipeline} from "ris-framework-api";
+import type {WebGlRenderer} from "../WebGlRenderer.ts";
+import type {WebGlGraphicsDevice} from "../WebGlGraphicsDevice.ts";
 
 /**
  * The base class for WebGL render pipelines. This class provides common functionality for all WebGL render pipelines.
@@ -14,7 +15,7 @@ import { WebGlConverter } from '../utilities/WebGlConverter.ts';
 export abstract class AWebGlRenderPipeline implements IRenderPipeline {
 
     /** The framework instance. */
-    protected readonly _framework: TempIFramework;
+    protected readonly _framework: IFramework;
     protected readonly _gl: WebGL2RenderingContext;
     protected readonly _sampler: WebGlSampler;
     protected readonly _blendState: WebGlBlendState;
@@ -28,9 +29,9 @@ export abstract class AWebGlRenderPipeline implements IRenderPipeline {
      * The constructor.
      * @param framework The framework.
      */
-    public constructor(framework: TempIFramework) {
+    public constructor(framework: IFramework) {
         this._framework = framework;
-        const graphicsDevice = asWebGLGraphicsDevice(framework.renderer.graphicsDevice);
+        const graphicsDevice = framework.renderer.graphicsDevice as WebGlGraphicsDevice;
         this._gl = graphicsDevice.gl;
         this._blendState = graphicsDevice.defaultBlendState as WebGlBlendState;
         this._sampler = graphicsDevice.defaultTextureSampler as WebGlSampler;
@@ -56,7 +57,7 @@ export abstract class AWebGlRenderPipeline implements IRenderPipeline {
      * for creatine the vertex array object.
      * @returns An array of WebGLBuffer objects to be used in the vertex array object.
      */
-    protected abstract _provideBuffers(): WebGLBuffer[];
+    protected abstract _provideBuffers(): WebGLBuffer[] | null | undefined;
 
     /**
      * Creates the vertex array object for the render pipeline.
@@ -65,6 +66,10 @@ export abstract class AWebGlRenderPipeline implements IRenderPipeline {
     protected _createVertexArrayObject(): void {
         this._vertexArrayObject = this._gl.createVertexArray();
         const buffers = this._provideBuffers();
+
+        if(!buffers || buffers.length === 0) {
+            return;
+        }
 
         for (let i = 0; i < this.vertexBufferLayouts.length; i++) {
             const layout = this.vertexBufferLayouts[i];

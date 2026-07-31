@@ -1,20 +1,16 @@
-import type { IUniformBuffer } from "../../../core/buffers/uniform-buffer-interface";
-import type { TempIFramework } from "../../../core/framework-interface";
-import type { ISpriteRenderPipeline } from "../../../core/render-pipelines/sprite-render-pipeline";
-import type { ITexture2D } from "ris-framework-api";
-import { VertexBufferLayout } from "../../../core/rendering/vertex-buffer-layout";
-import type { WebGlUniformBuffer } from "../../buffers/webgl-uniform-buffer";
-import {  asWebGLTexture2D, asWebGLUniformBuffer } from "../../cast/cast";
+import type {IFramework, ISpriteRenderPipeline, ITexture2D, IUniformBuffer, IVertexBuffer} from "ris-framework-api";
+import {VertexBufferLayout} from "../../../core/rendering/vertex-buffer-layout";
+import type {WebGlUniformBuffer} from "../../buffers/WebGlUniformBuffer.ts";
+import {asWebGLTexture2D, asWebGLUniformBuffer} from "../../cast/cast";
 import WebGlShaderModule from "../../shader/WebGlShaderModule.ts";
-import { WebGlTexture2D } from "../../texture/WebGlTexture2D.ts";
-import { WebGlVertexBuffer } from '../../buffers/WebGlVertexBuffer.ts';
-import type { IVertexBuffer } from "../../../core/buffers/vertex-buffer-interface";
-import { AWebGlRenderPipeline } from "../a-webgl-render-pipeline";
-import type { WebGLIndexBuffer } from "../../buffers/webgl-index-buffer";
+import {WebGlTexture2D} from "../../texture/WebGlTexture2D.ts";
+import {WebGlVertexBuffer} from '../../buffers/WebGlVertexBuffer.ts';
+import {AWebGlRenderPipeline} from "../AWebGlRenderPipeline.ts";
+import type {WebGLIndexBuffer} from "../../buffers/webgl-index-buffer";
 import {type IIndexBuffer, IndexBufferType} from "ris-framework-api";
 
 /**
- * The WebGL implementation of the sprite render pipeline. 
+ * The WebGL implementation of the sprite render pipeline.
  */
 export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements ISpriteRenderPipeline {
 
@@ -31,7 +27,7 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
      * @param framework The framework.
      * @param projectionViewBuffer The projection view buffer.
      */
-    constructor(framework: TempIFramework, projectionViewBuffer: IUniformBuffer) {
+    constructor(framework: IFramework, projectionViewBuffer: IUniformBuffer) {
         super(framework);
         this._projectionViewBuffer = asWebGLUniformBuffer(projectionViewBuffer);
     }
@@ -60,14 +56,10 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
     /** @inheritdoc */
     public override initialize(): void {
 
-        this._framework.content.load<WebGlShaderModule>(WebGlShaderModule.name, "sprite").webGlProgramPromise!.then(program => {
-            this._program = program;
-        }).catch(error => {
-            console.error("Failed to load shader module for main render target render pipeline.", error);
-        });
-
+        const module = this._framework.content.loadShaderModule("sprite") as WebGlShaderModule;
+        this._program = module.program!;
         this._createResources();
-        this.vertexBufferLayouts = [VertexBufferLayout.createFloat3Float2Layout()];
+        this.vertexBufferLayouts = [VertexBufferLayout.createFloat3Float4Float2Layout()];
         super.initialize();
     }
 
@@ -75,16 +67,16 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
         {
             this._texture = WebGlTexture2D.getOrCreateDefault(this._framework);
 
-            this._cameraBlockIndex = this._gl.getUniformBlockIndex(this._program, "_MatrixStorage_float4x4_ColMajorstd140");
+            this._cameraBlockIndex = this._gl.getUniformBlockIndex(this._program, "CameraBuffer");
             this._gl.uniformBlockBinding(this._program, this._cameraBlockIndex, WebGlSpriteRenderPipeline.CAMERA_BINDING_POINT);
         }
     }
 
 
     /** @inheritdoc */
-    protected _provideBuffers(): WebGLBuffer[] {
+    protected _provideBuffers(): WebGLBuffer[] | undefined | null {
         if (this._lastVertexBuffer === null) {
-            return this._buffersArray;
+            return null;
         }
 
         this._buffersArray[0] = this._lastVertexBuffer.buffer!;
@@ -102,8 +94,8 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
         const webGlIndexBuffer = indexBuffer as WebGLIndexBuffer;
 
 
-        this._primitiveState.apply(this._gl);
-        this._blendState.apply(this._gl);
+        // this._primitiveState.apply(this._gl);
+        //  this._blendState.apply(this._gl);
 
         // if it was changed, we need to create a new vao.
         if (this._lastVertexBuffer != webGlVertexBuffer) {
@@ -133,7 +125,6 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
         const fromIndices = indicesOffset * indexBuffer.elementByteSize;
 
         this._gl.drawElements(this._primitiveState.glPrimitiveType, toIndices, type, fromIndices);
-
     }
 
 }

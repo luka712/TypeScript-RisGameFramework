@@ -11,18 +11,13 @@ import type { IBlendState } from "../core/rendering/blending/blend-state-interfa
 import { WebGlBlendState } from "./blending/webgl-blend-state";
 import type { IPrimitiveState } from "../core/rendering/primitive/primitve-interface";
 import { WebGlPrimitiveState } from "./primitive/webgl-primitive-state";
-import { PrimitiveStateDescriptor } from "../core/rendering/primitive/primitive-state-descriptor";
+import { PrimitiveStateDescriptor } from "../core/rendering/primitive/PrimitiveStateDescriptor.ts";
 import  { type SwapChainDescriptor } from "../core/rendering/swap-chain/swap-chain-descriptor";
 import type { ISwapChain } from "../core/rendering/swap-chain/swap-chain-interface";
 import {WebGLGraphicsDeviceFeatures} from "./WebGLGraphicsDeviceFeatures.ts";
-import {WebGLSwapChain} from "./swap-chain/webgl-swap-chain.ts";
+import {WebGlSwapChain} from "./swap-chain/WebGlSwapChain.ts";
 
 export class WebGlGraphicsDevice extends AGraphicsDevice {
-
-    // @ts-ignore
-    public createSwapChain(canvas: HTMLCanvasElement, swapChainDescriptor: SwapChainDescriptor): ISwapChain {
-       return new WebGLSwapChain(canvas);
-    }
 
 
     private readonly _windowManager: IWindowManager;
@@ -103,9 +98,9 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
     }
 
     /** @inheritdoc */
-    //public createSwapChain(canvas: HTMLCanvasElement, swapChainDescriptor: SwapChainDescriptor): ISwapChain {
-    //    return new WebGLSwapChain(canvas);
-   // }
+    public createSwapChain(canvas: HTMLCanvasElement, swapChainDescriptor: SwapChainDescriptor): ISwapChain {
+        return new WebGlSwapChain(canvas);
+    }
 
     /** @inheritdoc */
     public createSampler(descriptor?: SamplerDescriptor): ISampler {
@@ -124,9 +119,7 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
 
     /** @inheritdoc */
        public createPrimitiveState(descriptor?: PrimitiveStateDescriptor): IPrimitiveState {
-        descriptor = descriptor || new PrimitiveStateDescriptor();
+        descriptor = descriptor ?? new PrimitiveStateDescriptor();
         return new WebGlPrimitiveState(this._gl, descriptor);
     }
-
-
 }

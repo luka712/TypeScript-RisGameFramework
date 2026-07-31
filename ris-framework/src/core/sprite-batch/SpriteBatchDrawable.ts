@@ -13,7 +13,7 @@ export class SpriteBatchDrawable {
     private _drawingMesh: SpriteBatchMesh = null!;
     private _renderPipeline: ISpriteRenderPipeline = null!;
 
-    private _needsResize = true;
+    private _needsResize = false;
 
     private _fromInstance = 0;
     private _toInstance = 0;

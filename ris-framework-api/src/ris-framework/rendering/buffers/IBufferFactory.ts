@@ -19,12 +19,12 @@ export interface IBufferFactory {
     /**
      * Creates a new vertex buffer and prefills it with data.
      * @param data - The data to prefill the buffer with.
-     * @param vertexCount - The number of vertices.
+     * @param vertexStride - The stride of single vertex in bytes.
      * @param usage - The buffer usage.
      * @param label - The buffer label.
      * @returns The .
      */
-    createVertexBuffer(data: number[], vertexCount: number, usage: BufferUsage, label?: string): IVertexBuffer;
+    createVertexBuffer(data: number[], vertexStride: number, usage: BufferUsage, label?: string): IVertexBuffer;
 
     /**
      * Creates a new uniform buffer.
@@ -33,6 +33,6 @@ export interface IBufferFactory {
      * @param label - The optional label of the buffer.
      * @returns The uniform buffer.
      */
-    createUniformBuffer(data: number[] | number, usage: BufferUsage, label?: string): IUniformBuffer;
+    createUniformBuffer(data: number[], usage: BufferUsage, label?: string): IUniformBuffer;
 
 }

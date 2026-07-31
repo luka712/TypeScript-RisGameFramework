@@ -1,5 +1,4 @@
-import type { IDisposable } from "../../common/disposable";
-import { TextureFormat } from "../../common/texture-enums";
+import type {IDisposable, TextureFormat} from "ris-framework-api";
 
 export interface IImageData extends IDisposable {
 

@@ -5,10 +5,10 @@ import type { IBlendState } from "../../core/rendering/blending/blend-state-inte
 import type { ITexture2D } from "../../core/rendering/texture/texture";
 import { WebGlBlendState } from "../blending/webgl-blend-state";
 import { WebGLIndexBuffer } from "../buffers/webgl-index-buffer";
-import { WebGlUniformBuffer } from "../buffers/webgl-uniform-buffer";
+import { WebGlUniformBuffer } from "../buffers/WebGlUniformBuffer.ts";
 import { WebGlVertexBuffer } from "../buffers/WebGlVertexBuffer.ts";
 import { WebGlTexture2D } from "../texture/WebGlTexture2D.ts";
-import { WebGlGraphicsDevice } from "../webgl-graphics-device";
+import { WebGlGraphicsDevice } from "../WebGlGraphicsDevice.ts";
 import { WebGlRenderer } from "../WebGlRenderer.ts";
 import type {IIndexBuffer} from "../../buffers/IIndexBuffer.ts";
 

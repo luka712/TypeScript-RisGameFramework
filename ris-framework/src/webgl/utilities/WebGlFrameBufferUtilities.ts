@@ -1,4 +1,4 @@
-import { TextureFormat } from "../../common/texture-enums";
+import {TextureFormat} from "ris-framework-api";
 
 
 /**
@@ -6,7 +6,7 @@ import { TextureFormat } from "../../common/texture-enums";
  * The WebGLFrameBufferUtilities class includes methods for creating framebuffers with specific configurations, such as attaching textures as color and depth attachments.
  * These utilities simplify the process of setting up framebuffers for rendering to textures, which is a common technique in graphics programming for effects like render-to-texture, post-processing, and off-screen rendering.
  */
-export class WebGLFrameBufferUtilities {
+export class WebGlFrameBufferUtilities {
 
 
     /**

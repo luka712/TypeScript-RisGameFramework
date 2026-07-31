@@ -1,17 +1,18 @@
 import { vec2 } from "gl-matrix"
 import { BaseGeometry } from "./BaseGeometry.ts";
-import type {IGeometryBuilder} from "./IGeometryBuilder.ts";
-import type {IGeometry} from "./IGeometry.ts";
+import type {IGeometry, IGeometryBuilder} from "../../../ris-framework-api/src";
 
 /**
  * The GeometryBuilder class provides methods for creating various types of geometries, such as quads, with specified parameters like scale and winding order.
  */
 export class GeometryBuilder implements IGeometryBuilder {
 
-    /** @inheritdoc */
-    public quadGeometry(scale: vec2 | null, counterClockwise: boolean = true): IGeometry {
+    static DEFAULT_SCALE = vec2.fromValues(1,1);
 
-        scale = scale ?? vec2.fromValues(1, 1);
+    /** @inheritdoc */
+    public quadGeometry(scale?: vec2 | null, counterClockwise: boolean = true): IGeometry {
+
+        scale = scale ?? GeometryBuilder.DEFAULT_SCALE;
 
         const geometry = new BaseGeometry();
         geometry.vertexCount = 4;

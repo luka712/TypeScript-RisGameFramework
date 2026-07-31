@@ -3,7 +3,7 @@ import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from "../../co
 import { SamplerDescriptor } from "../../core/rendering/sampler/sampler-descriptor";
 import type { ISampler } from "../../core/rendering/sampler/sampler-interface";
 import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
-import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
+import type { WebGlGraphicsDevice } from "../WebGlGraphicsDevice.ts";
 
 /**
  * The WebGL implementation of the ISampler interface.

@@ -1,4 +1,4 @@
-import { TextureSamplerFilteringPreset } from "../core/rendering/enums";
+import { TextureSamplerFilteringPreset } from "./rendering/enums.ts";
 
 /**
  * The options for configuring the Framework.

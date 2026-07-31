@@ -1,13 +1,13 @@
 import type { TempIFramework } from "../core/framework-interface";
 import { type RenderConfiguration } from "../core/renderer/renderer-interface";
-import { ARendererer } from "../core/renderer/a-rendererer";
+import { ARenderer } from "../core/rendering/ARenderer.ts";
 import type { TempIGraphicsDevice } from "../core/rendering/graphics-device-interface";
-import { WebGlGraphicsDevice } from "./webgl-graphics-device";
+import { WebGlGraphicsDevice } from "./WebGlGraphicsDevice.ts";
 
 /**
  * The WebGL implementation of the IRenderer interface.
  */
-export class WebGlRenderer extends ARendererer {
+export class WebGlRenderer extends ARenderer {
 
   private _renderConfiguration: RenderConfiguration;
 

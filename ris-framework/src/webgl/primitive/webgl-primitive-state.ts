@@ -1,5 +1,5 @@
 import { type PrimitiveTopology, CullMode, type FrontFace } from "../../core/rendering/primitive/enums";
-import type { PrimitiveStateDescriptor } from "../../core/rendering/primitive/primitive-state-descriptor";
+import type { PrimitiveStateDescriptor } from "../../core/rendering/primitive/PrimitiveStateDescriptor.ts";
 import type { IPrimitiveState } from "../../core/rendering/primitive/primitve-interface";
 import { WebGlConverter } from "../utilities/WebGlConverter.ts";
 

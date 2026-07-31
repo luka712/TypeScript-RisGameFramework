@@ -20,5 +20,4 @@ export interface IShaderModule extends IContent {
       *In the case of WebGPU, it is the shader module.
      */
     readonly nativeHandle?: any;
-
 }

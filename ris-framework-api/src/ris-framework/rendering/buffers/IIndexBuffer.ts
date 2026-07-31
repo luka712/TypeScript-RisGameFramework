@@ -1,11 +1,10 @@
+import {IBuffer} from "./IBuffer";
 import {IndexBufferType} from "./IndexBufferType";
-import {BufferUsage} from "./BufferUsage";
-import {IDisposable} from "../../core/IDisposable";
 
 /**
  * The index buffer.
  */
-export interface IIndexBuffer extends IDisposable {
+export interface IIndexBuffer extends IBuffer {
 
     /**
      * The type of buffer.
@@ -13,20 +12,10 @@ export interface IIndexBuffer extends IDisposable {
     readonly type: IndexBufferType;
 
     /**
-     * The usage of the buffer.
-     */
-    readonly usage: BufferUsage;
-
-    /**
      * Size of the element.
-     Usually 2 or 4 bytes depending on the Type property.
+     *     Usually 2 or 4 bytes depending on the Type property.
      */
     readonly elementByteSize: number;
-
-    /**
-     * The label.
-     */
-    readonly label: string;
 
     /**
      * The count of indices.
@@ -34,13 +23,15 @@ export interface IIndexBuffer extends IDisposable {
     readonly indicesCount: number;
 
     /**
-     * Gets the byte size.
+     * Initialize the index buffer.
+     * @param data - The data to initialize with.
      */
-    readonly byteSize: number;
+    initialize(data: number[]): void;
 
     /**
      * Initialize the index buffer.
      * @param data - The data to initialize with.
      */
     initialize(data: number[]): void;
+
 }

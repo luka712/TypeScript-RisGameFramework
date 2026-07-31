@@ -10,21 +10,26 @@ import {IUniformBuffer} from "../rendering/buffers/IUniformBuffer";
 export interface ISpriteBatch {
 
     /**
-     * Begins the sprite batch.
+     * Initializes the sprite batch.
+     * This method is called internally by the framework.
      */
-    begin(): void;
-
-    /**
-     * Begins the sprite batch.
-     * The projection view buffer to use for rendering between Begin and End.
-     */
-    begin(projectionViewBuffer: IUniformBuffer): void;
+    initialize(): void;
 
     /**
      * Begins the sprite batch.
      * @param projectionViewMatrix - The projection view matrix to use for rendering between Begin and End.
      */
-    begin(projectionViewMatrix: mat4): void;
+    begin(projectionViewMatrix?: mat4): void;
+
+    /**
+     * Draws the un-textured rectangle.
+     * @param drawRect The rectangle.
+     * @param color The color.
+     * @param rotation The rotation of rectangle.
+     * @param rotationOrigin The rotation origin.
+     */
+    drawRect( drawRect: Rect, color: Color,  rotation? :number, rotationOrigin? : vec2): void;
+
 
     /**
      * Draws a sprite.
@@ -32,7 +37,7 @@ export interface ISpriteBatch {
      * @param position - The position of a sprite.
      * @param size - The size of a sprite.
      */
-    draw(texture: ITexture2D, position: vec2, size: vec2): void;
+    // draw(texture: ITexture2D, position: vec2, size: vec2): void;
 
     /**
      * Draws a sprite.
@@ -40,7 +45,7 @@ export interface ISpriteBatch {
      * @param drawRect - The draw rectangle.
      * @param color - The color.
      */
-    draw(texture: ITexture2D, drawRect: Rect, color: Color): void;
+   // draw(texture: ITexture2D, drawRect: Rect, color: Color): void;
 
     /**
      * Draws a sprite.
@@ -49,7 +54,7 @@ export interface ISpriteBatch {
      * @param sourceRect - The source rectangle that selects part of the texture to draw.
      * @param color - The color.
      */
-    draw(texture: ITexture2D, drawRect: Rect, sourceRect: Rect, color: Color): void;
+    //draw(texture: ITexture2D, drawRect: Rect, sourceRect: Rect, color: Color): void;
 
     /**
      * Draws a sprite.
@@ -59,7 +64,7 @@ export interface ISpriteBatch {
      * @param color - The color.
      * @param rotation - The rotation of a sprite in clockwise order.
      */
-    draw(texture: ITexture2D, drawRect: Rect, sourceRect: Rect, color: Color, rotation: number): void;
+   // draw(texture: ITexture2D, drawRect: Rect, sourceRect: Rect, color: Color, rotation: number): void;
 
     /**
      * Draws the empty rectangle shape of a given color.
@@ -70,7 +75,7 @@ export interface ISpriteBatch {
      * @param rotationOrigin - The origin for a rotation.
      If null by default, it is set to (0,0) or top left corner.
      */
-    draw(drawRect: Rect, color: Color, origin: vec2, rotation: number, rotationOrigin?: number): void;
+  //  draw(drawRect: Rect, color: Color, origin: vec2, rotation: number, rotationOrigin?: number): void;
 
     /**
      * Draws a sprite.
@@ -83,7 +88,7 @@ export interface ISpriteBatch {
      * @param rotationOrigin - The origin for a rotation.
      * @param layerDepth - The layer depth. By default, it is 0.
      */
-    draw(texture: ITexture2D, drawRect: Rect, sourceRect: Rect, color: Color, origin: vec2, rotation: number, rotationOrigin: vec2, layerDepth: number): void;
+    //draw(texture: ITexture2D, drawRect: Rect, sourceRect: Rect, color: Color, origin: vec2, rotation: number, rotationOrigin: vec2, layerDepth: number): void;
 
     /**
      * Draws a sprite.
@@ -97,7 +102,7 @@ export interface ISpriteBatch {
      * @param flipSpriteHorizontally - Flip sprite horizontally. By default, it is false.
      * @param flipSpriteVertically - Flip sprite vertically. By default, it is false.
      */
-    draw(texture: ITexture2D, position: vec2, sourceRect: Rect, color: Color, rotation: number, origin: vec2, scale: vec2, flipSpriteHorizontally: boolean, flipSpriteVertically: boolean): void;
+    //draw(texture: ITexture2D, position: vec2, sourceRect: Rect, color: Color, rotation: number, origin: vec2, scale: vec2, flipSpriteHorizontally: boolean, flipSpriteVertically: boolean): void;
 
     /**
      * Draws a sprite.
@@ -106,11 +111,15 @@ export interface ISpriteBatch {
      * @param position - The position of a sprite.
      * @param size - The size of a sprite.
      */
-    draw(texture: ITexture2D, sourceRect: Rect, position: vec2, size: vec2): void;
+   // draw(texture: ITexture2D, sourceRect: Rect, position: vec2, size: vec2): void;
 
     /**
      * Ends the sprite batch.
      */
     end(): void;
 
+    /**
+     * Called internally by framework on end of frame.
+     */
+    frameEnd() : void;
 }

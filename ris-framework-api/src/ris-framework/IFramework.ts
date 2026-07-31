@@ -3,6 +3,9 @@ import {IGeometryBuilder} from "./geometry/IGeometryBuilder";
 import {ISpriteBatch} from "./sprites/ISpriteBatch";
 import {IRenderPipelineFactory} from "./rendering/render-pipelines/IRenderPipelineFactory";
 import {IBufferFactory} from "./rendering/buffers/IBufferFactory";
+import {ICameraFactory} from "./camera/ICameraFactory";
+import {ITextureFactory} from "./rendering/texture/ITextureFactory";
+import {IContentManager} from "./content/IContentManager";
 
 /**
  * The framework interface.
@@ -15,7 +18,7 @@ export interface IFramework {
     readonly renderer: IRenderer;
 
     /**
-     * The spritebatch.
+     * The SpriteBatch.
      */
     readonly spriteBatch: ISpriteBatch;
 
@@ -33,6 +36,21 @@ export interface IFramework {
      * The buffer factory.
      */
     readonly bufferFactory: IBufferFactory;
+
+    /**
+     * The camera factory.
+     */
+    readonly cameraFactory: ICameraFactory;
+
+    /**
+     * The texture factory.
+     */
+    readonly textureFactory: ITextureFactory;
+
+    /**
+     * The content manager.
+     */
+    readonly content: IContentManager;
 
     /**
      * Called when the framework is rendered.

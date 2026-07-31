@@ -1,5 +1,4 @@
-import {type ITexture2D, State, type TextureUsage, TextureViewDescriptor} from "ris-framework-api";
-import type {TextureFormat} from "../../../TextureFormat.ts";
+import {type ITexture2D, State, type TextureFormat, type TextureUsage, TextureViewDescriptor} from "ris-framework-api";
 import type {ITextureView} from "../../../../../ris-framework-api/dist/ris-framework/rendering/texture/ITextureView";
 
 

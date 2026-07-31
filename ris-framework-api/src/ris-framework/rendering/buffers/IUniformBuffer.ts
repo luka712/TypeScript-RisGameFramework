@@ -1,25 +1,9 @@
-import {BufferUsage} from "./BufferUsage";
-import {IDisposable} from "../../core/IDisposable";
+import {IBuffer} from "./IBuffer";
 
 /**
  * Interface for uniform buffer.
  */
-export interface IUniformBuffer extends IDisposable {
-
-    /**
-     * Gets the label.
-     */
-    readonly label: string;
-
-    /**
-     * The size of a buffer in bytes.
-     */
-    readonly byteLength: number;
-
-    /**
-     * The .
-     */
-    readonly bufferUsage: BufferUsage;
+export interface IUniformBuffer extends IBuffer  {
 
     /**
      * Initialize the constant buffer.
@@ -27,17 +11,11 @@ export interface IUniformBuffer extends IDisposable {
     initialize(): void;
 
     /**
-     * Initialize the constant buffer.
-     * @param data - The data to initialize with.
-     */
-    initialize(data: number[]): void;
-
-    /**
      * Update the constant buffer.
      * @param data - The data array.
      * @param offset - Defines where to start buffer write. Must be in bytes.
      * @param length - Defines how many bytes to write. By default, -1 that means data length is used.
      */
-    update(data: number[], offset: number, length: number): void;
+    update(data: number[], offset?: number, length?: number): void;
 
 }

@@ -9,21 +9,6 @@ import {GameTime} from "../time/GameTime";
 export interface ICamera extends IDisposable {
 
     /**
-     * The eye of the camera.
-     */
-    eye: vec3;
-
-    /**
-     * Sets the target of the camera.
-     */
-    target: vec3;
-
-    /**
-     * Get the direction of the camera.
-     */
-    readonly direction: vec3;
-
-    /**
      * The projection matrix.
      */
     readonly projectionMatrix: mat4;
@@ -54,9 +39,9 @@ export interface ICamera extends IDisposable {
     readonly viewBuffer: IUniformBuffer;
 
     /**
-     * The camera position buffer.
+     * Initialize the camera.
      */
-    readonly positionBuffer: IUniformBuffer;
+    initialize(): void;
 
     /**
      * Update the GPU buffers.

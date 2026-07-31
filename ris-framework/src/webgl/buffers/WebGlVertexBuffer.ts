@@ -1,12 +1,9 @@
-import type { IVertexBuffer } from "../../core/buffers/vertex-buffer-interface";
-import type { TempIFramework } from "../../core/framework-interface";
-import { asWebGLGraphicsDevice } from "../cast/cast";
-import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
-import type { WebGlGraphicsDevice } from "../webgl-graphics-device";
-import {BufferUsage} from "ris-framework-api";
+import {WebGlUtilities} from "../utilities/WebGlUtilities.ts";
+import type {WebGlGraphicsDevice} from "../WebGlGraphicsDevice.ts";
+import {BufferUsage, type IFramework, type IVertexBuffer} from "ris-framework-api";
 
 /**
- * The WebGL implementation of the vertex buffer. 
+ * The WebGL implementation of the vertex buffer.
  * This class is responsible for managing a vertex buffer in WebGL,
  * including creating the buffer, uploading data to the buffer,
  * and providing information about the buffer such as its size and stride.
@@ -15,20 +12,37 @@ export class WebGlVertexBuffer implements IVertexBuffer {
 
     private readonly _graphicsDevice: WebGlGraphicsDevice;
     private readonly _gl: WebGL2RenderingContext;
-    private _byteStride = 0;
     private _vertexCount = 0;
     private _byteSize = 0;
-    // @ts-ignore
-    private _bufferUsage = BufferUsage.NONE;
+    private _data: Float32Array;
 
     /**
      * The constructor.
-     * @param framework The framework.
-     * @param label An optional label for the vertex buffer, which can be used for debugging purposes.
+     * @param _framework
+     * @param dataOrVertexCount
+     * @param _byteStride
+     * @param _bufferUsage
+     * @param _label
      */
-    constructor(framework: TempIFramework, private readonly _label: string | null = null) {
-        this._graphicsDevice = asWebGLGraphicsDevice(framework.renderer.graphicsDevice);
+    constructor(private readonly _framework: IFramework,
+                dataOrVertexCount: number[] | number,
+                private readonly _byteStride: number,
+                private readonly _bufferUsage: BufferUsage,
+                private readonly _label?: string) {
+        this._graphicsDevice = this._framework.renderer.graphicsDevice as WebGlGraphicsDevice;
         this._gl = this._graphicsDevice.gl;
+
+        if (typeof dataOrVertexCount === "number") {
+            this._vertexCount = dataOrVertexCount;
+            this._byteSize = dataOrVertexCount * this._byteStride;
+            this._data = new Float32Array(dataOrVertexCount);
+        }
+        // Is iterable
+        else {
+            this._data = new Float32Array(dataOrVertexCount);
+            this._byteSize = dataOrVertexCount.length * Float32Array.BYTES_PER_ELEMENT;
+            this._vertexCount = this._byteSize / this._byteStride;
+        }
     }
 
     /**
@@ -36,12 +50,8 @@ export class WebGlVertexBuffer implements IVertexBuffer {
      */
     public buffer: WebGLBuffer | null = null;
 
-    public get isWritable(): boolean {
-        throw new Error("Method not implemented.");
-    }
-
     /** @inheritdoc */
-    public get label(): string | null {
+    public get label(): string | undefined {
         return this._label;
     }
 
@@ -61,23 +71,20 @@ export class WebGlVertexBuffer implements IVertexBuffer {
     }
 
     /** @inheritdoc */
-    public initialize(dataOrByteSize: number[] | number,
-                      byteStride: number,
-                      vertexCount: number,
-                      bufferUsage: BufferUsage): void {
-        this._byteStride = byteStride;
-        this._vertexCount = vertexCount;
-        this._bufferUsage = bufferUsage;
+    public initialize(): void {
+        this.buffer = WebGlUtilities.buffer.createVertexBuffer(this._gl, this._data, this._bufferUsage);
+    }
 
-        if (typeof dataOrByteSize === "number") {
-            this._byteSize = dataOrByteSize;
-            this.buffer = WebGlUtilities.buffer.createVertexBuffer(this._gl, dataOrByteSize, bufferUsage);
-            return;
+    /** @inheritdoc */
+    public update(data: number[], offset: number = 0, length: number = 0): void {
+
+        length = length > 0 ? length : data.length;
+
+        for (let i = offset; i < length; ++i) {
+            this._data[i] = data[i];
         }
-        const data = new Float32Array(dataOrByteSize);
-        this._byteSize = data.byteLength;
 
-        this.buffer = WebGlUtilities.buffer.createVertexBuffer(this._gl, data, bufferUsage);
+        WebGlUtilities.buffer.updateVertexBuffer(this._gl, this.buffer!, this._data, 0, offset, length);
     }
 
     /** @inheritDoc */

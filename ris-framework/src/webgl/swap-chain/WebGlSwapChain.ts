@@ -1,11 +1,11 @@
 import { vec2 } from "gl-matrix";
-import { TextureFormat } from "../../common/texture-enums";
 import type { ISwapChain } from "../../core/rendering/swap-chain/swap-chain-interface";
+import  {TextureFormat} from "ris-framework-api";
 
 /**
  * The WebGL implementation of the ISwapChain interface, which manages the swap chain for rendering operations in a WebGL context.
  */
-export class WebGLSwapChain implements ISwapChain {
+export class WebGlSwapChain implements ISwapChain {
 
     private _canvas: HTMLCanvasElement
     private _backBufferSize: vec2;
@@ -42,6 +42,4 @@ export class WebGLSwapChain implements ISwapChain {
     public present(): void {
         // Nothing to do here since WebGL automatically presents the rendered content to the canvas.
     }
-
-
 }

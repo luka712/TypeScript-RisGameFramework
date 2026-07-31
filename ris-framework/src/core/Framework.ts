@@ -1,29 +1,29 @@
 import {container, type DependencyContainer} from "tsyringe";
-import type {TempIFramework} from "../core/framework-interface";
-import {WindowManager} from "../core/window/window-manager";
-import type {IWindowManager} from "../core/window/window-manager-interface";
-import {WebGLRegisterServices} from "../webgl/webgl-register-services";
-import {FrameworkOptions} from "./framework-options";
+import {WindowManager} from "./window/window-manager.ts";
+import type {IWindowManager} from "./window/window-manager-interface.ts";
+import {WebGLRegisterServices} from "../webgl/webgl-register-services.ts";
+import {FrameworkOptions} from "./framework-options.ts";
 
-import {IFrameworkSymbol, ITextureFactorySymbol} from "../core/dependency-injection/register-services-interface";
-import {type ITempRenderer, RenderConfiguration, RenderConfigurationSymbol} from "../core/renderer/renderer-interface";
+import {IFrameworkSymbol} from "./dependency-injection/register-services-interface.ts";
+import {type ITempRenderer, RenderConfiguration, RenderConfigurationSymbol} from "./renderer/renderer-interface.ts";
 import {GeometryBuilder} from "../geometry/GeometryBuilder.ts";
-import type {ITempBuffersFactory} from "../core/buffers/buffers-factory-interface";
 import {
     type IRenderPipelineFactory,
     IRenderPipelineFactorySymbol
-} from "../core/render-pipelines/render-pipeline-factory-interface";
-import type {ITextureFactory} from "../core/rendering/texture/texture-factory";
-import {ContentManager} from "../core/content/content-manager";
-import {type IContentManager, IContentManagerSymbol} from "../core/content/content-manager-interface";
+} from "./render-pipelines/render-pipeline-factory-interface.ts";
+import type {ITextureFactory} from "./rendering/texture/texture-factory.ts";
+import {ContentManager} from "./content/ContentManager.ts";
 import {WebGlRenderer} from "../webgl/WebGlRenderer.ts";
-import type {IGeometryBuilder} from "../geometry/IGeometryBuilder.ts";
 import {WebGlBuffersFactory} from "../webgl/buffers/WebGlBuffersFactory.ts";
-import type {IGraphicsDevice} from "../../../ris-framework-api";
-import {WebGlShaderContentModule} from "../webgl/shader/WebGlShaderContentModule.ts";
-import {TextureSamplerFilteringPreset} from "../core/rendering/enums.ts";
+import type {IBufferFactory, IGeometryBuilder, IGraphicsDevice, ISpriteBatch} from "../../../ris-framework-api/src";
+import {WebGlShaderModuleLoader} from "../webgl/shader/WebGlShaderModuleLoader.ts";
+import {TextureSamplerFilteringPreset} from "./rendering/enums.ts";
+import {SpriteBatch} from "./sprite-batch/SpriteBatch.ts";
+import type {ICameraFactory, IContentManager, IFramework} from "ris-framework-api";
+import {CameraFactory} from "./camera/CameraFactory.ts";
+import {WebGlTextureFactory} from "../webgl/texture/WebGlTextureFactory.ts";
 
-export class Framework implements TempIFramework {
+export class Framework implements IFramework {
 
     private readonly _onRenderListeners: (() => void)[] = [];
 
@@ -31,10 +31,12 @@ export class Framework implements TempIFramework {
     private readonly _windowManager: IWindowManager;
     private readonly _renderer: ITempRenderer;
     private readonly _textureFactory: ITextureFactory;
-    private readonly _buffersFactory: ITempBuffersFactory;
-    private readonly _geometryBuilder: IGeometryBuilder;
+    private readonly _buffersFactory: IBufferFactory;
     private readonly _renderPipelineFactory: IRenderPipelineFactory;
     private readonly _contentManager: IContentManager;
+    private readonly _geometryBuilder: IGeometryBuilder;
+    private readonly _spriteBatch: ISpriteBatch;
+    private readonly _cameraFactory: CameraFactory;
 
     /**
      * The constructor for the Framework class.
@@ -51,14 +53,26 @@ export class Framework implements TempIFramework {
         const rendererConfig = new RenderConfiguration();
         rendererConfig.textureFiltering = options.textureFiltering ?? TextureSamplerFilteringPreset.BILINEAR;
         this._container.registerInstance(RenderConfigurationSymbol, rendererConfig);
-        this._container.registerInstance(IContentManagerSymbol, new ContentManager());
         (new WebGLRegisterServices).register(this._container);
         this._renderer = new WebGlRenderer(this, rendererConfig);
-        this._textureFactory = this._container.resolve(ITextureFactorySymbol);
-        this._buffersFactory = new WebGlBuffersFactory(this);
+        this._textureFactory = new WebGlTextureFactory(this);
         this._geometryBuilder = new GeometryBuilder();
         this._renderPipelineFactory = this._container.resolve(IRenderPipelineFactorySymbol);
-        this._contentManager = this._container.resolve(IContentManagerSymbol);
+        this._contentManager = new ContentManager(new WebGlShaderModuleLoader(this));
+
+        this._buffersFactory = new WebGlBuffersFactory(this);
+        this._spriteBatch = new SpriteBatch(this);
+        this._cameraFactory = new CameraFactory(this);
+    }
+
+    /** @inheritDoc */
+    public get spriteBatch(): ISpriteBatch {
+        return this._spriteBatch;
+    }
+
+    /** @inheritDoc */
+    public get cameraFactory(): ICameraFactory {
+        return this._cameraFactory;
     }
 
     /** @inheritdoc */
@@ -102,7 +116,7 @@ export class Framework implements TempIFramework {
     }
 
     /** @inheritdoc */
-    public get buffersFactory(): ITempBuffersFactory {
+    public get bufferFactory(): IBufferFactory {
         return this._buffersFactory;
     }
 
@@ -111,16 +125,13 @@ export class Framework implements TempIFramework {
         return this._contentManager;
     }
 
-    private _initializeSelf() {
-        this._contentManager.addContentModule(new WebGlShaderContentModule(this));
-    }
-
     /** @inheritdoc */
     public initialize(): void {
 
-        this._initializeSelf();
-
         this._renderer.initialize();
+        this._spriteBatch.initialize();
+
+
         this._renderer.afterInitialize();
 
         this.windowManager.updateEvent(() => {
@@ -134,6 +145,7 @@ export class Framework implements TempIFramework {
                 listener();
             }
 
+            this._spriteBatch.frameEnd();
             this._renderer.endRenderPass();
         });
         this.windowManager.runEventLoop();

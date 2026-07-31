@@ -17,6 +17,7 @@ export class SpriteBatchMesh extends Mesh {
     static readonly TOTAL_FLOATS_IN_SPRITE = 4 * this.TOTAL_FLOATS_PER_VERTEX;
 
     private _maxInstances = 0;
+    private _lastIndex = -1;
 
     /**
      * The constructor for the batch sprite mesh.
@@ -58,7 +59,7 @@ export class SpriteBatchMesh extends Mesh {
         this._vertexBuffer = this._framework.bufferFactory.createVertexBuffer(
             this._vertexData,
             this.maxInstances * 4,
-            BufferUsage.VERTEX | BufferUsage.COPYDST,
+            BufferUsage.VERTEX | BufferUsage.COPY_DST,
             "SpriteBatchMesh.VertexBuffer");
 
         this._indexBuffer = this._framework.bufferFactory.createIndexBuffer(
@@ -94,17 +95,7 @@ export class SpriteBatchMesh extends Mesh {
         this.initialize();
     }
 
-/// <summary>
-/// Write a sprite to the batch sprite mesh.
-/// </summary>
-/// <param name="instance">The instance to write, starting at 0.</param>
-/// <param name="position">The position of a sprite mesh.</param>
-/// <param name="size">The size of a sprite mesh in pixels.</param>
-/// <param name="color">The color of a sprite.</param>
-/// <param name="u0">The texture coordinate u0. By default, it is <c>0</c>.</param>
-/// <param name="v0">The texture coordinate v0. By default, it is <c>0</c>.</param>
-/// <param name="u1">The texture coordinate u1. By default, it is <c>1</c>.</param>
-/// <param name="v1">The texture coordinate v1. By default, it is <c>1</c>.</param>
+    /** @inheritDoc */
     public writeSprite(
         instance: number,
         position: vec3, size: vec2, color: Color,
@@ -159,6 +150,8 @@ export class SpriteBatchMesh extends Mesh {
         this._vertexData[index++] = color.a;
         this._vertexData[index++] = u1;
         this._vertexData[index] = v1;
+
+        this._lastIndex = index;
     }
 
     /*
@@ -236,6 +229,16 @@ export class SpriteBatchMesh extends Mesh {
 
     /** @inheritDoc */
     public override applyChanges(): void {
-        this._vertexBuffer!.update(this._vertexData, 0, this._vertexData.length * Float32Array.BYTES_PER_ELEMENT);
+
+        if(this._lastIndex <= 0)
+        {
+            return;
+        }
+
+        // TODO: update is way to large. U
+
+        // Update only to last index.
+        // Increment index by 1, since it's index, not a count.
+        this._vertexBuffer!.update(this._vertexData, 0, this._lastIndex + 1);
     }
 }

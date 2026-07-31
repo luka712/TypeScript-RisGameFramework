@@ -1,13 +1,13 @@
 import { WebGLBlendingUtilities } from "./webgl-blending-utilities";
-import { WebGLBufferUtilities } from "./webgl-buffer-utilities";
+import { WebGlBufferUtilities } from "./WebGlBufferUtilities.ts";
 import { WebGLCullingUtilities } from "./webgl-culling-utilities";
 import { WebGLFilterAnisotropicUtilities } from "./webgl-filter-anisotropic-utilities";
-import { WebGLFrameBufferUtilities } from "./webgl-framebuffer-utilities";
+import { WebGlFrameBufferUtilities } from "./WebGlFrameBufferUtilities.ts";
 import { WebGLProgramUtilities } from "./webgl-program-utilities";
 import { WebGLRenderbufferUtilities } from "./webgl-renderbuffer-utilities";
 import { WebGLSamplerUtilities } from "./webgl-sampler-utilities";
 import { WebGlShaderUtilities } from "./WebGlShaderUtilities.ts";
-import { WebGLTextureUtilities } from "./webgl-texture-utilities";
+import { WebGlTextureUtilities } from "./WebGlTextureUtilities.ts";
 
 /**
  * The utility class for WebGL operations.
@@ -32,12 +32,12 @@ export class WebGlUtilities {
     /**
      * The WebGL texture utilities.
      */
-    public static readonly texture = new WebGLTextureUtilities();
+    public static readonly texture = new WebGlTextureUtilities();
 
     /**
      * The WebGL framebuffer utilities.
      */
-    public static readonly framebuffer = new WebGLFrameBufferUtilities();
+    public static readonly framebuffer = new WebGlFrameBufferUtilities();
 
     /**
      * The WebGL render buffer utilities.
@@ -47,7 +47,7 @@ export class WebGlUtilities {
     /**
      * The WebGL buffer utilities.
      */
-    public static readonly buffer = new WebGLBufferUtilities();
+    public static readonly buffer = new WebGlBufferUtilities();
 
     /**
      * The WebGL render buffer utilities.

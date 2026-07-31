@@ -1,8 +1,6 @@
 import type { DependencyContainer } from "tsyringe";
 
 export const IFrameworkSymbol = Symbol.for("IFramework");
-export const ITextureFactorySymbol = Symbol.for("ITextureFactory");
-export const IBuffersFactorySymbol = Symbol.for("IBuffersFactory");
 
 /**
  * The interface for registering services to the dependency injection container.
