@@ -1,4 +1,4 @@
-import type { TextureFormat } from "../../common/texture-enums";
+import type { TextureFormat } from "ris-framework-api";
 import { SpectorJSUtilities } from "./spector-js-utilities";
 import { WebGlConverter } from "./WebGlConverter.ts";
 

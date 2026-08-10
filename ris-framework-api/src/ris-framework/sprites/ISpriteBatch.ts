@@ -28,7 +28,25 @@ export interface ISpriteBatch {
      * @param rotation The rotation of rectangle.
      * @param rotationOrigin The rotation origin.
      */
-    drawRect( drawRect: Rect, color: Color,  rotation? :number, rotationOrigin? : vec2): void;
+    drawRect(drawRect: Rect, color: Color, rotation?: number, rotationOrigin?: vec2): void;
+
+    /**
+     * Draws a sprite.
+     * @param texture - The texture to draw.
+     * @param drawRect - The draw rectangle.
+     * @param color - The color.
+     * @param sourceRect - The source rectangle that selects part of the texture to draw.
+     * @param rotation - The rotation of a sprite in clockwise order.
+     * @param rotationOrigin - The origin for a rotation.
+     * @param layerDepth - The layer depth. By default, it is 0.
+     */
+    draw(texture: ITexture2D,
+         drawRect: Rect,
+         color: Color,
+         sourceRect?: Rect,
+         rotation?: number,
+         rotationOrigin?: vec2,
+         layerDepth?: number): void;
 
 
     /**
@@ -45,7 +63,7 @@ export interface ISpriteBatch {
      * @param drawRect - The draw rectangle.
      * @param color - The color.
      */
-   // draw(texture: ITexture2D, drawRect: Rect, color: Color): void;
+    // draw(texture: ITexture2D, drawRect: Rect, color: Color): void;
 
     /**
      * Draws a sprite.
@@ -64,7 +82,7 @@ export interface ISpriteBatch {
      * @param color - The color.
      * @param rotation - The rotation of a sprite in clockwise order.
      */
-   // draw(texture: ITexture2D, drawRect: Rect, sourceRect: Rect, color: Color, rotation: number): void;
+    // draw(texture: ITexture2D, drawRect: Rect, sourceRect: Rect, color: Color, rotation: number): void;
 
     /**
      * Draws the empty rectangle shape of a given color.
@@ -75,7 +93,7 @@ export interface ISpriteBatch {
      * @param rotationOrigin - The origin for a rotation.
      If null by default, it is set to (0,0) or top left corner.
      */
-  //  draw(drawRect: Rect, color: Color, origin: vec2, rotation: number, rotationOrigin?: number): void;
+    //  draw(drawRect: Rect, color: Color, origin: vec2, rotation: number, rotationOrigin?: number): void;
 
     /**
      * Draws a sprite.
@@ -111,7 +129,8 @@ export interface ISpriteBatch {
      * @param position - The position of a sprite.
      * @param size - The size of a sprite.
      */
-   // draw(texture: ITexture2D, sourceRect: Rect, position: vec2, size: vec2): void;
+
+    // draw(texture: ITexture2D, sourceRect: Rect, position: vec2, size: vec2): void;
 
     /**
      * Ends the sprite batch.
@@ -121,5 +140,5 @@ export interface ISpriteBatch {
     /**
      * Called internally by framework on end of frame.
      */
-    frameEnd() : void;
+    frameEnd(): void;
 }

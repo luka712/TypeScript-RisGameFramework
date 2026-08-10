@@ -8,7 +8,7 @@ import type {BufferUsage, IFramework, IUniformBuffer} from "ris-framework-api";
 export class WebGlUniformBuffer implements IUniformBuffer {
 
     private readonly _gl: WebGL2RenderingContext;
-    private _byteLength: number = 0;
+    private _byteSize: number = 0;
     private _data: Float32Array;
 
     /**
@@ -34,7 +34,7 @@ export class WebGlUniformBuffer implements IUniformBuffer {
             this._data = new Float32Array(dataOrByteSize);
         }
 
-        this._byteLength = this._data.byteLength;
+        this._byteSize = this._data.byteLength;
 
     }
 
@@ -49,7 +49,7 @@ export class WebGlUniformBuffer implements IUniformBuffer {
 
     /** @inheritdoc */
     public get byteSize(): number {
-        return this._byteLength;
+        return this._byteSize;
     }
 
     /** @inheritdoc */

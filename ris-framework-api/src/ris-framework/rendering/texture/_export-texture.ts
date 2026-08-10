@@ -3,3 +3,8 @@ export * from "./TextureUsage";
 export * from "./TextureViewDescriptor";
 export * from "./TextureViewDimension";
 export * from "./TextureFormat";
+export * from "./ISampler";
+export * from "./ITextureView";
+export * from "./ITextureFactory";
+export * from "./SamplerFilter";
+export * from "./SamplerAddressMode";

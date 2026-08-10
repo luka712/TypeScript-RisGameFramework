@@ -6,8 +6,8 @@ import { Ktx2Loader } from "../../ris-ktx2/src";
 import Ktx2TextureList from "./components/Ktx2TextureList.tsx";
 import PropertiesView from "./views/PropertiesView.tsx";
 import AddFileButton from "./components/AddFileButton.tsx";
-import { Framework } from "../../ris-framework/src/gameframework/framework.ts";
 import type { IFramework } from "ris-framework-api";
+import {Framework} from "../../ris-framework/src/core/Framework.ts";
 
 function App() {
     const theme = createTheme({ cssVariables: true, palette: { mode: 'dark' } });
@@ -31,8 +31,6 @@ function App() {
         const fw = frameworkRef.current;
 
         if(!fw) {
-            debugger;
-            // @ts-ignore
             const fw: IFramework = new Framework({canvas: canvasRef.current});
             fw.initialize();
 
@@ -65,31 +63,31 @@ function App() {
         ? [
             {
                 name: "S3TC Texture Compression (BC1-BC3)",
-                value: framework.graphicsDevice.features.supportsTextureCompressionS3TC
+                value: framework.renderer.graphicsDevice.features.supportsTextureCompressionS3TC
                     ? "Supported"
                     : "Not Supported",
             },
             {
                 name: "BPTC Texture Compression (BC6-BC7)",
-                value: framework.graphicsDevice.features.supportsTextureCompressionBC
+                value: framework.renderer.graphicsDevice.features.supportsTextureCompressionBC
                     ? "Supported"
                     : "Not Supported",
             },
             {
                 name: "ETC2 Texture Compression",
-                value: framework.graphicsDevice.features.supportsTextureCompressionETC2
+                value: framework.renderer.graphicsDevice.features.supportsTextureCompressionETC2
                     ? "Supported"
                     : "Not Supported",
             },
             {
                 name: "ASTC Texture Compression",
-                value: framework.graphicsDevice.features.supportsTextureCompressionASTC
+                value: framework.renderer.graphicsDevice.features.supportsTextureCompressionASTC
                     ? "Supported"
                     : "Not Supported",
             },
             {
                 name: "PVRTC Texture Compression",
-                value: framework.graphicsDevice.features.supportsTextureCompressionPVRTC
+                value: framework.renderer.graphicsDevice.features.supportsTextureCompressionPVRTC
                     ? "Supported"
                     : "Not Supported",
             },

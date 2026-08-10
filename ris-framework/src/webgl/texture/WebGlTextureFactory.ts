@@ -1,8 +1,6 @@
-import {Color, type IFramework, type ITexture2D, TextureFormat, TextureUsage} from "ris-framework-api"
+import {Color, type IFramework, type ITexture2D, TextureFormat, TextureUsage, type ITextureFactory} from "ris-framework-api"
 import { WebGlTexture2D } from "./WebGlTexture2D.ts";
 import { vec2 } from "gl-matrix";
-import { GenericImageData } from "../../core/data/image-data";
-import type { ITextureFactory } from "../../core/rendering/texture/texture-factory";
 
 export class WebGlTextureFactory implements ITextureFactory {
 
@@ -15,11 +13,13 @@ export class WebGlTextureFactory implements ITextureFactory {
 
     /** @inheritdoc */
     public create(
-        data: ArrayBufferView,
-        width: number, height: number, channels: number,
+        width: number, height: number,
+        data?: Uint8Array | HTMLImageElement,
+        channels: number = 4,
         label: string | null | undefined = null,
-        useMipMaps = false,
-        textureUsage = TextureUsage.COPY_DST | TextureUsage.TEXTURE_BINDING): ITexture2D {
+        textureUsage = TextureUsage.COPY_DST | TextureUsage.TEXTURE_BINDING,
+        textureFormat= TextureFormat.RGBA_8_UNORM,
+        useMipMaps = false): ITexture2D {
 
         if (!data) {
             throw new Error("Data must not be null.");
@@ -32,14 +32,12 @@ export class WebGlTextureFactory implements ITextureFactory {
             throw new Error("channels must be greater than 0.");
         }
 
-        const imageData = new GenericImageData(data, width, height, channels);
-
         const texture = new WebGlTexture2D(
             this._framework,
             vec2.fromValues(width, height),
-            imageData,
+            data,
             textureUsage,
-            TextureFormat.BGRA_8_UNORM,
+            textureFormat,
             useMipMaps,
             label
         );
@@ -92,6 +90,6 @@ export class WebGlTextureFactory implements ITextureFactory {
             bytes[i + 3] = color.a * 255;
         }
 
-        return this.create(bytes, width, height, 4, label, useMipmap, textureUsage);
+        return this.create( width, height, bytes, 4, label, textureUsage, textureFormat, useMipmap );
     }
 }

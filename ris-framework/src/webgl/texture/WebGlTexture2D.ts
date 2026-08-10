@@ -1,17 +1,18 @@
-import type { vec2 } from "gl-matrix";
+import { vec2 } from "gl-matrix";
 import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
-import { GenericImageData, type IImageData } from "../../core/data/image-data";
-import { ATexture2D } from "../../core/rendering/texture/texture";
 import {
-    type IFramework,
-    State,
+    type IFramework, State,
     TextureFormat,
     TextureUsage,
+    type ITextureView,
     type TextureViewDescriptor
 } from "ris-framework-api";
 import type {WebGlGraphicsDevice} from "../WebGlGraphicsDevice.ts";
-import type {ITextureView} from "../../../../ris-framework-api/dist/ris-framework/rendering/texture/ITextureView";
+import {ATexture2D} from "../../core/rendering/texture/texture.ts";
 
+/**
+ * The WebGL implementation of ITexture2D.
+ */
 export class WebGlTexture2D extends ATexture2D {
 
     private readonly _graphicsDevice: WebGlGraphicsDevice;
@@ -31,7 +32,7 @@ export class WebGlTexture2D extends ATexture2D {
     constructor(
         private readonly _framework: IFramework,
         size: vec2,
-        private readonly _data: IImageData | null,
+        private readonly _data: Uint8Array | HTMLImageElement | null,
         textureUsage: TextureUsage,
         textureFormat: TextureFormat,
         useMipMaps: boolean = false,
@@ -62,7 +63,7 @@ export class WebGlTexture2D extends ATexture2D {
         }
 
         this._state = State.INITIALIZED;
-        const data = this._data?.data;
+        const data = this._data;
         this._texture = WebGlUtilities.texture.createTexture2D(
             this._gl,
             this.width, this.height,
@@ -102,10 +103,10 @@ export class WebGlTexture2D extends ATexture2D {
      */
     public static getOrCreateDefault(framework: IFramework): WebGlTexture2D {
         if (this._defaultFilled === null || this._defaultFilled.state === State.DISPOSED) {
-            
-            const imageData = new GenericImageData(new Uint8Array([255, 255, 255, 255]), 1, 1, 4);
-                        
-            this._defaultFilled = new WebGlTexture2D(framework, [1, 1], imageData, TextureUsage.TEXTURE_BINDING, TextureFormat.RGBA_8_UNORM, false, "DefaultFilledTexture");
+
+            this._defaultFilled = new WebGlTexture2D(framework,
+                vec2.fromValues(1,1),
+                new Uint8Array([255, 255, 255, 255]), TextureUsage.TEXTURE_BINDING, TextureFormat.RGBA_8_UNORM, false, "DefaultFilledTexture");
             this._defaultFilled.initialize();
         }
 

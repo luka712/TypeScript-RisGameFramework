@@ -16,5 +16,5 @@ export enum RenderingBackend {
     /**
      * The WebGL rendering backend.
      */
-    WEBGL = 2,
+    WEB_GL = 2,
 }

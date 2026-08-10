@@ -1,17 +1,17 @@
-import type { IGraphicsDeviceFeatures } from "../../interfaces/rendering/IGraphicsDeviceFeatures";
 import {BlendStateDescriptor} from "./blending/blend-state-descriptor";
-import type {IBlendState} from "./blending/blend-state-interface";
 import {TextureSamplerFilteringPreset} from "./enums";
-import type {TempIGraphicsDevice} from "./graphics-device-interface";
 import type {PrimitiveStateDescriptor} from "./primitive/PrimitiveStateDescriptor.ts";
-import type {IPrimitiveState} from "./primitive/primitve-interface";
-import type {RenderPassDescriptor} from "./render-pass/render-pass-descriptor";
 import type {IRenderPass} from "./render-pass/render-pass-interface";
 import {MipmapSamplerFilter, SamplerFilter} from "./sampler/enums";
 import {SamplerDescriptor} from "./sampler/sampler-descriptor";
-import type {ISampler} from "./sampler/sampler-interface";
-import type {SwapChainDescriptor} from "./swap-chain/swap-chain-descriptor";
-import type {ISwapChain} from "./swap-chain/swap-chain-interface";
+import {
+    type IGPUInfo,
+    type IGraphicsDeviceFeatures,
+    type ISampler,
+    type IBlendState,
+    type IPrimitiveState,
+    type IGraphicsDevice, SwapChainDescriptor, type RenderPassDescriptor
+} from "ris-framework-api";
 
 /**
  * The descriptor for the graphics device. This is used to configure the graphics device during initialization.
@@ -29,7 +29,7 @@ export class GraphicsDeviceDescriptor {
 /**
  * The abstract base class for graphics devices.
  */
-export abstract class AGraphicsDevice implements TempIGraphicsDevice {
+export abstract class AGraphicsDevice implements IGraphicsDevice {
 
     protected readonly _descriptor: GraphicsDeviceDescriptor;
     protected _defaultTextureSampler: ISampler = null!;
@@ -45,14 +45,10 @@ export abstract class AGraphicsDevice implements TempIGraphicsDevice {
     }
 
     /** @inheritdoc */
-    abstract readonly vendor: string;
-
-
-    /** @inheritdoc */
-    abstract readonly name: string;
-
-    /** @inheritdoc */
     abstract readonly features : IGraphicsDeviceFeatures;
+
+    /** @inheritdoc */
+    abstract readonly gpuInfo: IGPUInfo;
 
     /** @inheritdoc */
     public get defaultTextureSampler(): ISampler {
@@ -102,4 +98,22 @@ export abstract class AGraphicsDevice implements TempIGraphicsDevice {
 
     /** @inheritdoc */
     public abstract createPrimitiveState(descriptor?: PrimitiveStateDescriptor ): IPrimitiveState;
+
+    /** @inheritDoc */
+    public abstract setupDebugCallback(): void;
+
+    /** @inheritDoc */
+    public abstract frameEnd(): void;
+
+    /** @inheritDoc */
+    public abstract pushDebugGroup(groupName: string): void;
+
+    /** @inheritDoc */
+    public abstract popDebugGroup(): void;
+
+    /** @inheritDoc */
+    public dispose(): void {
+        this._defaultTextureSampler.dispose();
+        this._defaultBlendState.dispose();
+    }
 }

@@ -6,6 +6,7 @@ import {IBufferFactory} from "./rendering/buffers/IBufferFactory";
 import {ICameraFactory} from "./camera/ICameraFactory";
 import {ITextureFactory} from "./rendering/texture/ITextureFactory";
 import {IContentManager} from "./content/IContentManager";
+import {IWindowManager} from "./window/IWindowManager";
 
 /**
  * The framework interface.
@@ -51,6 +52,21 @@ export interface IFramework {
      * The content manager.
      */
     readonly content: IContentManager;
+
+    /**
+     * The window manager.
+     */
+    readonly windowManager: IWindowManager;
+
+    /**
+     * Called when the framework is ready to load content.
+     */
+    addOnLoadContentListener(event: () => void): void;
+
+    /**
+     * Remove callback.
+     */
+    removeOnLoadContentListener(event: () => void): void;
 
     /**
      * Called when the framework is rendered.

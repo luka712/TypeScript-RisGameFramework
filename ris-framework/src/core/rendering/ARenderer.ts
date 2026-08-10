@@ -1,21 +1,21 @@
-import type { TempIGraphicsDevice } from "./graphics-device-interface.ts";
 import type { ITempRenderer } from "../renderer/renderer-interface.ts";
-import { SwapChainDescriptor } from "./swap-chain/swap-chain-descriptor.ts";
-import type { ISwapChain } from "./swap-chain/swap-chain-interface.ts";
-import type { IWindowManager } from "../window/window-manager-interface.ts";
 import type { IRenderPass } from "./render-pass/render-pass-interface.ts";
-import type { IMainRenderTargetRenderPipeline } from "../render-pipelines/main-render-target-render-pipeline-interface.ts";
-import { RenderPassColorAttachment, RenderPassDepthStencilAttachment, RenderPassDescriptor } from './render-pass/render-pass-descriptor.ts';
 import type { vec2 } from "gl-matrix";
 import type { RenderingLimits } from "../renderer/rendering-limits.ts";
-import {type IFramework, type ITexture2D, TextureUsage} from "ris-framework-api";
+import {
+    type IFramework, type IGraphicsDevice, type IMainRenderTargetRenderPipeline, type ISwapChain,
+    type ITexture2D, type IWindowManager,
+    RenderPassColorAttachment, RenderPassDepthStencilAttachment,
+    RenderPassDescriptor, SwapChainDescriptor,
+    TextureUsage
+} from "ris-framework-api";
 import {TextureFormat, Color} from "ris-framework-api";
 
 export abstract class ARenderer implements ITempRenderer {
 
     protected readonly _framework: IFramework;
     private readonly _windowManager: IWindowManager;
-    private _graphicsDevice: TempIGraphicsDevice = null!;
+    private _graphicsDevice: IGraphicsDevice = null!;
     private _preferredTextureFormat: TextureFormat = TextureFormat.BGRA_8_UNORM;
     private _preferredDepthStencilFormat: TextureFormat = TextureFormat.DEPTH_24_STENCIL_8;
     private readonly _currentBackBufferSize: vec2 = [0, 0];
@@ -32,7 +32,7 @@ export abstract class ARenderer implements ITempRenderer {
     protected _mainRenderTargetPipeline?: IMainRenderTargetRenderPipeline;
 
     /** @inheritdoc */
-    public get graphicsDevice(): TempIGraphicsDevice {
+    public get graphicsDevice(): IGraphicsDevice {
         return this._graphicsDevice;
     }
 
@@ -83,7 +83,7 @@ export abstract class ARenderer implements ITempRenderer {
     public backBufferMatchesSwapChain: boolean = false;
 
     /**
-     * The constrcutor.
+     * The constructor.
      * @param framework The framework. 
      */
     constructor(framework: IFramework) {
@@ -98,13 +98,15 @@ export abstract class ARenderer implements ITempRenderer {
      *  This is an abstract method that must be implemented by subclasses to provide the specific graphics device implementation for the renderer.
      * @returns The graphics device for the renderer.
      */
-    protected abstract createGraphicsDevice(): TempIGraphicsDevice;
+    protected abstract createGraphicsDevice(): IGraphicsDevice;
 
     /** @inheritdoc */
     public initialize(): void {
         this._graphicsDevice = this.createGraphicsDevice();
         this._graphicsDevice.initialize();
-        this._swapChain = this._graphicsDevice.createSwapChain(this._windowManager.canvas, new SwapChainDescriptor());
+        this._swapChain = this._graphicsDevice.createSwapChain(
+            this._windowManager.canvas,
+            new SwapChainDescriptor());
         this._preferredTextureFormat = this._swapChain.textureFormat
 
         // TODO: RESIZE EVENT
@@ -114,8 +116,10 @@ export abstract class ARenderer implements ITempRenderer {
     /** @inheritdoc */
     public afterInitialize(): void {
 
+        let colorAttachment = new RenderPassColorAttachment();
+        colorAttachment.swapChain = this._swapChain;
         this._swapChainRenderPass = this._graphicsDevice.createRenderPass({
-            colorAttachments: [new RenderPassColorAttachment(undefined, this._swapChain)]
+            colorAttachments: [colorAttachment],
         });
 
         this._setupMainRenderPass();
@@ -153,10 +157,12 @@ export abstract class ARenderer implements ITempRenderer {
     private _createMainRenderPass(): void {
         this._mainRenderTargetRenderPass?.dispose();
         const renderPassDesc = new RenderPassDescriptor();
-        const colorAttachment = new RenderPassColorAttachment(this._mainRenderTarget);
+        const colorAttachment = new RenderPassColorAttachment();
+        colorAttachment.texture = this._mainRenderTarget;
         colorAttachment.clearColor = this._clearColor;
-        renderPassDesc.colorAttachments.push(colorAttachment);
-        renderPassDesc.depthStencilAttachment = new RenderPassDepthStencilAttachment(this._depthStencilBuffer);
+        renderPassDesc.colorAttachments = [colorAttachment];
+        renderPassDesc.depthStencilAttachment = new RenderPassDepthStencilAttachment();
+        renderPassDesc.depthStencilAttachment.texture = this._depthStencilBuffer;
         this._mainRenderTargetRenderPass = this._graphicsDevice.createRenderPass(renderPassDesc);
         this._mainRenderPassDirty = false;
     }

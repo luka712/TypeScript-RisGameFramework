@@ -19,6 +19,7 @@ export class SpriteBatch implements ISpriteBatch {
 
     private readonly _tempPosition = vec3.create();
     private readonly _tempSize = vec2.create();
+    private readonly _tempSourceRect = new Rect(0, 0, 0,0);
 
     private readonly _spriteBatchDrawables: Map<ITexture2D, SpriteBatchDrawable> = new Map();
     private _currentTexture: ITexture2D | null = null;
@@ -39,6 +40,12 @@ export class SpriteBatch implements ISpriteBatch {
      * @param _framework The framework.
      */
     public constructor(private readonly _framework: IFramework) {
+    }
+
+    private _validateTexture(texture?: ITexture2D) {
+        if(!texture) {
+            throw  new Error(`Texture cannot be empty.`);
+        }
     }
 
     private _checkIfNewDrawableShouldBeCreated(texture: ITexture2D): void {
@@ -105,208 +112,48 @@ export class SpriteBatch implements ISpriteBatch {
         );
     }
 
-    /*
-    /// <inheritdoc />
-public void Draw(ITexture2D texture, Rect<float>drawRect, Rect<float>sourceRect, Color color,
-Vector2D<float> origin,
-    float rotation, Vector2D<float> rotationOrigin,
-    float layerDepth)
-    {
-        CheckIfNewDrawableShouldBeCreated(texture);
+    /** @inheritDoc */
+    public draw(texture: ITexture2D,
+                drawRect: Rect,
+                color: Color,
+                sourceRect?: Rect,
+                // @ts-ignore
+                rotation: number = 0,
+                // @ts-ignore
+                rotationOrigin?: vec2,
+                layerDepth: number = 0): void {
+
+        this._validateTexture(texture);
+        this._checkIfNewDrawableShouldBeCreated(texture);
 
         // Safe to assign current texture.
-        _currentTexture = texture;
+        this._currentTexture = texture;
 
-        float u0 = sourceRect.X / texture.Width;
-        float v0 = sourceRect.Y / texture.Height;
-        float u1 = (sourceRect.X + sourceRect.Width) / texture.Width;
-        float v1 = (sourceRect.Y + sourceRect.Height) / texture.Height;
+        if(!sourceRect) {
+            sourceRect = this._tempSourceRect;
+            sourceRect.x = 0;
+            sourceRect.y = 0;
+            sourceRect.width = texture.width;
+            sourceRect.height = texture.height;
+        }
 
-        float posX = drawRect.X - (drawRect.Width * origin.X);
-        float posY = drawRect.Y - (drawRect.Height * origin.Y);
+        const u0 = sourceRect.x / texture.width;
+        const v0 = sourceRect.y / texture.height;
+        const u1 = (sourceRect.x + sourceRect.width) / texture.width;
+        const v1 = (sourceRect.y + sourceRect.height) / texture.height;
 
-        _currentSpriteBatchDrawable.WriteSprite(
-            new Vector3D<float>(posX, posY, layerDepth),
-            new Vector2D<float>(drawRect.Width, drawRect.Height),
+        this._tempPosition[0] = drawRect.x - drawRect.width;
+        this._tempPosition[1] = drawRect.y - drawRect.height;
+        this._tempPosition[2] = layerDepth;
+        this._tempSize[0] = drawRect.width;
+        this._tempSize[1] = drawRect.height;
+
+        this._currentSpriteBatchDrawable.writeSprite(
+            this._tempPosition, this._tempSize,
             color,
-            rotation,
-            rotationOrigin,
             u0, v0, u1, v1
         );
     }
-
-    /// <inheritdoc />
-public void Draw(ITexture2D texture,
-Vector2D<float> position,
-Rect<float>sourceRect,
-    Color color,
-    float rotation,
-Vector2D<float> origin,
-Vector2D<float> scale,
-    bool flipSpriteHorizontally = false,
-    bool flipSpriteVertically = false)
-    {
-        CheckIfNewDrawableShouldBeCreated(texture);
-
-        // Safe to assign current texture.
-        _currentTexture = texture;
-
-        float xPos = position.X;
-        float yPos = position.Y;
-
-        float u0 = (float)sourceRect.X / texture.Width;
-        float v0 = (float)sourceRect.Y / texture.Height;
-        float u1 = (float)(sourceRect.X + sourceRect.Width) / texture.Width;
-        float v1 = (float)(sourceRect.Y + sourceRect.Height) / texture.Height;
-
-        if (flipSpriteHorizontally)
-        {
-            (u0, u1) = (u1, u0);
-        }
-
-        if (flipSpriteVertically)
-        {
-            (v0, v1) = (v1, v0);
-        }
-
-        _currentSpriteBatchDrawable.WriteSprite(
-            new Vector3D<float>(xPos, yPos, 0),
-            new Vector2D<float>(sourceRect.Width, sourceRect.Height) * scale,
-            color,
-            rotation,
-            origin,
-            u0, v0, u1, v1
-        );
-    }
-
-    /// <inheritdoc />
-public void Draw(ITexture2D texture, Rect<float>sourceRect, Vector2D<float> position, Vector2D<float> size)
-    {
-        CheckIfNewDrawableShouldBeCreated(texture);
-
-        // Safe to assign current texture.
-        _currentTexture = texture;
-
-        float u0 = (float)sourceRect.X / texture.Width;
-        float v0 = (float)sourceRect.Y / texture.Height;
-        float u1 = (float)(sourceRect.X + sourceRect.Width) / texture.Width;
-        float v1 = (float)(sourceRect.Y + sourceRect.Height) / texture.Height;
-
-        _currentSpriteBatchDrawable.WriteSprite(new Vector3D<float>(position.X, position.Y, 0), size, u0, v0, u1, v1);
-    }
-
-    /// <inheritdoc />
-public void Draw(ITexture2D texture, Rect<float>drawRect, Color color)
-    {
-        if (texture is null)
-        {
-            throw new ArgumentNullException(nameof(texture));
-        }
-
-        CheckIfNewDrawableShouldBeCreated(texture);
-
-        // Safe to assign current texture.
-        _currentTexture = texture;
-
-        _currentSpriteBatchDrawable.WriteSprite(
-            new(drawRect.X, drawRect.Y, 0),
-            new(drawRect.Width, drawRect.Height),
-            color);
-    }
-
-    /// <inheritdoc />
-public void Draw(Rect<float>drawRect, Color color, Vector2D<float> origin = default, float rotation = 0, Vector2D<float>? rotationOrigin = null)
-    {
-        CheckIfNewDrawableShouldBeCreated(_defaultWhiteTexture);
-        rotationOrigin ??= new Vector2D<float>(0, 0);
-        _currentTexture = _defaultWhiteTexture;
-
-        float posX = drawRect.X - (drawRect.Width * origin.X);
-        float posY = drawRect.Y - (drawRect.Height * origin.Y);
-
-        _currentSpriteBatchDrawable.WriteSprite(
-            new(posX, posY, 0),
-            new(drawRect.Width, drawRect.Height),
-            color,
-            rotation: rotation,
-        rotationOrigin: rotationOrigin.Value);
-    }
-
-    /// <inheritdoc />
-public void DrawString(
-    SpriteFont font,
-    string text,
-Vector2D<float> position,
-    Color? color = null,
-    float scale = 1.0f)
-    {
-        color ??= Color.White;
-        CheckIfNewDrawableShouldBeCreated(font.Texture);
-
-        // Safe to assign current texture.
-        _currentTexture = font.Texture;
-
-        float nextCharX = 0;
-        foreach (char character in text)
-        {
-            SpriteFontCharacter spriteFontCharacter = font[character]!;
-
-            float x = position.X + spriteFontCharacter.Offset.X * scale + nextCharX * scale;
-            float y = position.Y + spriteFontCharacter.Offset.Y * scale;
-
-            _currentSpriteBatchDrawable.WriteSprite(new Vector3D<float>(x, y, 0), spriteFontCharacter.Size * scale,
-                spriteFontCharacter.TextureCoords.A,
-                spriteFontCharacter.TextureCoords.B,
-                spriteFontCharacter.TextureCoords.C,
-                spriteFontCharacter.TextureCoords.D,
-                color.Value
-            );
-
-            nextCharX += spriteFontCharacter.Advance;
-        }
-    }
-    /// <inheritdoc />
-    ///
-public void DrawString(
-    SpriteFont font,
-    string text,
-Vector2D<float> position,
-    Color color,
-Vector2D<float> origin,
-Vector2D<float> scale)
-    {
-        CheckIfNewDrawableShouldBeCreated(font.Texture);
-
-        // Safe to assign current texture.
-        _currentTexture = font.Texture;
-
-        float nextCharX = 0;
-        foreach (char character in text)
-        {
-            SpriteFontCharacter spriteFontCharacter = font[character]!;
-
-            float x = position.X + spriteFontCharacter.Offset.X * scale.X + nextCharX * scale.X;
-            float y = position.Y + spriteFontCharacter.Offset.Y * scale.Y;
-
-            // Offset for origin.
-            x -= origin.X * scale.X;
-            y -= origin.Y * scale.Y;
-
-            _currentSpriteBatchDrawable.WriteSprite(
-                new Vector3D<float>(x, y, 0),
-                spriteFontCharacter.Size * scale,
-                spriteFontCharacter.TextureCoords.A,
-                spriteFontCharacter.TextureCoords.B,
-                spriteFontCharacter.TextureCoords.C,
-                spriteFontCharacter.TextureCoords.D,
-                color
-            );
-
-            nextCharX += spriteFontCharacter.Advance;
-        }
-    }
-    */
-
 
     /** @inheritDoc */
     public end(): void {

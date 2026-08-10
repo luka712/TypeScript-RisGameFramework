@@ -1,32 +1,47 @@
-import  { type RenderPassDescriptor } from "../core/rendering/render-pass/render-pass-descriptor";
 import type { IRenderPass } from "../core/rendering/render-pass/render-pass-interface";
-import type { ISampler } from "../core/rendering/sampler/sampler-interface";
-import  { type SamplerDescriptor } from "../core/rendering/sampler/sampler-descriptor";
-import type { IWindowManager } from "../core/window/window-manager-interface";
 import { WebGlSampler } from "./sampler/webgl-sampler";
 import { WebGlRenderPass } from "./render-pass/WebGlRenderPass.ts";
-import { AGraphicsDevice, GraphicsDeviceDescriptor } from "../core/rendering/a-graphics-device";
+import { AGraphicsDevice, GraphicsDeviceDescriptor } from "../core/rendering/AGraphicsDevice.ts";
 import  { type BlendStateDescriptor } from "../core/rendering/blending/blend-state-descriptor";
-import type { IBlendState } from "../core/rendering/blending/blend-state-interface";
 import { WebGlBlendState } from "./blending/webgl-blend-state";
-import type { IPrimitiveState } from "../core/rendering/primitive/primitve-interface";
 import { WebGlPrimitiveState } from "./primitive/webgl-primitive-state";
 import { PrimitiveStateDescriptor } from "../core/rendering/primitive/PrimitiveStateDescriptor.ts";
-import  { type SwapChainDescriptor } from "../core/rendering/swap-chain/swap-chain-descriptor";
-import type { ISwapChain } from "../core/rendering/swap-chain/swap-chain-interface";
 import {WebGLGraphicsDeviceFeatures} from "./WebGLGraphicsDeviceFeatures.ts";
 import {WebGlSwapChain} from "./swap-chain/WebGlSwapChain.ts";
+import {WebGlGpuInfo} from "./WebGlGpuInfo.ts";
+import type {
+    IBlendState,
+    IGPUInfo, IPrimitiveState,
+    ISampler,
+    ISwapChain,
+    IWindowManager,
+    RenderPassDescriptor,
+    SwapChainDescriptor
+} from "ris-framework-api";
+import type {SamplerDescriptor} from "../core/rendering/sampler/sampler-descriptor.ts";
 
 export class WebGlGraphicsDevice extends AGraphicsDevice {
+
+
+    public setupDebugCallback(): void {
+        throw new Error("Method not implemented.");
+    }
+    public frameEnd(): void {
+        throw new Error("Method not implemented.");
+    }
+    public pushDebugGroup(groupName: string): void {
+        throw new Error("Method not implemented.");
+    }
+    public popDebugGroup(): void {
+        throw new Error("Method not implemented.");
+    }
 
 
     private readonly _windowManager: IWindowManager;
     private _canvas: HTMLCanvasElement = null!;
     private _gl: WebGL2RenderingContext = null!;
-    private _name: string = "Unknown";
-    private _vendor: string = "Unknown";
     private _features: WebGLGraphicsDeviceFeatures = null!;
-
+    private _gpuInfo: WebGlGpuInfo = null!;
 
     /**
      * The constructor.
@@ -38,7 +53,6 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
         super(descriptor);
         this._windowManager = windowManager;
     }
-
 
     /**
      * The WebGL rendering context.
@@ -53,14 +67,10 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
     }
 
     /** @inheritdoc */
-    public get name(): string {
-        return this._name;
+    public get gpuInfo(): IGPUInfo {
+        return this._gpuInfo;
     }
 
-    /** @inheritdoc */
-    public get vendor(): string {
-        return this._vendor;
-    }
 
     /** @inheritdoc */
     public initialize(): void {
@@ -82,23 +92,14 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
             throw new Error("WebGL not supported.");
         }
 
-        // Get name of the graphics device.
-        const debugExt = this._gl.getExtension("WEBGL_debug_renderer_info");
-        if(debugExt) {
-            this._name = this._gl.getParameter(debugExt.UNMASKED_RENDERER_WEBGL);
-            this._vendor = this._gl.getParameter(debugExt.UNMASKED_VENDOR_WEBGL);
-        }
-        else {
-            this._name = this._gl.getParameter(this._gl.RENDERER);
-            this._vendor = this._gl.getParameter(this._gl.VENDOR);
-        }
         this._features = new WebGLGraphicsDeviceFeatures(this._gl);
+        this._gpuInfo = new WebGlGpuInfo(this);
 
         super.initialize();
     }
 
     /** @inheritdoc */
-    public createSwapChain(canvas: HTMLCanvasElement, swapChainDescriptor: SwapChainDescriptor): ISwapChain {
+    public createSwapChain(canvas: HTMLCanvasElement, _: SwapChainDescriptor): ISwapChain {
         return new WebGlSwapChain(canvas);
     }
 

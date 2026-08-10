@@ -1,13 +1,14 @@
 import { inject, injectable } from "tsyringe";
-import type { TempIFramework } from "../../core/framework-interface";
-import type { IMainRenderTargetRenderPipeline } from "../../core/render-pipelines/main-render-target-render-pipeline-interface";
 import type { IRenderPipelineFactory } from "../../core/render-pipelines/render-pipeline-factory-interface";
-import type { ITexture2D } from "../../core/rendering/texture/texture";
 import { WebGlMainRenderTargetRenderPipeline } from "./WebGlMainRenderTargetRenderPipeline.ts";
 import { IFrameworkSymbol } from "../../core/dependency-injection/register-services-interface";
-import type { IUniformBuffer } from "../../core/buffers/uniform-buffer-interface";
-import type { ISpriteRenderPipeline } from "../../core/render-pipelines/sprite-render-pipeline";
 import { WebGlSpriteRenderPipeline } from "./sprite/WebGlSpriteRenderPipeline.ts";
+import type {
+    IFramework,
+    IMainRenderTargetRenderPipeline,
+    ISpriteRenderPipeline, ITexture2D,
+    IUniformBuffer
+} from "ris-framework-api";
 
 /**
  * The WebGL implementation of the IRenderPipelineFactory interface. 
@@ -20,7 +21,7 @@ export class WebGlRenderPipelineFactory implements IRenderPipelineFactory {
      * The constructor for the WebGLRenderPipelineFactory class.
      * @param _framework The framework instance.
      */
-    constructor(@inject(IFrameworkSymbol) private readonly _framework: TempIFramework) {
+    constructor(@inject(IFrameworkSymbol) private readonly _framework: IFramework) {
     }
 
     /** @inheritdoc */

@@ -1,8 +1,11 @@
 import type { BlendStateDescriptor } from "../../core/rendering/blending/blend-state-descriptor";
-import type { IBlendState } from "../../core/rendering/blending/blend-state-interface";
 import { WebGlConverter } from "../utilities/WebGlConverter.ts";
 import type { WebGlGraphicsDevice } from "../WebGlGraphicsDevice.ts";
+import type {IBlendState} from "ris-framework-api";
 
+/**
+ * The WebGL blend state.
+ */
 export class WebGlBlendState implements IBlendState {
 
     private readonly _gl: WebGL2RenderingContext;
@@ -30,9 +33,9 @@ export class WebGlBlendState implements IBlendState {
         this._dstAlphaFactor = WebGlConverter.convertBlendFactor(this._gl, descriptor.alpha.dstFactor);
         this._alphaBlendOperation = WebGlConverter.convertBlendOperation(this._gl, descriptor.alpha.operation);
     }
-    
+
     /** @inheritdoc */
-    public nativeObject: any;
+    public nativePtr: any;
 
     /**
      * For internal use only. Applies the blend state to the WebGL context.

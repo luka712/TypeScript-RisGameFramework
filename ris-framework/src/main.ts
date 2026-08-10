@@ -6,7 +6,7 @@ import viteLogo from '/vite.svg'
 import {setupCounter} from './counter.ts'
 import {Framework} from './core/Framework.ts';
 import {TextureSamplerFilteringPreset} from "./core/rendering/enums.ts";
-import {Color, type IFramework, Rect} from "ris-framework-api";
+import {Color, type IFramework, type ITexture2D, Rect} from "ris-framework-api";
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
@@ -34,7 +34,18 @@ const framework : IFramework = new Framework({
 });
 
 const rect = new Rect(200, 200, 200, 200);
+const texRect = new Rect(500, 200, 200, 200);
+const texRect2 = new Rect(200, 500, 200, 200);
 const color = Color.blue();
+const whiteColor = Color.white();
+let tex: ITexture2D;
+let tex2 : ITexture2D;
+
+framework.addOnLoadContentListener(async () =>
+{
+  tex = await framework.content.loadTexture2DAsync("/assets/test.png");
+  tex2 = await framework.content.loadTexture2DAsync("/assets/cat.jpg");
+});
 
 framework.addOnRenderListener(() =>
 {
@@ -42,8 +53,15 @@ framework.addOnRenderListener(() =>
 
   spriteBatch.begin();
   spriteBatch.drawRect(rect, color);
+  if(tex != null){
+    spriteBatch.draw(tex, texRect, whiteColor);
+  }
+  if(tex2 != null){
+    spriteBatch.draw(tex2, texRect2, whiteColor);
+  }
   spriteBatch.end();
 });
+
 framework.initialize();
 framework.renderer.clearColor = Color.lightPink();
 
