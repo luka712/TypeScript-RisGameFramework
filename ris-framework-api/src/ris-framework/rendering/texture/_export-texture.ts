@@ -8,3 +8,4 @@ export * from "./ITextureView";
 export * from "./ITextureFactory";
 export * from "./SamplerFilter";
 export * from "./SamplerAddressMode";
+export * from "./MipMapSamplerFilter";

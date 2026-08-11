@@ -1,9 +1,14 @@
 import {Culling} from "../../core/renderer/enums";
 import {BlendFactor, BlendOperation} from "../../core/rendering/blending/enums";
 import {CullMode, FrontFace, PrimitiveTopology} from "../../core/rendering/primitive/enums";
-import {MipmapSamplerFilter, SamplerAddressMode, SamplerFilter} from "../../core/rendering/sampler/enums";
 import {VertexFormat} from "../../VertexFormat.ts";
-import {BufferUsage, TextureFormat} from "ris-framework-api";
+import {
+    BufferUsage,
+    MipMapSamplerFilter,
+    SamplerAddressMode,
+    SamplerFilter,
+    TextureFormat
+} from "ris-framework-api";
 
 export class WebGlConverter {
 
@@ -223,16 +228,18 @@ export class WebGlConverter {
      * @param mipMapFilter The MipmapSamplerFilter.
      * @returns The WebGL enum.
      */
-    public static convertToMinFilter(gl: WebGL2RenderingContext, minFilter: SamplerFilter, mipMapFilter: MipmapSamplerFilter): number {
-        if (mipMapFilter == MipmapSamplerFilter.NONE) {
+    public static convertToMinFilter(gl: WebGL2RenderingContext,
+                                     minFilter: SamplerFilter,
+                                     mipMapFilter: MipMapSamplerFilter): number {
+        if (mipMapFilter == MipMapSamplerFilter.NONE) {
             return this.convertMagFilter(gl, minFilter);
         }
 
         if (minFilter == SamplerFilter.NEAREST) {
             switch (mipMapFilter) {
-                case MipmapSamplerFilter.NEAREST:
+                case MipMapSamplerFilter.NEAREST:
                     return gl.NEAREST_MIPMAP_NEAREST;
-                case MipmapSamplerFilter.LINEAR:
+                case MipMapSamplerFilter.LINEAR:
                     return gl.NEAREST_MIPMAP_LINEAR;
                 default:
                     throw new Error("NotImplementedException");
@@ -240,9 +247,9 @@ export class WebGlConverter {
         }
         else if (minFilter == SamplerFilter.LINEAR) {
             switch (mipMapFilter) {
-                case MipmapSamplerFilter.NEAREST:
+                case MipMapSamplerFilter.NEAREST:
                     return gl.LINEAR_MIPMAP_NEAREST;
-                case MipmapSamplerFilter.LINEAR:
+                case MipMapSamplerFilter.LINEAR:
                     return gl.LINEAR_MIPMAP_LINEAR;
                 default:
                     throw new Error("NotImplementedException");
@@ -315,26 +322,26 @@ export class WebGlConverter {
      * @param mipMapFilter The MipmapSamplerFilter.
      * @returns The WebGL enum.
      */
-    public static convertMinFIlter(gl: WebGL2RenderingContext, filter: SamplerFilter, mipMapFilter: MipmapSamplerFilter): number {
+    public static convertMinFIlter(gl: WebGL2RenderingContext, filter: SamplerFilter, mipMapFilter: MipMapSamplerFilter): number {
 
-        if (mipMapFilter == MipmapSamplerFilter.NONE) {
+        if (mipMapFilter == MipMapSamplerFilter.NONE) {
             return this.convertMagFilter(gl, filter);
         }
         switch (filter) {
             case SamplerFilter.NEAREST:
                 switch (mipMapFilter) {
-                    case MipmapSamplerFilter.NEAREST:
+                    case MipMapSamplerFilter.NEAREST:
                         return gl.NEAREST_MIPMAP_NEAREST;
-                    case MipmapSamplerFilter.LINEAR:
+                    case MipMapSamplerFilter.LINEAR:
                         return gl.NEAREST_MIPMAP_LINEAR;
                     default:
                         throw new Error("NotImplementedException");
                 }
             case SamplerFilter.LINEAR:
                 switch (mipMapFilter) {
-                    case MipmapSamplerFilter.NEAREST:
+                    case MipMapSamplerFilter.NEAREST:
                         return gl.LINEAR_MIPMAP_NEAREST;
-                    case MipmapSamplerFilter.LINEAR:
+                    case MipMapSamplerFilter.LINEAR:
                         return gl.LINEAR_MIPMAP_LINEAR;
                     default:
                         throw new Error("NotImplementedException");

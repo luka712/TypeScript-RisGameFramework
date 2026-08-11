@@ -4,11 +4,10 @@ import {FrameworkOptions} from "./framework-options.ts";
 import {IFrameworkSymbol} from "./dependency-injection/register-services-interface.ts";
 import { RenderConfiguration, RenderConfigurationSymbol} from "./renderer/renderer-interface.ts";
 import {GeometryBuilder} from "../geometry/GeometryBuilder.ts";
-import type {ITextureFactory} from "./rendering/texture/texture-factory.ts";
 import {ContentManager} from "./content/ContentManager.ts";
 import {WebGlRenderer} from "../webgl/WebGlRenderer.ts";
 import {WebGlBuffersFactory} from "../webgl/buffers/WebGlBuffersFactory.ts";
-import type {IBufferFactory, IGeometryBuilder, IGraphicsDevice, ISpriteBatch} from "ris-framework-api";
+import type {IBufferFactory, IGeometryBuilder, IGraphicsDevice, ISpriteBatch, ITextureFactory} from "ris-framework-api";
 import {WebGlShaderModuleLoader} from "../webgl/shader/WebGlShaderModuleLoader.ts";
 import {TextureSamplerFilteringPreset} from "./rendering/enums.ts";
 import {SpriteBatch} from "./sprite-batch/SpriteBatch.ts";
@@ -93,7 +92,7 @@ private readonly _onLoadContentListeners: (() => void)[] = [];
     }
 
     /** @inheritdoc */
-    public readonly renderPipelineFactory(): IRenderPipelineFactory;
+    public renderPipelineFactory: IRenderPipelineFactory;
 
     /** @inheritdoc */
     get geometryBuilder(): IGeometryBuilder {

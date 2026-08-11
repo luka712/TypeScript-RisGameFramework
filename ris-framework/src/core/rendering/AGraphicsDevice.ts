@@ -2,7 +2,6 @@ import {BlendStateDescriptor} from "./blending/blend-state-descriptor";
 import {TextureSamplerFilteringPreset} from "./enums";
 import type {PrimitiveStateDescriptor} from "./primitive/PrimitiveStateDescriptor.ts";
 import type {IRenderPass} from "./render-pass/render-pass-interface";
-import {MipmapSamplerFilter, SamplerFilter} from "./sampler/enums";
 import {SamplerDescriptor} from "./sampler/sampler-descriptor";
 import {
     type IGPUInfo,
@@ -10,7 +9,8 @@ import {
     type ISampler,
     type IBlendState,
     type IPrimitiveState,
-    type IGraphicsDevice, SwapChainDescriptor, type RenderPassDescriptor
+    type IGraphicsDevice, SwapChainDescriptor, type RenderPassDescriptor, SamplerFilter, MipMapSamplerFilter,
+    type ISwapChain
 } from "ris-framework-api";
 
 /**
@@ -73,7 +73,7 @@ export abstract class AGraphicsDevice implements IGraphicsDevice {
         var samplerDescriptor = new SamplerDescriptor();
         samplerDescriptor.minFilter = this._descriptor.samplerFilteringPreset == TextureSamplerFilteringPreset.POINT ? SamplerFilter.NEAREST : SamplerFilter.LINEAR;
         samplerDescriptor.magFilter = this._descriptor.samplerFilteringPreset == TextureSamplerFilteringPreset.POINT ? SamplerFilter.NEAREST : SamplerFilter.LINEAR;
-        samplerDescriptor.mipMapFilter = this._descriptor.samplerFilteringPreset == TextureSamplerFilteringPreset.TRILINEAR ? MipmapSamplerFilter.LINEAR : MipmapSamplerFilter.NONE;
+        samplerDescriptor.mipMapFilter = this._descriptor.samplerFilteringPreset == TextureSamplerFilteringPreset.TRILINEAR ? MipMapSamplerFilter.LINEAR : MipMapSamplerFilter.NONE;
         return this.createSampler(samplerDescriptor);
     }
 

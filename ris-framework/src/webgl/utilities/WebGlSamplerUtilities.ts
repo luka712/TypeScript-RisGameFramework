@@ -1,10 +1,12 @@
 import { SamplerCompareFunction } from '../../common/sampler-enums';
-import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from '../../core/rendering/sampler/enums';
 import { SpectorJSUtilities } from './spector-js-utilities';
 import { WebGlConverter } from './WebGlConverter.ts';
+import {MipMapSamplerFilter, SamplerAddressMode, SamplerFilter} from "ris-framework-api";
 
-export class WebGLSamplerUtilities {
-
+/**
+ * The utility class for working with WebGLSampler object.
+ */
+export class WebGlSamplerUtilities {
       
     /**
      * Creates a WebGLSampler with the specified parameters.
@@ -23,7 +25,7 @@ export class WebGLSamplerUtilities {
     public create(gl: WebGL2RenderingContext,
                   minFilter: SamplerFilter = SamplerFilter.LINEAR,
                   magFilter: SamplerFilter = SamplerFilter.LINEAR,
-                  mipMapFilter: MipmapSamplerFilter = MipmapSamplerFilter.NONE,
+                  mipMapFilter: MipMapSamplerFilter = MipMapSamplerFilter.NONE,
                   addressModeU: SamplerAddressMode = SamplerAddressMode.CLAMP_TO_EDGE,
                   addressModeV: SamplerAddressMode = SamplerAddressMode.CLAMP_TO_EDGE,
                   addressModeW: SamplerAddressMode = SamplerAddressMode.CLAMP_TO_EDGE,

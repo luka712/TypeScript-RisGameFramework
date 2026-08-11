@@ -1,9 +1,8 @@
 import { SamplerCompareFunction } from "../../common/sampler-enums";
-import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from "../../core/rendering/sampler/enums";
 import { SamplerDescriptor } from "../../core/rendering/sampler/sampler-descriptor";
-import type { ISampler } from "../../core/rendering/sampler/sampler-interface";
 import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
 import type { WebGlGraphicsDevice } from "../WebGlGraphicsDevice.ts";
+import {type ISampler, MipMapSamplerFilter, SamplerAddressMode, SamplerFilter} from "ris-framework-api";
 
 /**
  * The WebGL implementation of the ISampler interface.
@@ -13,7 +12,7 @@ export class WebGlSampler implements ISampler {
     private readonly _gl: WebGL2RenderingContext;
     private _minFilter = SamplerFilter.NEAREST;
     private _magFilter = SamplerFilter.NEAREST;
-    private _mipMapFilter = MipmapSamplerFilter.NONE;
+    private _mipMapFilter = MipMapSamplerFilter.NONE;
     private _addressModueU = SamplerAddressMode.CLAMP_TO_EDGE
     private _addressModueV = SamplerAddressMode.CLAMP_TO_EDGE;
     private _addressModueW = SamplerAddressMode.CLAMP_TO_EDGE;
@@ -39,6 +38,7 @@ export class WebGlSampler implements ISampler {
         this._createSampler();
     }
 
+
     /** @inheritdoc */
     public get minFilter() {
         return this._minFilter;
@@ -50,22 +50,22 @@ export class WebGlSampler implements ISampler {
     }
 
     /** @inheritdoc */
-    public get mipMapFilter() {
+    public get mipmapFilter()  {
         return this._mipMapFilter;
     }
 
     /** @inheritdoc */
-    public get addressModueU() {
+    public get addressModeU() {
         return this._addressModueU;
     }
 
     /** @inheritdoc */
-    public get addressModueV() {
+    public get addressModeV() {
         return this._addressModueV;
     }
 
     /** @inheritdoc */
-    public get addressModueW() {
+    public get addressModeW() {
         return this._addressModueW;
     }
 

@@ -7,19 +7,19 @@ import {SimpleTreeView, TreeItem} from "@mui/x-tree-view";
  * The drop area component.
  * @constructor
  */
-export default function Ktx2TextureList() {
+export default function TextureList() {
 
-    const ktx2Textures = useAppStore(state => state.ktxTextures);
+    const textures = useAppStore(state => state.textures);
 
     let id = 1;
-    const listTextures = ktx2Textures.map(ktx => {
+    const listTextures = textures.map(tex => {
 
         const _id = (id++).toString();
 
         return {
             id: _id,
-            label: _id + ". " + (ktx.filePath ?? "Unknown"),
-            ktxTexture: ktx
+            label: _id + ". " + (tex.name ?? "Unknown"),
+            texture: tex
         }
     });
 

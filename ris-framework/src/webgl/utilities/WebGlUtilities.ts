@@ -5,7 +5,7 @@ import { WebGLFilterAnisotropicUtilities } from "./webgl-filter-anisotropic-util
 import { WebGlFrameBufferUtilities } from "./WebGlFrameBufferUtilities.ts";
 import { WebGLProgramUtilities } from "./webgl-program-utilities";
 import { WebGLRenderbufferUtilities } from "./webgl-renderbuffer-utilities";
-import { WebGLSamplerUtilities } from "./webgl-sampler-utilities";
+import { WebGlSamplerUtilities } from "./WebGlSamplerUtilities.ts";
 import { WebGlShaderUtilities } from "./WebGlShaderUtilities.ts";
 import { WebGlTextureUtilities } from "./WebGlTextureUtilities.ts";
 
@@ -57,7 +57,7 @@ export class WebGlUtilities {
     /**
      * The WebGL sampler utilities.
      */
-    public static readonly sampler = new WebGLSamplerUtilities();
+    public static readonly sampler = new WebGlSamplerUtilities();
 
     /**
      * The WebGL shader utilities.

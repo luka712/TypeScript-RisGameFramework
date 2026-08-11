@@ -1,31 +1,26 @@
 import {useDropzone} from "react-dropzone";
 import {useAppStore} from "../store/AppStore.ts";
-import {Ktx2Loader} from "../../../ris-ktx2/dist";
 import {Button} from "@mui/material";
 
-interface AddFileButtonProps {
-    ktxLoader: Ktx2Loader;
-}
 
 
 /**
  * The drop area component.
  * @constructor
  */
-export default function AddFileButton({ktxLoader}: AddFileButtonProps) {
+export default function AddFileButton() {
 
-    const addKtxTexture = useAppStore(state => state.addKtxTexture);
+    const addTexture = useAppStore(state => state.addTexture);
 
 
     const {getRootProps, getInputProps} = useDropzone({
         accept: {
-            "image/ktx2": [".ktx2"],
+            "image/ktx2": [".ktx2", ".png", ".jpg", ".webp", ".jpeg"],
         },
         onDrop: async (files) => {
 
             for (const file of files) {
-                const ktxTex = await ktxLoader.loadAsync(file);
-                addKtxTexture(ktxTex);
+                addTexture(file);
             }
         },
     });

@@ -56,4 +56,10 @@ export class ContentManager implements IContentManager {
             data.channels);
     }
 
+    /** @inheritDoc */
+    public loadTexture2DFromPixels(width: number, height: number, pixels: ArrayBuffer): ITexture2D {
+        const view = new Uint8Array(pixels);
+        return this._framework.textureFactory.create(width, height, view);
+    }
+
 }

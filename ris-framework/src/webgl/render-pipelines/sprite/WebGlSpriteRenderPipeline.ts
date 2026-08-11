@@ -16,7 +16,7 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
 
     private static readonly CAMERA_BINDING_POINT: number = 0;
 
-    private _texture: WebGlTexture2D | null = null;
+    private _texture: WebGlTexture2D = null!;
     private _projectionViewBuffer: WebGlUniformBuffer;
     private _cameraBlockIndex: number = -1;
     private _buffersArray: WebGLBuffer[] = [null!];
@@ -43,12 +43,12 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
     }
 
     /** @inheritdoc */
-    public get spriteTexture(): ITexture2D | null {
+    public get spriteTexture(): ITexture2D  {
         return this._texture;
     }
 
     /** @inheritdoc */
-    public set spriteTexture(value: ITexture2D | null) {
+    public set spriteTexture(value: ITexture2D ) {
         this._texture = asWebGLTexture2D(value!);
     }
 

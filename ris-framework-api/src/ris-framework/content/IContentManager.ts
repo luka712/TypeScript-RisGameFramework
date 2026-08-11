@@ -40,5 +40,4 @@ export interface IContentManager {
      * @returns The .
      */
     loadTexture2DAsync(path: string): Promise<ITexture2D>;
-
 }

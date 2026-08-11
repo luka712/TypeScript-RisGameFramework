@@ -1,4 +1,4 @@
-import { MipmapSamplerFilter, SamplerAddressMode, SamplerFilter } from "./enums";
+import {MipMapSamplerFilter, SamplerAddressMode, SamplerFilter} from "ris-framework-api";
 
 export class SamplerDescriptor {
     /**
@@ -14,7 +14,7 @@ export class SamplerDescriptor {
     /**
      * The mipmap filter.
      */
-    public mipMapFilter: MipmapSamplerFilter = MipmapSamplerFilter.NONE;
+    public mipMapFilter: MipMapSamplerFilter = MipMapSamplerFilter.NONE;
 
     /**
      * The address mode for the U coordinate.
