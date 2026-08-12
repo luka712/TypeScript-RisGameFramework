@@ -62,7 +62,8 @@ export class SpriteBatch implements ISpriteBatch {
             if (!spriteBatchDrawable) {
                 spriteBatchDrawable = new SpriteBatchDrawable(
                     this._framework, texture,
-                    this._currentProjectionViewBuffer, SpriteBatch.MAX_BATCH_SIZE);
+                    this._currentProjectionViewBuffer,
+                    SpriteBatch.MAX_BATCH_SIZE);
                 spriteBatchDrawable.initialize();
                 this._spriteBatchDrawables.set(texture, spriteBatchDrawable);
             }
@@ -77,6 +78,12 @@ export class SpriteBatch implements ISpriteBatch {
         this._defaultCamera = this._framework.cameraFactory.createDefaultOrthographicCamera();
         this._currentProjectionViewBuffer = this._defaultCamera.projectionViewBuffer;
         this._defaultWhiteTexture = this._framework.textureFactory.createEmpty(1, 1, Color.white());
+
+        this._framework.renderer.addOnResizedListener((_, size) => {
+            this._defaultCamera.right = size[0]
+            this._defaultCamera.bottom = size[1];
+            this._defaultCamera.updateBuffers();
+        });
     }
     
     /** @inheritDoc */
@@ -142,8 +149,8 @@ export class SpriteBatch implements ISpriteBatch {
         const u1 = (sourceRect.x + sourceRect.width) / texture.width;
         const v1 = (sourceRect.y + sourceRect.height) / texture.height;
 
-        this._tempPosition[0] = drawRect.x - drawRect.width;
-        this._tempPosition[1] = drawRect.y - drawRect.height;
+        this._tempPosition[0] = drawRect.x;
+        this._tempPosition[1] = drawRect.y;
         this._tempPosition[2] = layerDepth;
         this._tempSize[0] = drawRect.width;
         this._tempSize[1] = drawRect.height;

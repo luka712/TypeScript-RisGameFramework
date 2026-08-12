@@ -5,6 +5,7 @@ import type { RenderingLimits } from "../renderer/rendering-limits.ts";
 import {
     type IFramework, type IGraphicsDevice, type IMainRenderTargetRenderPipeline, type ISwapChain,
     type ITexture2D, type IWindowManager,
+    RenderingBackend,
     RenderPassColorAttachment, RenderPassDepthStencilAttachment,
     RenderPassDescriptor, SwapChainDescriptor,
     TextureUsage
@@ -14,6 +15,12 @@ import {TextureFormat, Color} from "ris-framework-api";
 export abstract class ARenderer implements ITempRenderer {
 
     protected readonly _framework: IFramework;
+
+    /**
+     * The resize listeners.
+     */
+    protected _resizeListeners: ((sender: any, size: vec2) => void)[] = [];
+
     private readonly _windowManager: IWindowManager;
     private _graphicsDevice: IGraphicsDevice = null!;
     private _preferredTextureFormat: TextureFormat = TextureFormat.BGRA_8_UNORM;
@@ -71,11 +78,13 @@ export abstract class ARenderer implements ITempRenderer {
         if (this.backBufferMatchesSwapChain) {
             console.warn(`Attempting to set back buffer size to ${size[0]}x${size[1]}, but back buffer is currently matching the swap chain.
                  To set the back buffer size, either set backBufferMatchesSwapChain to false, or resize the swap chain using the setSize method on the swap chain.`);
-        }
-        else {
+        } else {
             this._currentBackBufferSize[0] = size[0];
             this._currentBackBufferSize[1] = size[1];
             this._mainRenderTargetRequiresResize = true;
+
+            // TODO: should we resize swapchain as well?
+            this._swapChainRequiresResize = true;
         }
     }
 
@@ -84,13 +93,31 @@ export abstract class ARenderer implements ITempRenderer {
 
     /**
      * The constructor.
-     * @param framework The framework. 
+     * @param framework The framework.
      */
     constructor(framework: IFramework) {
         this._framework = framework;
         this._windowManager = framework.windowManager;
         this._currentBackBufferSize[0] = this._windowManager.canvas.width;
         this._currentBackBufferSize[1] = this._windowManager.canvas.height;
+    }
+
+     backend: RenderingBackend;
+
+    /** @inheritDoc */
+    public addOnResizedListener(event: (sender: any, e: vec2) => void): void {
+        this._resizeListeners.push(event);
+    }
+
+    /** @inheritDoc */
+    public removeOnResizedListener(event: (sender: any, e: vec2) => void): void {
+        this._resizeListeners = this._resizeListeners.splice(this._resizeListeners.indexOf(event), 1);
+    }
+    beginComputePass(): void {
+        throw new Error("Method not implemented.");
+    }
+    endComputePass(): void {
+        throw new Error("Method not implemented.");
     }
 
     /**
@@ -174,11 +201,17 @@ export abstract class ARenderer implements ITempRenderer {
         // then main render target only needs to be resized when back buffer size is changed.
         if ((this.backBufferMatchesSwapChain && this._swapChainRequiresResize) || this._mainRenderTargetRequiresResize) {
             this._setupMainRenderPass();
+
+            for(const listener of this._resizeListeners){
+                listener(this, this.backBufferSize);
+            }
         }
 
         if (!this._swapChainRequiresResize) {
             return;
         }
+
+        debugger;
 
         // Note: surface texture and surface texture view must be released before trying to resize.
         this._swapChain.resize(this.backBufferSize[0], this.backBufferSize[1]);

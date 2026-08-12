@@ -16,7 +16,7 @@ export class RenderConfiguration {
     /**
      * The size of the main frame buffer. This is used to initialize the main render target.
      */
-    frameBufferSize: vec2 = vec2.fromValues(800, 600);
+    backBufferSize: vec2 = vec2.fromValues(800, 600);
 
     /**
      * The preset for texture sampler filtering.

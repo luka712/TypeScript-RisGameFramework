@@ -100,7 +100,7 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
 
     /** @inheritdoc */
     public createSwapChain(canvas: HTMLCanvasElement, _: SwapChainDescriptor): ISwapChain {
-        return new WebGlSwapChain(canvas);
+        return new WebGlSwapChain(canvas, this);
     }
 
     /** @inheritdoc */

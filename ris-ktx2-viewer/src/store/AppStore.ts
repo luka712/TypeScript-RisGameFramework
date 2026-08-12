@@ -1,24 +1,26 @@
 import {create, type StoreApi, type UseBoundStore} from "zustand";
 import type {IKtx2Texture} from "../../../ris-ktx2/dist/ktx-texture-interface";
-import type {IFramework, ITexture2D} from "ris-framework-api";
+import type {IFramework} from "ris-framework-api";
 import {Ktx2Loader} from "../../../ris-ktx2/dist";
+import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
+import {vec2} from "gl-matrix";
 
 interface AppStore {
     framework: IFramework | null;
     textures: ITexture2DContainer[];
     selectedTexture: ITexture2DContainer | null;
     getSelectedTexture: () => ITexture2DContainer | null;
+    onTextureSelectedCallbacks: ((tex: ITexture2DContainer) => void)[],
+    onTextureSelected: (callback: (tex: ITexture2DContainer) => void) => void;
     theme: string;
     addTexture: (filePath: File) => void;
     setTheme: (theme: string) => void;
     setFramework: (framework: IFramework) => void;
+
+    getResolution: () => vec2 | undefined,
+    setResolution: (resolution: vec2) => void;
 }
 
-interface ITexture2DContainer {
-    name: string;
-    texture: ITexture2D | null;
-    ktxContainer: IKtx2Texture | null;
-}
 
 let ktxLoader: Ktx2Loader | null = null;
 
@@ -76,12 +78,12 @@ async function decodeImage(file: File): Promise<{
 
 async function getKtxContainerTexture(file: File): Promise<IKtx2Texture> {
 
-    if(!ktxLoader) {
+    if (!ktxLoader) {
         ktxLoader = new Ktx2Loader();
         await ktxLoader.initializeAsync();
     }
 
-    return  await ktxLoader.loadAsync(file);
+    return await ktxLoader.loadAsync(file);
 }
 
 
@@ -89,15 +91,25 @@ export const useAppStore: UseBoundStore<StoreApi<AppStore>> = create<AppStore>(
     (set, get) => ({
         ktxTextures: [],
         textures: [],
-selectedTexture: null,
+        selectedTexture: null,
         theme: "light",
-
+        onTextureSelectedCallbacks: [],
         framework: null,
-
+        onTextureSelected: (callback) => get().onTextureSelectedCallbacks.push(callback),
         getSelectedTexture: () => get().selectedTexture,
 
         setTheme: (theme) =>
             set({theme}),
+
+        getResolution: () => get().framework?.renderer.backBufferSize,
+
+        setResolution: (resolution) => {
+            const fw = get().framework;
+
+            if(fw){
+                fw.renderer.backBufferSize = resolution;
+            }
+        },
 
         setFramework: (framework) => set({framework}),
 
@@ -123,7 +135,7 @@ selectedTexture: null,
                     image.pixels
                 );
 
-                const container : ITexture2DContainer = {
+                const container: ITexture2DContainer = {
                     name: file.name,
                     texture: texture,
                     ktxContainer: null
@@ -132,16 +144,20 @@ selectedTexture: null,
                 // Set as selected texture
                 get().selectedTexture = container;
 
+                for(const callback of get().onTextureSelectedCallbacks){
+                    callback(container);
+                }
+
                 set((state) => ({
                     textures: [
                         ...state.textures,
                         container,
                     ],
                 }));
-            } else if(file.name.endsWith(".ktx2")){
+            } else if (file.name.endsWith(".ktx2")) {
 
                 const ktx = await getKtxContainerTexture(file);
-                const container : ITexture2DContainer = {
+                const container: ITexture2DContainer = {
                     name: file.name,
                     texture: null,
                     ktxContainer: ktx
@@ -150,14 +166,17 @@ selectedTexture: null,
                 // Set as selected texture
                 get().selectedTexture = container;
 
+                for(const callback of get().onTextureSelectedCallbacks){
+                    callback(container);
+                }
+
                 set((state) => ({
                     textures: [
                         ...state.textures,
                         container,
                     ],
                 }));
-            }
-            else {
+            } else {
                 throw new Error("Not implemented");
             }
 

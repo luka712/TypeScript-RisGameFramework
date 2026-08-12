@@ -1,6 +1,6 @@
 import {container, type DependencyContainer} from "tsyringe";
 import {WindowManager} from "./window/window-manager.ts";
-import {FrameworkOptions} from "./framework-options.ts";
+import {FrameworkConfig} from "./FrameworkConfig.ts";
 import {IFrameworkSymbol} from "./dependency-injection/register-services-interface.ts";
 import { RenderConfiguration, RenderConfigurationSymbol} from "./renderer/renderer-interface.ts";
 import {GeometryBuilder} from "../geometry/GeometryBuilder.ts";
@@ -33,8 +33,8 @@ private readonly _onLoadContentListeners: (() => void)[] = [];
      * The constructor for the Framework class.
      * @param options The optional options for them framework.
      */
-    constructor(options: FrameworkOptions | null = null) {
-        options = options ?? new FrameworkOptions();
+    constructor(options: FrameworkConfig | null = null) {
+        options = options ?? new FrameworkConfig();
 
         this._container = container.createChildContainer();
         this.windowManager = new WindowManager(options.canvas);
@@ -42,6 +42,7 @@ private readonly _onLoadContentListeners: (() => void)[] = [];
         // Setup container.
         this._container.registerInstance(IFrameworkSymbol, this);
         const rendererConfig = new RenderConfiguration();
+        rendererConfig.backBufferSize = options.backBufferSize;
         rendererConfig.textureFiltering = options.textureFiltering ?? TextureSamplerFilteringPreset.BILINEAR;
         this._container.registerInstance(RenderConfigurationSymbol, rendererConfig);
         this.renderer = new WebGlRenderer(this, rendererConfig);

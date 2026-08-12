@@ -1,8 +1,7 @@
-import type { TempIFramework } from "../core/framework-interface";
 import { type RenderConfiguration } from "../core/renderer/renderer-interface";
 import { ARenderer } from "../core/rendering/ARenderer.ts";
-import type { TempIGraphicsDevice } from "../core/rendering/graphics-device-interface";
 import { WebGlGraphicsDevice } from "./WebGlGraphicsDevice.ts";
+import type {IFramework, IGraphicsDevice} from "ris-framework-api";
 
 /**
  * The WebGL implementation of the IRenderer interface.
@@ -17,14 +16,14 @@ export class WebGlRenderer extends ARenderer {
    * @param renderConfiguration The render configuration. This is used to initialize the renderer.
    */
   constructor(
-     framework: TempIFramework,
+     framework: IFramework,
      renderConfiguration: RenderConfiguration) {
     super(framework);
     this._renderConfiguration = renderConfiguration;
   }
 
   /** @inheritdoc */
-  protected createGraphicsDevice(): TempIGraphicsDevice {
+  protected createGraphicsDevice(): IGraphicsDevice {
     return new WebGlGraphicsDevice(this._framework.windowManager, {
       samplerFilteringPreset: this._renderConfiguration.textureFiltering
     });

@@ -1,14 +1,19 @@
 import {Box, createTheme, Grid, Paper, Stack, Tab, Tabs, ThemeProvider} from "@mui/material";
 import './App.css'
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState} from "react";
 import DropArea from "./components/DropArea.tsx";
-import {Ktx2Loader} from "../../ris-ktx2/src";
 import TextureList from "./components/TextureList.tsx";
 import PropertiesView from "./views/PropertiesView.tsx";
 import AddFileButton from "./components/AddFileButton.tsx";
 import {Color, type IFramework, Rect} from "ris-framework-api";
 import {Framework} from "../../ris-framework/src/core/Framework.ts";
 import {useAppStore} from "./store/AppStore.ts";
+import {vec2} from "gl-matrix";
+import SelectedTexturePropertiesView from "./views/SelectedTexturePropertiesView.tsx";
+
+const imageRect = new Rect(0,0,0,0);
+
+const whiteColor = Color.white();
 
 function App() {
     const theme = createTheme({cssVariables: true, palette: {mode: 'dark'}});
@@ -21,22 +26,57 @@ function App() {
     const getSelectedTexture = useAppStore(state => state.getSelectedTexture);
 
     const [framework, setFramework] = useState<IFramework | null>(null);
-    const [ktxLoader] = useState(() => {
-        const loader = new Ktx2Loader();
-        // fire-and-forget is fine if the loader is ready by the time files are dropped
-        loader.initializeAsync();
-        return loader;
-    });
 
     const [tab, setTab] = useState(0);
 
-    useEffect(() => {
-        if (!canvasRef.current) return;
+    const onTextureSelected = useAppStore(state => state.onTextureSelected);
+    onTextureSelected(tex => {
 
+        const texture = tex.texture;
+        if(texture) {
+
+            const canvas = canvasRef.current;
+            if(canvas) {
+                canvas.width = texture.width;
+                canvas.height = texture.height;
+            }
+
+            const fw = frameworkRef.current;
+            if(fw){
+                fw.renderer.backBufferSize = vec2.fromValues(texture.width, texture.height);
+            }
+        }
+
+    });
+
+    useEffect(() => {
+        if (!canvasRef.current) {
+            return;
+        }
+
+        const canvas = canvasRef.current;
         const fw = frameworkRef.current;
 
+        if (canvas) {
+
+            const observer = new ResizeObserver(entries => {
+                const rect = entries[0].contentRect;
+               // frameworkSize[0] = rect.width * 2;
+                //frameworkSize[1] = rect.height * 2;
+
+                if(fw) {
+                    // fw.renderer.backBufferSize = frameworkSize;
+                }
+            });
+
+            observer.observe(canvas);
+        }
+
         if (!fw) {
-            const fw: IFramework = new Framework({canvas: canvasRef.current});
+            const fw: IFramework = new Framework({
+                canvas: canvasRef.current,
+                backBufferSize: vec2.fromValues(1920,1080),
+            });
             fw.renderer.clearColor = Color.gray();
             fw.addOnRenderListener(() => {
                 const spriteBatch = fw!.spriteBatch;
@@ -45,9 +85,13 @@ function App() {
                 spriteBatch.begin();
 
                 if (selectedTexture && selectedTexture.texture) {
-                    spriteBatch.draw(selectedTexture.texture, new Rect(200, 200, 200, 200), Color.white());
+
+                    imageRect.width = selectedTexture.texture.width;
+                    imageRect.height = selectedTexture.texture.height;
+
+                    spriteBatch.draw(selectedTexture.texture, imageRect, whiteColor);
                 }
-                spriteBatch.drawRect(new Rect(100, 100, 100, 100), Color.white());
+                // spriteBatch.drawRect(imageRect, whiteColor);
                 spriteBatch.end();
             });
             fw.initialize();
@@ -118,6 +162,7 @@ function App() {
                     <DropArea/>
                     <Paper>
                         <Grid container spacing={2}>
+
                             <Grid size={3}>
                                 <Box>
                                     <Tabs
@@ -132,7 +177,7 @@ function App() {
 
                                     {tab === 0 && (
                                         <Stack direction="column" spacing={2} sx={{marginLeft: 2}}>
-                                            <AddFileButton ktxLoader={ktxLoader}/>
+                                            <AddFileButton/>
                                             <TextureList/>
                                         </Stack>
                                     )}
@@ -153,10 +198,16 @@ function App() {
                             </Grid>
 
                             <Grid size={6}>
-                                <canvas ref={canvasRef} width={800} height={600}/>
+                                <Box>
+                                    <canvas ref={canvasRef} width={1920} height={1080} />
+                                </Box>
                             </Grid>
 
-                            <Grid size={3}/>
+                            <Grid size={3}>
+                                <Box sx={{paddingTop: 2, paddingBottom: 2}}>
+                                    <SelectedTexturePropertiesView />
+                                </Box>
+                            </Grid>
                         </Grid>
                     </Paper>
                 </Stack>
