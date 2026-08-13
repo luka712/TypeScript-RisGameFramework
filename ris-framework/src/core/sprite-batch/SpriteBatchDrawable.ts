@@ -1,11 +1,18 @@
-import type {IFramework, ISpriteRenderPipeline, ITexture2D, IUniformBuffer, Color} from "ris-framework-api";
+import type {
+    IFramework,
+    ISpriteRenderPipeline,
+    ITexture2D,
+    IUniformBuffer,
+    Color,
+    IDisposable
+} from "ris-framework-api";
 import {SpriteBatchMesh} from "./SpriteBatchMesh.ts";
 import type {vec2, vec3} from "gl-matrix";
 
 /**
  * The drawable class for sprite batch.
  */
-export class SpriteBatchDrawable {
+export class SpriteBatchDrawable implements IDisposable {
 
     private readonly _framework: IFramework;
     private readonly _texture: ITexture2D;
@@ -124,5 +131,11 @@ export class SpriteBatchDrawable {
         }
 
         this._needsResize = false;
+    }
+
+    /** @inheritDoc */
+    public dispose(): void {
+        this._renderPipeline.dispose();
+        this._drawingMesh.dispose();
     }
 }

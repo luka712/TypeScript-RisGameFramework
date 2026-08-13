@@ -91,6 +91,11 @@ export class WebGlTexture2D extends ATexture2D {
         this._gl.deleteTexture(this._texture);
         this._texture = null;
         this._state = State.DISPOSED;
+
+        for(const listener of this._disposedListeners)
+        {
+            listener(this);
+        }
     }
 
     private static _defaultFilled: WebGlTexture2D | null = null;

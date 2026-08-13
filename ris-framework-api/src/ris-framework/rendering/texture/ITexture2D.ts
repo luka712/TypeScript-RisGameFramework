@@ -65,6 +65,16 @@ export interface ITexture2D extends IContent {
     readonly height: number;
 
     /**
+     * The new size of the renderer.
+     */
+    addOnDisposedListener(event: (sender: ITexture2D) => void): void;
+
+    /**
+     * The new size of the renderer.
+     */
+    removeOnDisposedListener(event: (sender: ITexture2D) => void): void;
+
+    /**
      * Creates the texture view with the specified description.
      * @param description - The .
      * @returns The .

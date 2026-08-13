@@ -50,6 +50,7 @@ export interface IRenderer {
      * The new size of the renderer.
      */
     addOnResizedListener(event: (sender: any, e: vec2) => void): void;
+
     /**
      * The new size of the renderer.
      */

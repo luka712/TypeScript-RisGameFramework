@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import { useAppStore } from "../store/AppStore.ts";
+import {useEffect, useState} from "react";
+import {useAppStore} from "../store/AppStore.ts";
 import PropertiesView from "./PropertiesView.tsx";
 import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
+import {Mapper} from "../service/Mapper.ts";
 
 export default function SelectedTexturePropertiesView() {
     const onTexSelected = useAppStore(
@@ -22,7 +23,7 @@ export default function SelectedTexturePropertiesView() {
                 { name: "Width", value: tex?.texture?.width?.toString() ?? "0" },
                 { name: "Height", value: tex?.texture?.height?.toString() ?? "0" },
                 { name: "Mipmaps", value: "1" },
-                { name: "Format", value: "RGBA8" },
+                { name: "Format", value: Mapper.mapTextureFormatToString[tex.texture!.textureFormat!] }
             ]);
         };
 

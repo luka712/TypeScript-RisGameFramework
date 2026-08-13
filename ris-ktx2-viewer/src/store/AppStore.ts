@@ -10,10 +10,12 @@ interface AppStore {
     textures: ITexture2DContainer[];
     selectedTexture: ITexture2DContainer | null;
     getSelectedTexture: () => ITexture2DContainer | null;
+    setSelectedTexture: (texture: ITexture2DContainer) => void;
     onTextureSelectedCallbacks: ((tex: ITexture2DContainer) => void)[],
     onTextureSelected: (callback: (tex: ITexture2DContainer) => void) => void;
     theme: string;
     addTexture: (filePath: File) => void;
+    removeTexture: (texContainer: ITexture2DContainer) => void;
     setTheme: (theme: string) => void;
     setFramework: (framework: IFramework) => void;
 
@@ -97,6 +99,12 @@ export const useAppStore: UseBoundStore<StoreApi<AppStore>> = create<AppStore>(
         framework: null,
         onTextureSelected: (callback) => get().onTextureSelectedCallbacks.push(callback),
         getSelectedTexture: () => get().selectedTexture,
+        setSelectedTexture: (tex: ITexture2DContainer)=> {
+            get().selectedTexture = tex;
+            for(const callback of get().onTextureSelectedCallbacks) {
+                callback(tex);
+            }
+        },
 
         setTheme: (theme) =>
             set({theme}),
@@ -113,7 +121,24 @@ export const useAppStore: UseBoundStore<StoreApi<AppStore>> = create<AppStore>(
 
         setFramework: (framework) => set({framework}),
 
+        removeTexture: (texture: ITexture2DContainer) => {
+
+            set((state) => ({
+                textures: [
+                    ...state.textures.splice(state.textures.indexOf(texture))
+                ],
+            }));
+            texture.texture?.dispose();
+        },
+
         addTexture: async (file) => {
+
+            if(get().textures.map(t => t.name).indexOf(file.name) > -1) {
+                // TODO: message as texture is already added
+
+                return;
+            }
+
             const framework = get().framework;
 
             if (!framework) {

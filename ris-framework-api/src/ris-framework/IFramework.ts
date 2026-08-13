@@ -1,12 +1,12 @@
-import {IRenderer} from "./rendering/IRenderer";
-import {IGeometryBuilder} from "./geometry/IGeometryBuilder";
+import {RenderingBackend} from "./rendering/RenderingBackend";
 import {ISpriteBatch} from "./sprites/ISpriteBatch";
+import {IRenderer} from "./rendering/IRenderer";
 import {IRenderPipelineFactory} from "./rendering/render-pipelines/IRenderPipelineFactory";
 import {IBufferFactory} from "./rendering/buffers/IBufferFactory";
-import {ICameraFactory} from "./camera/ICameraFactory";
+import {IGeometryBuilder} from "./geometry/IGeometryBuilder";
 import {ITextureFactory} from "./rendering/texture/ITextureFactory";
+import {ICameraFactory} from "./camera/ICameraFactory";
 import {IContentManager} from "./content/IContentManager";
-import {IWindowManager} from "./window/IWindowManager";
 
 /**
  * The framework interface.
@@ -14,14 +14,32 @@ import {IWindowManager} from "./window/IWindowManager";
 export interface IFramework {
 
     /**
+     * The used rendering backend.
+     */
+    readonly renderingBackend: RenderingBackend;
+
+    /**
+     * The sprite batches.
+     */
+    readonly spriteBatch: ISpriteBatch;
+
+    /**
      * The renderer used by the framework.
      */
     readonly renderer: IRenderer;
 
     /**
-     * The SpriteBatch.
+     * The pipeline factory.
+     * Responsible for creating low-level rendering pipelines.
+     * Pipeline includes everything necessary to render some geometry
+     * and can be thought of as a material or renderer.
      */
-    readonly spriteBatch: ISpriteBatch;
+    readonly renderPipelineFactory: IRenderPipelineFactory;
+
+    /**
+     * The buffer factory, responsible for creating GPU memory buffers.
+     */
+    readonly bufferFactory: IBufferFactory;
 
     /**
      * The geometry builder.
@@ -29,14 +47,10 @@ export interface IFramework {
     readonly geometryBuilder: IGeometryBuilder;
 
     /**
-     * The render pipeline factory.
+     * The texture factory.
+     * Responsible for creating textures.
      */
-    readonly renderPipelineFactory: IRenderPipelineFactory;
-
-    /**
-     * The buffer factory.
-     */
-    readonly bufferFactory: IBufferFactory;
+    readonly textureFactory: ITextureFactory;
 
     /**
      * The camera factory.
@@ -44,27 +58,19 @@ export interface IFramework {
     readonly cameraFactory: ICameraFactory;
 
     /**
-     * The texture factory.
-     */
-    readonly textureFactory: ITextureFactory;
-
-    /**
      * The content manager.
      */
     readonly content: IContentManager;
 
     /**
-     * The window manager.
-     */
-    readonly windowManager: IWindowManager;
-
-    /**
-     * Called when the framework is ready to load content.
+     * Called right after the framework is initialized and before the render loop starts.
+     * Content can be loaded here.
      */
     addOnLoadContentListener(event: () => void): void;
 
     /**
-     * Remove callback.
+     * Called right after the framework is initialized and before the render loop starts.
+     * Content can be loaded here.
      */
     removeOnLoadContentListener(event: () => void): void;
 

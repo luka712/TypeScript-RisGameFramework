@@ -66,6 +66,13 @@ export class SpriteBatch implements ISpriteBatch {
                     SpriteBatch.MAX_BATCH_SIZE);
                 spriteBatchDrawable.initialize();
                 this._spriteBatchDrawables.set(texture, spriteBatchDrawable);
+
+                // When texture is disposed destroy this drawable.
+                const disposeListener = () => {
+                    spriteBatchDrawable?.dispose();
+                    texture.removeOnDisposedListener(disposeListener);
+                };
+                texture.addOnDisposedListener(disposeListener);
             }
 
             // Assign current.

@@ -12,6 +12,8 @@ export abstract class ATexture2D implements ITexture2D {
     protected _handle: any;
     protected _state: State = State.CREATED;
 
+    protected _disposedListeners: ((tex: ITexture2D) => void)[] = [];
+
     /**
      * The constructor for the ATexture2D class.
      * @param _width The width of the texture.
@@ -39,6 +41,20 @@ export abstract class ATexture2D implements ITexture2D {
         this.textureUsage = textureUsage;
         this.textureFormat = textureFormat;
         this.textureViewFormat = textureFormat;
+    }
+
+    /** @inheritDoc */
+    public addOnDisposedListener(event: (sender: ITexture2D) => void): void {
+        this._disposedListeners.push(event);
+    }
+
+    /** @inheritDoc */
+    public removeOnDisposedListener(event: (sender: ITexture2D) => void): void {
+
+        let index = this._disposedListeners.indexOf(event);
+        if (index > -1) {
+            this._disposedListeners = this._disposedListeners.splice(index, 1);
+        }
     }
 
     /** @inheritDoc */
@@ -96,7 +112,7 @@ export abstract class ATexture2D implements ITexture2D {
 
     /**
      * Creates a texture view for the texture.
-     * @param descriptor The descriptor for the texture view. 
+     * @param descriptor The descriptor for the texture view.
      * @returns The created texture view, which can be used for sampling the texture in shaders.
      */
     public abstract createView(descriptor?: TextureViewDescriptor): ITextureView;
