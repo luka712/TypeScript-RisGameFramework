@@ -6,7 +6,7 @@ import {
     type ISpriteBatch,
     type IOrthographicCamera,
     type IUniformBuffer,
-    Color, Rect
+    Color, Rect, type ISampler
 } from "ris-framework-api";
 
 /**
@@ -19,10 +19,14 @@ export class SpriteBatch implements ISpriteBatch {
 
     private readonly _tempPosition = vec3.create();
     private readonly _tempSize = vec2.create();
-    private readonly _tempSourceRect = new Rect(0, 0, 0,0);
+    private readonly _tempSourceRect = new Rect(0, 0, 0, 0);
 
-    private readonly _spriteBatchDrawables: Map<ITexture2D, SpriteBatchDrawable> = new Map();
+    /**
+     * The drawables where first key is texture id, second key is sampler id and value is drawable.
+     */
+    private readonly _spriteBatchDrawables: Map<number, Map<number, SpriteBatchDrawable>> = new Map();
     private _currentTexture: ITexture2D | null = null;
+    private _currentSampler: ISampler | null = null;
     private _currentSpriteBatchDrawable: SpriteBatchDrawable = null!;
     private _defaultCamera: IOrthographicCamera = null!;
 
@@ -42,30 +46,50 @@ export class SpriteBatch implements ISpriteBatch {
     public constructor(private readonly _framework: IFramework) {
     }
 
+    private _tryGetDrawable(texture: ITexture2D, sampler: ISampler) {
+        const samplerKeyValue = this._spriteBatchDrawables.get(texture.id);
+        if (!samplerKeyValue) {
+            return null;
+        }
+
+        return samplerKeyValue.get(sampler.id);
+    }
+
+    private _setDrawable(texture: ITexture2D, sampler: ISampler, drawable: SpriteBatchDrawable): void {
+        let samplerKeyValue = this._spriteBatchDrawables.get(texture.id);
+        if (!samplerKeyValue) {
+            samplerKeyValue = new Map();
+            samplerKeyValue.set(sampler.id, drawable);
+        }
+
+        this._spriteBatchDrawables.set(texture.id, samplerKeyValue);
+    }
+
     private _validateTexture(texture?: ITexture2D) {
-        if(!texture) {
-            throw  new Error(`Texture cannot be empty.`);
+        if (!texture) {
+            throw new Error(`Texture cannot be empty.`);
         }
     }
 
-    private _checkIfNewDrawableShouldBeCreated(texture: ITexture2D): void {
+    private _checkIfNewDrawableShouldBeCreated(texture: ITexture2D, sampler: ISampler): void {
         // If there was a texture change, we need to end the current sprite batch drawable and start a new one.
-        if (texture != this._currentTexture) {
+        if (texture != this._currentTexture || sampler != this._currentSampler) {
             // End will draw. This draws with a previously set sprite batch drawable.
             this.end();
 
             this._currentTexture = texture;
 
             // Create a new sprite batch drawable if needed.
-            let spriteBatchDrawable = this._spriteBatchDrawables.get(texture);
+            let spriteBatchDrawable = this._tryGetDrawable(texture, sampler);
 
             if (!spriteBatchDrawable) {
                 spriteBatchDrawable = new SpriteBatchDrawable(
-                    this._framework, texture,
+                    this._framework, texture, sampler,
                     this._currentProjectionViewBuffer,
                     SpriteBatch.MAX_BATCH_SIZE);
                 spriteBatchDrawable.initialize();
-                this._spriteBatchDrawables.set(texture, spriteBatchDrawable);
+
+                this._setDrawable(texture, sampler, spriteBatchDrawable);
 
                 // When texture is disposed destroy this drawable.
                 const disposeListener = () => {
@@ -92,17 +116,22 @@ export class SpriteBatch implements ISpriteBatch {
             this._defaultCamera.updateBuffers();
         });
     }
-    
+
     /** @inheritDoc */
-    public begin(projectionViewMatrix?: mat4) {
+    public begin(projectionViewMatrix: mat4 | undefined = undefined,
+                 sampler: ISampler | undefined = undefined) {
         this.end();
+
+        this._currentSampler = sampler ?? this._framework.graphicsDevice.defaultTextureSampler;
 
         if (projectionViewMatrix) {
             this._currentProjectionViewBuffer.update(projectionViewMatrix);
         }
 
-        for (let kvp of this._spriteBatchDrawables) {
-            kvp[1].reset();
+        for (const texSamplerDrawableKvp of this._spriteBatchDrawables) {
+            for (const samplerDrawableKvp of texSamplerDrawableKvp[1]) {
+                samplerDrawableKvp[1].reset();
+            }
         }
 
         // Clear current texture.
@@ -113,7 +142,7 @@ export class SpriteBatch implements ISpriteBatch {
     /** @inheritDoc */
 
     public drawRect(drawRect: Rect, color: Color, __: number = 0, _: vec2 | undefined = undefined) {
-        this._checkIfNewDrawableShouldBeCreated(this._defaultWhiteTexture);
+        this._checkIfNewDrawableShouldBeCreated(this._defaultWhiteTexture, this._currentSampler!);
 
         this._tempPosition[0] = drawRect.x;
         this._tempPosition[1] = drawRect.y;
@@ -138,12 +167,12 @@ export class SpriteBatch implements ISpriteBatch {
                 layerDepth: number = 0): void {
 
         this._validateTexture(texture);
-        this._checkIfNewDrawableShouldBeCreated(texture);
+        this._checkIfNewDrawableShouldBeCreated(texture, this._currentSampler!);
 
         // Safe to assign current texture.
         this._currentTexture = texture;
 
-        if(!sourceRect) {
+        if (!sourceRect) {
             sourceRect = this._tempSourceRect;
             sourceRect.x = 0;
             sourceRect.y = 0;
@@ -178,8 +207,10 @@ export class SpriteBatch implements ISpriteBatch {
 
     /** @inheritDoc */
     public frameEnd(): void {
-        for (let drawable of this._spriteBatchDrawables) {
-            drawable[1].frameEnd();
+        for (const texSamplerDrawableKvp of this._spriteBatchDrawables) {
+            for (const samplerDrawableKvp of texSamplerDrawableKvp[1]) {
+                samplerDrawableKvp[1].frameEnd();
+            }
         }
     }
 }

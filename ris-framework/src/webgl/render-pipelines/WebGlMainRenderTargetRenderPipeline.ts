@@ -1,7 +1,4 @@
 import {vec2} from "gl-matrix";
-import type {
-    IMainRenderTargetRenderPipeline
-} from "../../core/render-pipelines/main-render-target-render-pipeline-interface";
 import type {WebGlVertexBuffer} from "../buffers/WebGlVertexBuffer.ts";
 import {GeometryFormat} from "../../geometry/GeometryFormat.ts";
 import type {WebGLIndexBuffer} from "../buffers/webgl-index-buffer";
@@ -9,7 +6,7 @@ import {VertexBufferLayout} from "../../core/rendering/vertex-buffer-layout";
 import type {WebGlTexture2D} from "../texture/WebGlTexture2D.ts";
 import WebGlShaderModule from "../shader/WebGlShaderModule.ts";
 import {AWebGlRenderPipeline} from "./AWebGlRenderPipeline.ts";
-import {BufferUsage, type IFramework, type ITexture2D} from "ris-framework-api";
+import {BufferUsage, type IFramework, type IMainRenderTargetRenderPipeline, type ITexture2D} from "ris-framework-api";
 
 /**
  * The WebGL implementation of the main render target render pipeline.
@@ -91,7 +88,7 @@ export class WebGlMainRenderTargetRenderPipeline extends AWebGlRenderPipeline im
 
         this._gl.activeTexture(this._gl.TEXTURE0);
         this._gl.bindTexture(this._gl.TEXTURE_2D, this._mainRenderTarget.glTexture);
-        this._gl.bindSampler(0, this._sampler.glSampler);
+        this._gl.bindSampler(0, this._defaultTextureSampler.glSampler);
 
         this._gl.drawElements(this._gl.TRIANGLES, this._indexBuffer.indicesCount, this._gl.UNSIGNED_SHORT, 0);
     }

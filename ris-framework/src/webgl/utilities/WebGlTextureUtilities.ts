@@ -40,20 +40,26 @@ export class WebGlTextureUtilities {
 
         const internalFormat = WebGlConverter.convertInternalFormat(gl, textureFormat);
         const format = WebGlConverter.convertToPixelFormat(gl, textureFormat);
-        const textureType = WebGlConverter.convertToTextureType(gl, textureFormat);
+
+        let mipLevels = 1;
+        if (useMipMaps) {
+            mipLevels = Math.floor(Math.log2(Math.max(width, height))) + 1;
+        }
+
+        gl.texStorage2D(gl.TEXTURE_2D, mipLevels, internalFormat, width, height);
 
         if (data instanceof HTMLImageElement) {
-            gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, width, height, 0, format, textureType, data);
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, data);
         } else if (data instanceof Uint8Array) {
-            gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, width, height, 0, format, textureType, data);
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, data);
         } else if (!data) {
-            gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, width, height, 0, format, textureType, null);
-        }else {
+            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, data);
+        } else {
             throw new Error("unsupported data type");
         }
 
         // Generate mipmaps.
-        if (useMipMaps) {
+        if (mipLevels > 1) {
             gl.generateMipmap(gl.TEXTURE_2D);
         }
 

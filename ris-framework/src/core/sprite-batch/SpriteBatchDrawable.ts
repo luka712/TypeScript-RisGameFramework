@@ -4,7 +4,7 @@ import type {
     ITexture2D,
     IUniformBuffer,
     Color,
-    IDisposable
+    IDisposable, ISampler
 } from "ris-framework-api";
 import {SpriteBatchMesh} from "./SpriteBatchMesh.ts";
 import type {vec2, vec3} from "gl-matrix";
@@ -16,6 +16,7 @@ export class SpriteBatchDrawable implements IDisposable {
 
     private readonly _framework: IFramework;
     private readonly _texture: ITexture2D;
+    private readonly _sampler: ISampler;
     private _maxBatchSize: number;
     private _drawingMesh: SpriteBatchMesh = null!;
     private _renderPipeline: ISpriteRenderPipeline = null!;
@@ -27,18 +28,21 @@ export class SpriteBatchDrawable implements IDisposable {
 
     /**
      * The constructor.
-     * @param framework
-     * @param texture
-     * @param projectionViewBuffer
-     * @param maxBatchSize
+     * @param framework The framework.
+     * @param texture The texture.
+     * @param sampler The sampler.
+     * @param projectionViewBuffer The projection view buffer.
+     * @param maxBatchSize The maximum size of batch.
      */
     public constructor(
         framework: IFramework,
         texture: ITexture2D,
+        sampler: ISampler,
         projectionViewBuffer: IUniformBuffer,
         maxBatchSize: number) {
         this._framework = framework;
         this._texture = texture;
+        this._sampler = sampler;
         this._maxBatchSize = maxBatchSize;
         this.projectionViewBuffer = projectionViewBuffer;
     }
@@ -54,6 +58,7 @@ export class SpriteBatchDrawable implements IDisposable {
             .renderPipelineFactory
             .createSpriteRenderPipeline(this.projectionViewBuffer);
         this._renderPipeline.spriteTexture = this._texture;
+        this._renderPipeline.textureSampler = this._sampler;
 
         this._drawingMesh = new SpriteBatchMesh(this._framework, this._maxBatchSize);
         this._drawingMesh.initialize();

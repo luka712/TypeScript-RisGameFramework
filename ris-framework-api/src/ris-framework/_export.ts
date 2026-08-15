@@ -17,3 +17,4 @@ export * from "./loaders/_export";
 export * from "./rendering/renderpass/_export";
 export * from "./window/_export";
 export * from "./rendering/swapchain/_export";
+export * from "./rendering/sampler/_export"

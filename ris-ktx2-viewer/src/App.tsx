@@ -3,13 +3,15 @@ import './App.css'
 import { useEffect, useRef, useState} from "react";
 import DropArea from "./components/DropArea.tsx";
 import TextureList from "./components/TextureList.tsx";
-import PropertiesView from "./views/PropertiesView.tsx";
+import GenericPropertiesView from "./views/GenericPropertiesView.tsx";
 import AddFileButton from "./components/AddFileButton.tsx";
 import {Color, type IFramework, Rect} from "ris-framework-api";
 import {Framework} from "../../ris-framework/src/core/Framework.ts";
 import {useAppStore} from "./store/AppStore.ts";
 import {vec2} from "gl-matrix";
 import SelectedTexturePropertiesView from "./views/SelectedTexturePropertiesView.tsx";
+import {PropertiesView} from "./views/PropertiesView.tsx";
+import {useSamplerStore} from "./store/SamplerStore.ts";
 
 const imageRect = new Rect(0,0,0,0);
 
@@ -22,8 +24,10 @@ function App() {
     const frameworkRef = useRef<IFramework | null>(null);
 
     const setFrameworkAppStore = useAppStore(state => state.setFramework);
+    const setFrameworkSamplerStore = useSamplerStore(state => state.setFramework);
 
     const getSelectedTexture = useAppStore(state => state.getSelectedTexture);
+    const getSampler = useSamplerStore(state => state.getSampler);
 
     const [framework, setFramework] = useState<IFramework | null>(null);
 
@@ -81,8 +85,9 @@ function App() {
             fw.addOnRenderListener(() => {
                 const spriteBatch = fw!.spriteBatch;
                 const selectedTexture = getSelectedTexture();
+                const sampler = getSampler();
 
-                spriteBatch.begin();
+                spriteBatch.begin(undefined, sampler);
 
                 if (selectedTexture && selectedTexture.texture) {
 
@@ -99,6 +104,7 @@ function App() {
             frameworkRef.current = fw;
             setFramework(fw);
             setFrameworkAppStore(fw);
+            setFrameworkSamplerStore(fw);
         }
 
         // optional cleanup if Framework has a dispose method
@@ -181,13 +187,13 @@ function App() {
                                             <TextureList/>
                                         </Stack>
                                     )}
-                                    {tab === 1 && <PropertiesView properties={properties}/>}
+                                    {tab === 1 && <GenericPropertiesView properties={properties}/>}
                                     {tab === 2 && (
                                         <Stack direction="column" spacing={2}>
                                             {framework ? (
                                                 <>
-                                                    <PropertiesView properties={gpuProperties}/>
-                                                    <PropertiesView properties={gpuFeatures}/>
+                                                    <GenericPropertiesView properties={gpuProperties}/>
+                                                    <GenericPropertiesView properties={gpuFeatures}/>
                                                 </>
                                             ) : (
                                                 <Box sx={{p: 2}}>Initializing GPU…</Box>
@@ -205,6 +211,7 @@ function App() {
 
                             <Grid size={3}>
                                 <Box sx={{paddingTop: 2, paddingBottom: 2}}>
+                                    <PropertiesView />
                                     <SelectedTexturePropertiesView />
                                 </Box>
                             </Grid>

@@ -3,6 +3,7 @@ import {Rect} from "../data/Rect";
 import {Color} from "../data/Color";
 import {vec2, mat4} from "gl-matrix"
 import {IUniformBuffer} from "../rendering/buffers/IUniformBuffer";
+import {ISampler} from "../rendering/sampler/ISampler";
 
 /**
  * The sprite batch.
@@ -19,7 +20,7 @@ export interface ISpriteBatch {
      * Begins the sprite batch.
      * @param projectionViewMatrix - The projection view matrix to use for rendering between Begin and End.
      */
-    begin(projectionViewMatrix?: mat4): void;
+    begin(projectionViewMatrix?: mat4, textureSampler?: ISampler): void;
 
     /**
      * Draws the un-textured rectangle.

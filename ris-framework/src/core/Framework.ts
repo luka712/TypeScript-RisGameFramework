@@ -7,7 +7,7 @@ import {GeometryBuilder} from "../geometry/GeometryBuilder.ts";
 import {ContentManager} from "./content/ContentManager.ts";
 import {WebGlRenderer} from "../webgl/WebGlRenderer.ts";
 import {WebGlBuffersFactory} from "../webgl/buffers/WebGlBuffersFactory.ts";
-import type {IBufferFactory, IGeometryBuilder, IGraphicsDevice, ISpriteBatch, ITextureFactory} from "ris-framework-api";
+import type {IBufferFactory, IGeometryBuilder, IGraphicsDevice, ISpriteBatch, ITextureFactory, RenderingBackend} from "ris-framework-api";
 import {WebGlShaderModuleLoader} from "../webgl/shader/WebGlShaderModuleLoader.ts";
 import {TextureSamplerFilteringPreset} from "./rendering/enums.ts";
 import {SpriteBatch} from "./sprite-batch/SpriteBatch.ts";
@@ -19,8 +19,9 @@ import type {IRenderPipelineFactory} from "ris-framework-api";
 
 export class Framework implements IFramework {
 
+    private readonly _onLoadContentListeners: (() => void)[] = [];
+    private readonly _onInitializeListeners: (() => void)[] = [];
     private readonly _onRenderListeners: (() => void)[] = [];
-private readonly _onLoadContentListeners: (() => void)[] = [];
 
     private readonly _container: DependencyContainer;
     private readonly _textureFactory: ITextureFactory;
@@ -56,6 +57,10 @@ private readonly _onLoadContentListeners: (() => void)[] = [];
         this._cameraFactory = new CameraFactory(this);
     }
 
+    renderingBackend: RenderingBackend;
+
+
+
     /** @inheritDoc */
     public readonly renderer : IRenderer;
 
@@ -65,6 +70,16 @@ private readonly _onLoadContentListeners: (() => void)[] = [];
     /** @inheritDoc */
     public get cameraFactory(): ICameraFactory {
         return this._cameraFactory;
+    }
+
+    /** @inheritDoc */
+    public addOnInitializedListener(event: () => void): void {
+        this._onInitializeListeners.push(event);
+    }
+
+    /** @inheritDoc */
+    public removeOnInitializedListener(event: () => void): void {
+        this._onInitializeListeners.splice(this._onInitializeListeners.indexOf(event), 1);
     }
 
     /** @inheritdoc */
@@ -126,6 +141,10 @@ private readonly _onLoadContentListeners: (() => void)[] = [];
 
         // Load content events.
         for(const listener of this._onLoadContentListeners){
+            listener();
+        }
+
+        for(const listener of this._onInitializeListeners){
             listener();
         }
 

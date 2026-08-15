@@ -9,6 +9,7 @@ import {type ISampler, MipMapSamplerFilter, SamplerAddressMode, SamplerFilter} f
  */
 export class WebGlSampler implements ISampler {
 
+    private static _id: number = 0;
     private readonly _gl: WebGL2RenderingContext;
     private _minFilter = SamplerFilter.NEAREST;
     private _magFilter = SamplerFilter.NEAREST;
@@ -28,6 +29,7 @@ export class WebGlSampler implements ISampler {
 
         descriptor = descriptor ?? new SamplerDescriptor();
 
+        this.id = WebGlSampler._id++;
         this._minFilter = descriptor.minFilter;
         this._magFilter = descriptor.magFilter;
         this._mipMapFilter = descriptor.mipMapFilter;
@@ -38,6 +40,8 @@ export class WebGlSampler implements ISampler {
         this._createSampler();
     }
 
+    /** @inheritDoc */
+    readonly id: number;
 
     /** @inheritdoc */
     public get minFilter() {
@@ -102,4 +106,5 @@ export class WebGlSampler implements ISampler {
             this.glSampler = null!;
         }
     }
+
 }

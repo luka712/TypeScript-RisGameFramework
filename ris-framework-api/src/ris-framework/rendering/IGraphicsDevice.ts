@@ -1,13 +1,14 @@
 import {IDisposable} from "../core/IDisposable";
 import {IGPUInfo} from "./IGPUInfo";
 import {IGraphicsDeviceFeatures} from "./IGraphicsDeviceFeatures";
-import {ISampler} from "./texture/ISampler";
+import {ISampler} from "./sampler/ISampler";
 import {IBlendState} from "./blending/IBlendState";
 import {IPrimitiveState} from "./primitive/IPrimitiveState";
 import {RenderPassDescriptor} from "./renderpass/RenderPassDescriptor";
 import {IRenderPass} from "./renderpass/IRenderPass";
 import {SwapChainDescriptor} from "./swapchain/SwapChainDescriptor";
 import {ISwapChain} from "./swapchain/ISwapChain";
+import {SamplerDescriptor} from "./sampler/SamplerDescriptor";
 
 /**
  * The interface for a graphics device.
@@ -56,6 +57,13 @@ export interface IGraphicsDevice extends IDisposable {
      * Called at the end of each frame to perform any necessary cleanup of resources that were used during the frame.
      */
     frameEnd(): void;
+
+    /**
+     * Create a sampler object.
+     * @param samplerDescriptor - The sampler descriptor.
+     * @returns The sampler.
+     */
+    createSampler(samplerDescriptor: SamplerDescriptor): ISampler;
 
     /**
      * Creates a render pass for the graphics device.

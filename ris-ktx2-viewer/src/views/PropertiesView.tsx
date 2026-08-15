@@ -1,39 +1,27 @@
-import {Container, Divider, Paper} from "@mui/material";
-import FormTextBlock from "../components/FormTextBlock.tsx";
-
-interface PropertiesViewProps {
-    properties: { name: string, value: string }[];
-}
+import {Container, Divider, Stack} from "@mui/material";
+import SamplerFilterSelect from "../components/SamplerFilterSelect.tsx";
+import {useSamplerStore} from "../store/SamplerStore.ts";
 
 /**
- * Takes a list of generic properties like values (name, value) and display them.
+ * The properties of a texture.
  * @constructor
  */
-export default function PropertiesView({properties}: PropertiesViewProps) {
+export function PropertiesView() {
 
 
-    if (!properties || properties.length === 0) {
-        return <Paper>
-            <Container>
-            </Container>
-        </Paper>
-    }
+    const setMagFilter = useSamplerStore(store => store.setMagFilter);
+    const setMinFilter = useSamplerStore(store => store.setMinFilter);
 
-    const isSingle = properties.length === 1;
-    const firstProperty = properties[0];
-    const first = <FormTextBlock label={firstProperty.name} text={firstProperty.value} topMost={true} bottomMost={isSingle}/>
-
-    const elements = [first];
-    for (let i = 1; i < properties.length; i++) {
-        const isLast = i === properties.length - 1;
-        elements.push(<Divider />);
-        elements.push(<FormTextBlock label={properties[i].name} text={properties[i].value} bottomMost={isLast}/>)
-    }
+    const magFilter = useSamplerStore(store => store.magFilter);
+    const minFilter = useSamplerStore(store => store.minFilter);
 
     return (
         <Container>
-                {elements}
+            <Stack direction="column">
+                <SamplerFilterSelect label={"Mag Filter"} value={magFilter} onValueChange={setMagFilter} topMost={true}/>
+                <Divider />
+                <SamplerFilterSelect label={"Min Filter"} value={minFilter} onValueChange={setMinFilter} bottomMost={true}/>
+            </Stack>
         </Container>
-    )
-
+    );
 }

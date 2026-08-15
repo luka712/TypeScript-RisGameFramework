@@ -73,6 +73,11 @@ export abstract class ATexture2D implements ITexture2D {
     public readonly textureFormat: TextureFormat;
 
     /** @inheritDoc */
+    public get textureState(): State {
+        return this._state;
+    }
+
+    /** @inheritDoc */
     public get handle(): any {
         return this._handle;
     }

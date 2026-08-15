@@ -17,7 +17,7 @@ export abstract class AWebGlRenderPipeline implements IRenderPipeline {
     /** The framework instance. */
     protected readonly _framework: IFramework;
     protected readonly _gl: WebGL2RenderingContext;
-    protected readonly _sampler: WebGlSampler;
+    protected readonly _defaultTextureSampler: WebGlSampler;
     protected readonly _blendState: WebGlBlendState;
     protected readonly _primitiveState: WebGlPrimitiveState;
     protected _vertexArrayObject: WebGLVertexArrayObject | null = null;
@@ -34,7 +34,7 @@ export abstract class AWebGlRenderPipeline implements IRenderPipeline {
         const graphicsDevice = framework.renderer.graphicsDevice as WebGlGraphicsDevice;
         this._gl = graphicsDevice.gl;
         this._blendState = graphicsDevice.defaultBlendState as WebGlBlendState;
-        this._sampler = graphicsDevice.defaultTextureSampler as WebGlSampler;
+        this._defaultTextureSampler = graphicsDevice.defaultTextureSampler as WebGlSampler;
         this._primitiveState = graphicsDevice.defaultPrimitiveState as WebGlPrimitiveState;
     }
 

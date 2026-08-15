@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useAppStore} from "../store/AppStore.ts";
-import PropertiesView from "./PropertiesView.tsx";
+import GenericPropertiesView from "./GenericPropertiesView.tsx";
 import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
 import {Mapper} from "../service/Mapper.ts";
 
@@ -39,6 +39,6 @@ export default function SelectedTexturePropertiesView() {
     }, [onTexSelected]);
 
     return (
-        <PropertiesView properties={properties} />
+        <GenericPropertiesView properties={properties} />
     );
 }

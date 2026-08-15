@@ -1,9 +1,11 @@
-import {TextureViewDescriptor} from "./TextureViewDescriptor";
 import {ITextureView} from "./ITextureView";
-import {State} from "../../data/State";
-import {TextureFormat} from "./TextureFormat";
-import {TextureUsage} from "./TextureUsage";
 import {IContent} from "../../content/IContent";
+import {TextureUsage} from "./TextureUsage";
+import {State} from "../../data/State";
+import {TextureViewDescriptor} from "./TextureViewDescriptor";
+
+class TextureFormat {
+}
 
 /**
  * The texture 2D interface.
@@ -12,7 +14,7 @@ export interface ITexture2D extends IContent {
 
     /**
      * The default texture view.
-     *     It is created with default parameters and can be used when no specific view is needed.
+     * It is created with default parameters and can be used when no specific view is needed.
      */
     readonly defaultTextureView: ITextureView;
 
@@ -28,9 +30,9 @@ export interface ITexture2D extends IContent {
 
     /**
      * The texture view format.
-     *     In most cases it will be same as  but in some cases it can be different.
+     * In most cases it will be the same as the texture format, but in some cases it can be different.
      *
-     *     Case where it might differ is if texture is used as depth texture and shader binding.
+     * Case where it might differ is if texture is used as depth texture and shader binding.
      */
     readonly textureViewFormat: TextureFormat;
 
@@ -40,7 +42,7 @@ export interface ITexture2D extends IContent {
     readonly id: number;
 
     /**
-     * The handle of underlying graphics API texture object.
+     * The handle of the underlying graphics API texture object.
      */
     readonly handle?: any;
 
@@ -52,7 +54,7 @@ export interface ITexture2D extends IContent {
     /**
      * The current state.
      */
-    readonly state: State;
+    readonly textureState: State;
 
     /**
      * The width of the texture.
@@ -65,24 +67,25 @@ export interface ITexture2D extends IContent {
     readonly height: number;
 
     /**
-     * The new size of the renderer.
+     * The event that is raised when the texture is disposed.
      */
-    addOnDisposedListener(event: (sender: ITexture2D) => void): void;
+    addOnDisposedListener(event: (obj: ITexture2D) => void): void;
 
     /**
-     * The new size of the renderer.
+     * The event that is raised when the texture is disposed.
      */
-    removeOnDisposedListener(event: (sender: ITexture2D) => void): void;
+    removeOnDisposedListener(event: (obj: ITexture2D) => void): void;
 
     /**
      * Creates the texture view with the specified description.
-     * @param description - The .
-     * @returns The .
+     * @param descriptor - The texture view descriptor.
+     * @returns The texture view.
      */
-    createView(description: TextureViewDescriptor): ITextureView;
+    createView(descriptor?: TextureViewDescriptor): ITextureView;
 
     /**
      * Initializes the texture.
      */
     initialize(): void;
+
 }

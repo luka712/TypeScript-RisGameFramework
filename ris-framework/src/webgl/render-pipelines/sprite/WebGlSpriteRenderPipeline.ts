@@ -1,4 +1,11 @@
-import type {IFramework, ISpriteRenderPipeline, ITexture2D, IUniformBuffer, IVertexBuffer} from "ris-framework-api";
+import type {
+    IFramework,
+    ISampler,
+    ISpriteRenderPipeline,
+    ITexture2D,
+    IUniformBuffer,
+    IVertexBuffer
+} from "ris-framework-api";
 import {VertexBufferLayout} from "../../../core/rendering/vertex-buffer-layout";
 import type {WebGlUniformBuffer} from "../../buffers/WebGlUniformBuffer.ts";
 import {asWebGLTexture2D, asWebGLUniformBuffer} from "../../cast/cast";
@@ -8,6 +15,7 @@ import {WebGlVertexBuffer} from '../../buffers/WebGlVertexBuffer.ts';
 import {AWebGlRenderPipeline} from "../AWebGlRenderPipeline.ts";
 import type {WebGLIndexBuffer} from "../../buffers/webgl-index-buffer";
 import {type IIndexBuffer, IndexBufferType} from "ris-framework-api";
+import type {WebGlSampler} from "../../sampler/webgl-sampler.ts";
 
 /**
  * The WebGL implementation of the sprite render pipeline.
@@ -17,6 +25,7 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
     private static readonly CAMERA_BINDING_POINT: number = 0;
 
     private _texture: WebGlTexture2D = null!;
+    private _sampler?: WebGlSampler;
     private _projectionViewBuffer: WebGlUniformBuffer;
     private _cameraBlockIndex: number = -1;
     private _buffersArray: WebGLBuffer[] = [null!];
@@ -52,6 +61,14 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
         this._texture = asWebGLTexture2D(value!);
     }
 
+    /** @inheritdoc */
+    public get textureSampler(): ISampler | undefined {
+        return this._sampler;
+    }
+
+    public set textureSampler(value: ISampler | undefined) {
+        this._sampler = value as WebGlSampler | undefined;
+    }
 
     /** @inheritdoc */
     public override initialize(): void {
@@ -92,6 +109,7 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
 
         const webGlVertexBuffer = vertexBuffer as WebGlVertexBuffer;
         const webGlIndexBuffer = indexBuffer as WebGLIndexBuffer;
+        const webGlSampler = this._sampler ?? this._defaultTextureSampler;
 
 
         // this._primitiveState.apply(this._gl);
@@ -111,7 +129,7 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
         this._gl.bindBufferBase(this._gl.UNIFORM_BUFFER, this._cameraBlockIndex, this._projectionViewBuffer.glBuffer!);
         this._gl.activeTexture(this._gl.TEXTURE0);
         this._gl.bindTexture(this._gl.TEXTURE_2D, this._texture!.glTexture);
-        this._gl.bindSampler(0, this._sampler.glSampler);
+        this._gl.bindSampler(0, webGlSampler.glSampler);
 
         // We can only really use two types uint16 and uint32. Boolean check to see which one to use.
         const type = indexBuffer.type == IndexBufferType.UINT_16

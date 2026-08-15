@@ -1,8 +1,9 @@
 import {RenderingBackend} from "./rendering/RenderingBackend";
 import {ISpriteBatch} from "./sprites/ISpriteBatch";
 import {IRenderer} from "./rendering/IRenderer";
-import {IRenderPipelineFactory} from "./rendering/render-pipelines/IRenderPipelineFactory";
+import {IGraphicsDevice} from "./rendering/IGraphicsDevice";
 import {IBufferFactory} from "./rendering/buffers/IBufferFactory";
+import {IRenderPipelineFactory} from "./rendering/render-pipelines/IRenderPipelineFactory";
 import {IGeometryBuilder} from "./geometry/IGeometryBuilder";
 import {ITextureFactory} from "./rendering/texture/ITextureFactory";
 import {ICameraFactory} from "./camera/ICameraFactory";
@@ -27,6 +28,11 @@ export interface IFramework {
      * The renderer used by the framework.
      */
     readonly renderer: IRenderer;
+
+    /**
+     * The graphics device used by the framework.
+     */
+    readonly graphicsDevice: IGraphicsDevice;
 
     /**
      * The pipeline factory.
@@ -58,7 +64,7 @@ export interface IFramework {
     readonly cameraFactory: ICameraFactory;
 
     /**
-     * The content manager.
+     * The .
      */
     readonly content: IContentManager;
 
@@ -67,23 +73,27 @@ export interface IFramework {
      * Content can be loaded here.
      */
     addOnLoadContentListener(event: () => void): void;
-
     /**
      * Called right after the framework is initialized and before the render loop starts.
      * Content can be loaded here.
      */
     removeOnLoadContentListener(event: () => void): void;
-
+    /**
+     * Called when the framework is initialized.
+     */
+    addOnInitializedListener(event: () => void): void;
+    /**
+     * Called when the framework is initialized.
+     */
+    removeOnInitializedListener(event: () => void): void;
     /**
      * Called when the framework is rendered.
      */
     addOnRenderListener(event: () => void): void;
-
     /**
      * Called when the framework is rendered.
      */
     removeOnRenderListener(event: () => void): void;
-
     /**
      * Initializes the framework.
      */
