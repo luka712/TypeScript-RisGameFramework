@@ -2,6 +2,8 @@ import {IShaderModuleLoader} from "../shader/IShaderModuleLoader";
 import {IShaderModule} from "../shader/IShaderModule";
 import {ITexture2D} from "../rendering/texture/ITexture2D";
 import {IKtx2Container} from "./IKtx2Container";
+import {TextureDescriptor} from "../rendering/texture/TextureDescriptor";
+import {ContentConfig} from "./ContentConfig";
 
 /**
  * The content manager.
@@ -30,14 +32,18 @@ export interface IContentManager {
     /**
      * Loads a texture2D.
      * @param path - The file path to the texture.
-     * @returns The .
+     * @param desc - The texture descriptor.
+     * @param contentConfig - The content config.
+     * @returns The Texture2D.
      */
-    loadTexture2D(path: string): ITexture2D;
+    loadTexture2D(path: string, desc?: TextureDescriptor, contentConfig?: ContentConfig): ITexture2D;
 
     /**
      * Loads a texture2D.
      * @param path - The file path to the texture.
-     * @returns The .
+     * @param desc - The texture descriptor.
+     * @param contentConfig - The content config.
+     * @returns The Texture2D.
      */
-    loadTexture2DAsync(path: string): Promise<ITexture2D>;
+    loadTexture2DAsync(path: string, desc?: TextureDescriptor, contentConfig?: ContentConfig): Promise<ITexture2D>;
 }

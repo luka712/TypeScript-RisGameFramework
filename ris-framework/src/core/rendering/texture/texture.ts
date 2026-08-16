@@ -1,5 +1,11 @@
-import {type ITexture2D, State, type TextureFormat, type TextureUsage, TextureViewDescriptor} from "ris-framework-api";
-import type {ITextureView} from "../../../../../ris-framework-api/dist/ris-framework/rendering/texture/ITextureView";
+import {
+    type ITexture2D,
+    type ITextureView,
+    State,
+    type TextureFormat,
+    type TextureUsage,
+    TextureViewDescriptor
+} from "ris-framework-api";
 
 
 /**
@@ -11,6 +17,8 @@ export abstract class ATexture2D implements ITexture2D {
 
     protected _handle: any;
     protected _state: State = State.CREATED;
+    protected _size = 0;
+    protected _mipLevels = 0;
 
     protected _disposedListeners: ((tex: ITexture2D) => void)[] = [];
 
@@ -108,6 +116,16 @@ export abstract class ATexture2D implements ITexture2D {
     /** @inheritdoc */
     public get height(): number {
         return this._height;
+    }
+
+    /** @inheritDoc */
+    public get size(): number {
+        return this._size;
+    }
+
+    /** @inheritDoc */
+    public get mipLevels(): number {
+        return this._mipLevels;
     }
 
     /** @inheritdoc */

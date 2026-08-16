@@ -170,7 +170,6 @@ export class WebGlConverter {
         switch (textureFormat) {
             // Same format regardless.
             case TextureFormat.RGBA_8_UNORM:
-            case TextureFormat.BGRA_8_UNORM:
                 return gl.RGBA8;
             case TextureFormat.DEPTH_32_FLOAT:
                 return gl.DEPTH_COMPONENT32F;

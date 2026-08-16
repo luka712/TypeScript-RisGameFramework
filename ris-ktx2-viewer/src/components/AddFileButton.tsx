@@ -1,6 +1,7 @@
 import {useDropzone} from "react-dropzone";
 import {useAppStore} from "../store/AppStore.ts";
 import {Button} from "@mui/material";
+import {useTextureStore} from "../store/TextureStore.ts";
 
 
 
@@ -10,7 +11,7 @@ import {Button} from "@mui/material";
  */
 export default function AddFileButton() {
 
-    const addTexture = useAppStore(state => state.addTexture);
+    const addTexture = useTextureStore(state => state.addTexture);
 
 
     const {getRootProps, getInputProps} = useDropzone({

@@ -1,12 +1,14 @@
-import type {
-    IShaderModule,
-    IContentManager,
-    IShaderModuleLoader,
-    ITexture2D,
-    IKtx2Container,
-    IImageLoader, IFramework
+import {
+    type IShaderModule,
+    type IContentManager,
+    type IShaderModuleLoader,
+    type ITexture2D,
+    type IKtx2Container,
+    type IImageLoader, type IFramework, type TextureDescriptor, TextureFormat
 } from "ris-framework-api";
 import {ImageLoader} from "../loaders/ImageLoader.ts";
+import {TextureUsage} from "../../../../ris-framework-api";
+import type {ContentConfig} from "../../../../ris-framework-api/dist/ris-framework/content/ContentConfig";
 
 /**
  * The content manager.
@@ -34,26 +36,29 @@ export class ContentManager implements IContentManager {
         return this.shaderModuleLoader.load(shaderModuleId);
     }
 
-    /**
-     * Loads a texture2D.
-     * @param path - The file path to the texture.
-     * @returns The .
-     */
-    public loadTexture2D(path: string): ITexture2D {
+    /** @inheritDoc */
+    public async loadTexture2DAsync(path: string,
+                                    textureDescriptor?: TextureDescriptor,
+                                    contentConfig?: ContentConfig,
+                                    ): Promise<ITexture2D> {
 
-    }
-    /**
-     * Loads a texture2D.
-     * @param path - The file path to the texture.
-     * @returns The .
-     */
-    public async loadTexture2DAsync(path: string): Promise<ITexture2D> {
+        let format =  this._framework.renderer.preferredTextureFormat;
 
-        const data = await this._imageLoader.loadAsync(path);
+        if(textureDescriptor && textureDescriptor.format != TextureFormat.UNDEFINED) {
+            format = textureDescriptor.format;
+        }
+
+        // TODO: pass texture descriptor
+        const data = await this._imageLoader.loadAsync(path, contentConfig?.keepImageDataCached);
         return this._framework.textureFactory.create(
             data.width, data.height,
             data.getData(0) as Uint8Array,
-            data.channels);
+            data.channels,
+            undefined,
+            TextureUsage.TEXTURE_BINDING | TextureUsage.COPY_SRC,
+            format,
+            textureDescriptor?.generateMipmaps
+            );
     }
 
     /** @inheritDoc */

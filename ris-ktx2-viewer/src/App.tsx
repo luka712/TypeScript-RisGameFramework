@@ -12,6 +12,8 @@ import {vec2} from "gl-matrix";
 import SelectedTexturePropertiesView from "./views/SelectedTexturePropertiesView.tsx";
 import {PropertiesView} from "./views/PropertiesView.tsx";
 import {useSamplerStore} from "./store/SamplerStore.ts";
+import {useTextureStore} from "./store/TextureStore.ts";
+import {FooterView} from "./views/FooterView.tsx";
 
 const imageRect = new Rect(0,0,0,0);
 
@@ -25,15 +27,16 @@ function App() {
 
     const setFrameworkAppStore = useAppStore(state => state.setFramework);
     const setFrameworkSamplerStore = useSamplerStore(state => state.setFramework);
+    const setFrameworkTextureStore = useTextureStore(state => state.setFramework);
 
-    const getSelectedTexture = useAppStore(state => state.getSelectedTexture);
+    const getSelectedTexture = useTextureStore(state => state.getSelectedTexture);
     const getSampler = useSamplerStore(state => state.getSampler);
 
     const [framework, setFramework] = useState<IFramework | null>(null);
 
     const [tab, setTab] = useState(0);
 
-    const onTextureSelected = useAppStore(state => state.onTextureSelected);
+    const onTextureSelected = useTextureStore(state => state.onTextureSelected);
     onTextureSelected(tex => {
 
         const texture = tex.texture;
@@ -105,6 +108,7 @@ function App() {
             setFramework(fw);
             setFrameworkAppStore(fw);
             setFrameworkSamplerStore(fw);
+            setFrameworkTextureStore(fw);
         }
 
         // optional cleanup if Framework has a dispose method
@@ -168,7 +172,6 @@ function App() {
                     <DropArea/>
                     <Paper>
                         <Grid container spacing={2}>
-
                             <Grid size={3}>
                                 <Box>
                                     <Tabs
@@ -202,19 +205,20 @@ function App() {
                                     )}
                                 </Box>
                             </Grid>
-
                             <Grid size={6}>
                                 <Box>
                                     <canvas ref={canvasRef} width={1920} height={1080} />
                                 </Box>
                             </Grid>
-
                             <Grid size={3}>
                                 <Box sx={{paddingTop: 2, paddingBottom: 2}}>
                                     <PropertiesView />
                                     <SelectedTexturePropertiesView />
                                 </Box>
                             </Grid>
+                        </Grid>
+                        <Grid size={12}>
+                            <FooterView />
                         </Grid>
                     </Paper>
                 </Stack>

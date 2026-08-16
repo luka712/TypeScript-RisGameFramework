@@ -3,9 +3,7 @@ import {IContent} from "../../content/IContent";
 import {TextureUsage} from "./TextureUsage";
 import {State} from "../../data/State";
 import {TextureViewDescriptor} from "./TextureViewDescriptor";
-
-class TextureFormat {
-}
+import {TextureFormat} from "./TextureFormat";
 
 /**
  * The texture 2D interface.
@@ -57,6 +55,12 @@ export interface ITexture2D extends IContent {
     readonly textureState: State;
 
     /**
+     * The size of this texture in RAM.
+     * Note that size if rough approximation as real size can depend on driver implementation.
+     */
+    readonly size: number;
+
+    /**
      * The width of the texture.
      */
     readonly width: number;
@@ -65,6 +69,11 @@ export interface ITexture2D extends IContent {
      * The height of the texture.
      */
     readonly height: number;
+
+    /**
+     * The number of mipmap levels.
+     */
+    readonly mipLevels: number;
 
     /**
      * The event that is raised when the texture is disposed.

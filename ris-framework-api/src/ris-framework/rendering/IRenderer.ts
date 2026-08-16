@@ -81,5 +81,4 @@ export interface IRenderer {
      * Ends the rendering and submits the frame to the screen.
      */
     endRenderPass(): void;
-
 }

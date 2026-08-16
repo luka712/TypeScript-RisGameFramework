@@ -25,6 +25,10 @@ export class ImageLoader implements IImageLoader {
      */
     private readonly _permanentCache: Record<string, ImageData> = {};
 
+    /**
+     * The constructor.
+     * @param _framework The framework.
+     */
     public constructor(
         private readonly _framework: IFramework,
     ) {

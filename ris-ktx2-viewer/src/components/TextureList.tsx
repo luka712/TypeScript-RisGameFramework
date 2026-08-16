@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useAppStore } from "../store/AppStore.ts";
 import {
     Divider,
     Menu,
@@ -8,6 +7,7 @@ import {
     Typography
 } from "@mui/material";
 import { SimpleTreeView, TreeItem } from "@mui/x-tree-view";
+import {useTextureStore} from "../store/TextureStore.ts";
 
 
 /**
@@ -16,9 +16,9 @@ import { SimpleTreeView, TreeItem } from "@mui/x-tree-view";
  */
 export default function TextureList() {
 
-    const textures = useAppStore(state => state.textures);
-    const setSelectedTexture = useAppStore(state => state.setSelectedTexture);
-    const removeTexture = useAppStore(state => state.removeTexture);
+    const textures = useTextureStore(state => state.textures);
+    const setSelectedTexture = useTextureStore(state => state.setSelectedTexture);
+    const removeTexture = useTextureStore(state => state.removeTexture);
 
     const [contextMenu, setContextMenu] = useState<{
         mouseX: number;

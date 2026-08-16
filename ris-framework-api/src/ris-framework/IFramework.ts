@@ -2,11 +2,11 @@ import {RenderingBackend} from "./rendering/RenderingBackend";
 import {ISpriteBatch} from "./sprites/ISpriteBatch";
 import {IRenderer} from "./rendering/IRenderer";
 import {IGraphicsDevice} from "./rendering/IGraphicsDevice";
-import {IBufferFactory} from "./rendering/buffers/IBufferFactory";
 import {IRenderPipelineFactory} from "./rendering/render-pipelines/IRenderPipelineFactory";
+import {IBufferFactory} from "./rendering/buffers/IBufferFactory";
 import {IGeometryBuilder} from "./geometry/IGeometryBuilder";
-import {ITextureFactory} from "./rendering/texture/ITextureFactory";
 import {ICameraFactory} from "./camera/ICameraFactory";
+import {ITextureFactory} from "./rendering/texture/ITextureFactory";
 import {IContentManager} from "./content/IContentManager";
 
 /**
@@ -64,7 +64,7 @@ export interface IFramework {
     readonly cameraFactory: ICameraFactory;
 
     /**
-     * The .
+     * The content manager.
      */
     readonly content: IContentManager;
 

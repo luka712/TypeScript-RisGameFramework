@@ -5,7 +5,7 @@ import {
     TextureFormat,
     TextureUsage,
     type ITextureView,
-    type TextureViewDescriptor
+    type TextureViewDescriptor, TextureUtilities
 } from "ris-framework-api";
 import type {WebGlGraphicsDevice} from "../WebGlGraphicsDevice.ts";
 import {ATexture2D} from "../../core/rendering/texture/texture.ts";
@@ -73,6 +73,18 @@ export class WebGlTexture2D extends ATexture2D {
             this._anisotropy,
             this._label
         );
+
+        let width = this.width;
+        let height = this.height;
+        this._mipLevels = this._useMipMaps ? TextureUtilities.mipLevels(width, height) : 1;
+        this._size = 0;
+
+        for(let i = 0; i < this.mipLevels; i++) {
+            this._size += TextureUtilities.bytesPerPixel(this.textureFormat) * width * height;
+            width /= 2;
+            height /= 2;
+        }
+
     }
 
     /** @inheritdoc */

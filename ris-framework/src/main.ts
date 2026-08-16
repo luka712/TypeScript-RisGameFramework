@@ -13,7 +13,7 @@ import {
   type ITexture2D,
   Rect,
   SamplerDescriptor,
-  SamplerFilter
+  SamplerFilter, TextureDescriptor, TextureFormat
 } from "ris-framework-api";
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -51,15 +51,20 @@ let tex2 : ITexture2D;
 let sampler: ISampler;
 framework.addOnLoadContentListener(async () =>
 {
-  tex = await framework.content.loadTexture2DAsync("/assets/test.png");
-  tex2 = await framework.content.loadTexture2DAsync("/assets/cat.jpg");
+
+  const texDesc = new TextureDescriptor();
+  texDesc.generateMipmaps = true;
+  texDesc.format = TextureFormat.BGRA_8_UNORM;
+
+  tex = await framework.content.loadTexture2DAsync("/assets/test.png", texDesc);
+  tex2 = await framework.content.loadTexture2DAsync("/assets/cat.jpg", texDesc);
 });
 
 framework.addOnInitializedListener(() => {
   const desc = new SamplerDescriptor();
   desc.minFilter = SamplerFilter.NEAREST;
   desc.magFilter = SamplerFilter.NEAREST;
-  desc.label = "Label";
+  // desc.label = "Label";
   sampler = framework.graphicsDevice.createSampler(desc);
   debugger;
 });

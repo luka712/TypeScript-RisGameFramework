@@ -1,11 +1,11 @@
 import {useEffect, useState} from "react";
-import {useAppStore} from "../store/AppStore.ts";
 import GenericPropertiesView from "./GenericPropertiesView.tsx";
 import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
 import {Mapper} from "../service/Mapper.ts";
+import {useTextureStore} from "../store/TextureStore.ts";
 
 export default function SelectedTexturePropertiesView() {
-    const onTexSelected = useAppStore(
+    const onTexSelected = useTextureStore(
         store => store.onTextureSelectedCallbacks
     );
 
