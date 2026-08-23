@@ -54,7 +54,7 @@ export async function decodeImage(file: File): Promise<IImage> {
     }
 }
 
-export async function getKtxContainerTexture(file: File): Promise<IKtx2Texture> {
+export async function getKtx2Texture(file: File): Promise<IKtx2Texture> {
 
     if (!ktxLoader) {
         ktxLoader = new Ktx2Loader();

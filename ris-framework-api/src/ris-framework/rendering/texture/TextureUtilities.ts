@@ -1,4 +1,5 @@
 import {TextureFormat} from "./TextureFormat";
+import {KtxTranscodeFormat, TextureFormatInfo, VkFormat} from "ris-ktx2-api";
 
 /**
  * The texture utilities.
@@ -6,16 +7,28 @@ import {TextureFormat} from "./TextureFormat";
 export class TextureUtilities {
 
     private static readonly _compressedTextureFormats = [
-        TextureFormat.ATSC_4X4_RGBA,
+        TextureFormat.ASTC_4X4_RGBA,
         TextureFormat.BC3_RGBA_UNORM,
         TextureFormat.BC7_RGBA_UNORM,
         TextureFormat.ETC2_RGBA8_UNORM
     ];
+    private static readonly _vkFormatTextureFormat: { [key: number]: number } = {
+        [VkFormat.R8G8B8A8_UNORM]: TextureFormat.RGBA_8_UNORM
+    }
 
-    private static readonly _textureFormatBytesPerPixel: { [key: number]: number } = {
-        [TextureFormat.RGBA_8_UNORM]: 4,
-        [TextureFormat.DEPTH_32_FLOAT]: 4,
-        [TextureFormat.DEPTH_24_STENCIL_8]: 4,
+    private static readonly _textureFormatVkFormat: { [key: number]: number } = {
+        [TextureFormat.RGBA_8_UNORM]: VkFormat.R8G8B8A8_UNORM,
+        [TextureFormat.DEPTH_24_STENCIL_8]: VkFormat.D24_UNORM_S8_UINT,
+        [TextureFormat.BC3_RGBA_UNORM]: VkFormat.BC3_UNORM_BLOCK,
+        [TextureFormat.BC7_RGBA_UNORM]: VkFormat.BC7_UNORM_BLOCK,
+    };
+
+    private static readonly _mapTextureFormatKtxTranscodeFormat: { [key: number]: number } = {
+        [TextureFormat.RGBA_8_UNORM]: KtxTranscodeFormat.RGBA32,
+        [TextureFormat.ASTC_4X4_RGBA]: KtxTranscodeFormat.ASTC_4X4_RGBA,
+        [TextureFormat.BC3_RGBA_UNORM]: KtxTranscodeFormat.BC3_RGBA,
+        [TextureFormat.BC7_RGBA_UNORM]: KtxTranscodeFormat.BC7_RGBA,
+        [TextureFormat.ETC2_RGBA8_UNORM]: KtxTranscodeFormat.ETC2_RGBA,
     };
 
     /**
@@ -39,21 +52,42 @@ export class TextureUtilities {
     }
 
     /**
-     * Gets the number of bytes per pixel for a given texture format.
+     * Gets the number of VRAM reserved for a given texture format of given size.
      *
      * @param textureFormat The texture format.
+     * @param width Texture width.
+     * @param height Texture height.
      * @returns The number of bytes per pixel.
      */
-    public static bytesPerPixel(textureFormat: TextureFormat): number {
-        const value = this._textureFormatBytesPerPixel[textureFormat];
-
-        if (value === undefined) {
-            throw new Error(
-                `Bytes per pixel is not defined for texture format: ${textureFormat}`
-            );
+    public static getVRamSize(textureFormat: TextureFormat, width: number, height: number): number {
+        let vkFormat = this._textureFormatVkFormat[textureFormat];
+        if (!vkFormat) {
+            throw new Error(`Not implemented: ${textureFormat}`);
         }
 
-        return value;
+        const texInfo = TextureFormatInfo.fromVkFormat(vkFormat);
+
+        const blocksX = Math.ceil(width / texInfo.blockWidth);
+        const blocksY = Math.ceil(height / texInfo.blockHeight);
+        return blocksX * blocksY * texInfo.blockWidth;
+    }
+
+    /**
+     * Converts the VkFormat to TextureFormat.
+     * @param vkFormat The VK format.
+     * @returns The texture format.
+     */
+    public static convertVkFormatToTextureFormat(vkFormat: VkFormat): TextureFormat {
+        return this._vkFormatTextureFormat[vkFormat];
+    }
+
+    /**
+     * Maps the Texture Format to Ktx Transcode Format.
+     * @param textureFormat The texture format.
+     * @returns The Ktx Transcode Format.
+     */
+    public static convertTextureFormatToKtxTranscodeFormat(textureFormat: TextureFormat): KtxTranscodeFormat {
+        return this._mapTextureFormatKtxTranscodeFormat[textureFormat];
     }
 
 }

@@ -2,6 +2,8 @@ import {Color} from "../../data/Color";
 import {TextureUsage} from "./TextureUsage";
 import {TextureFormat} from "./TextureFormat";
 import {ITexture2D} from "./ITexture2D";
+import {TextureDescriptor} from "./TextureDescriptor";
+import type {IKtx2Texture} from "ris-ktx2-api";
 
 /**
  * The texture factory.
@@ -43,4 +45,12 @@ export interface ITextureFactory {
            usage?: TextureUsage,
            textureFormat?: TextureFormat,
            generateMipMaps?: boolean): ITexture2D;
+
+    /**
+     * Create a texture from a KTX2 file.
+     * @param ktxTexture - The ktx2 texture.
+     * @param descriptor - The optional texture descriptor.
+     * @returns The 2D texture.
+     */
+    createFromKtx2(ktxTexture: IKtx2Texture, descriptor?: TextureDescriptor): ITexture2D;
 }

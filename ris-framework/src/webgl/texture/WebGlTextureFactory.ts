@@ -1,6 +1,17 @@
-import {Color, type IFramework, type ITexture2D, TextureFormat, TextureUsage, type ITextureFactory} from "ris-framework-api"
-import { WebGlTexture2D } from "./WebGlTexture2D.ts";
-import { vec2 } from "gl-matrix";
+import {
+    Color,
+    type IFramework,
+    type ITexture2D,
+    type ITextureFactory,
+    TextureDescriptor,
+    TextureFormat,
+    TextureUsage,
+    TextureUtilities
+} from "ris-framework-api"
+import {WebGlTexture2D} from "./WebGlTexture2D.ts";
+import {type IKtx2Texture, KtxTranscodeFlags, TextureFormatInfo, VkFormat} from "ris-ktx2-api";
+import {KtxTranscodeFormat} from "../../../../ris-ktx2-api/src";
+import {vec2} from "gl-matrix";
 
 export class WebGlTextureFactory implements ITextureFactory {
 
@@ -8,7 +19,78 @@ export class WebGlTextureFactory implements ITextureFactory {
      * The constructor for the WebGLTextureFactory class.
      * @param _framework The framework instance.
      */
-    constructor( private readonly _framework: IFramework) {
+    constructor(private readonly _framework: IFramework) {
+    }
+
+    /** @inheritDoc */
+    public createFromKtx2(ktxTexture: IKtx2Texture, descriptor?: TextureDescriptor): ITexture2D {
+        descriptor = descriptor ?? new TextureDescriptor();
+        const vkFormat = ktxTexture.vkFormat;
+
+        // Ktx2 will have different cases, for now we consider simple 2d case.
+        const numLevels = ktxTexture.numLevels;
+        let transcodeFormat = KtxTranscodeFormat.NO_SELECTION;
+        let textureFormat = descriptor.textureFormat;
+        const gpuFeatures = this._framework.graphicsDevice.features;
+        let texFormatInfo: TextureFormatInfo | null = null;
+
+        if (ktxTexture.needsTranscoding && vkFormat == VkFormat.UNDEFINED)
+        {
+            // If descriptor format is UNDEFINED, we will use format according to the GPU features.
+            if(descriptor.textureFormat == TextureFormat.UNDEFINED)
+            {
+                if(gpuFeatures.supportsTextureCompressionBC)
+                {
+                    transcodeFormat = KtxTranscodeFormat.BC7_RGBA;
+                    textureFormat = TextureFormat.BC7_RGBA_UNORM;
+                }
+                else if(gpuFeatures.supportsTextureCompressionASTC)
+                {
+                    transcodeFormat = KtxTranscodeFormat.ASTC_4X4_RGBA;
+                    textureFormat = TextureFormat.ATSC_4X4_RGBA
+                }
+                else if(gpuFeatures.supportsTextureCompressionS3TC)
+                {
+                    transcodeFormat = KtxTranscodeFormat.BC3_RGBA;
+                    textureFormat = TextureFormat.BC3_RGBA_UNORM;
+                }
+                else if(gpuFeatures.supportsTextureCompressionETC2)
+                {
+                    transcodeFormat = KtxTranscodeFormat.ETC2_RGBA;
+                    textureFormat = TextureFormat.ETC2_RGBA8_UNORM;
+                }
+            }
+            else
+            {
+                transcodeFormat = TextureUtilities.convertTextureFormatToKtxTranscodeFormat(textureFormat);
+            }
+
+            ktxTexture.transcodeBasis(transcodeFormat, KtxTranscodeFlags.HIGH_QUALITY);
+            texFormatInfo = ktxTexture.getTextureFormatInfo(transcodeFormat);
+        }
+        else {
+            // No transcoding path, but still get info about the texture format.
+            textureFormat = TextureUtilities.convertVkFormatToTextureFormat(vkFormat);
+            transcodeFormat = TextureUtilities.convertTextureFormatToKtxTranscodeFormat(textureFormat);
+            texFormatInfo = ktxTexture.getTextureFormatInfo(transcodeFormat);
+        }
+
+        const data: Uint8Array[] = [];
+        for (let i = 0; i < numLevels; i++)
+        {
+            data.push(ktxTexture.getImage(i));
+        }
+
+        const textureDescriptor = new TextureDescriptor();
+        textureDescriptor.width = ktxTexture.width;
+        textureDescriptor.height = ktxTexture.height;
+        textureDescriptor.data = data;
+        textureDescriptor.textureFormat = textureFormat;
+        textureDescriptor.blockSize = vec2.fromValues(texFormatInfo.blockWidth, texFormatInfo.blockHeight);
+
+        const texture = new WebGlTexture2D(this._framework, textureDescriptor);
+        texture.initialize();
+        return texture;
     }
 
     /** @inheritdoc */
@@ -32,14 +114,19 @@ export class WebGlTextureFactory implements ITextureFactory {
             throw new Error("channels must be greater than 0.");
         }
 
+        const desc = new TextureDescriptor();
+        desc.width = width;
+        desc.height = height;
+        // @ts-ignore
+        desc.data = data ? [data] : null;
+        desc.textureFormat = textureFormat;
+        desc.textureUsage = textureUsage;
+        desc.generateMipmaps = useMipMaps;
+        desc.label = label;
+
         const texture = new WebGlTexture2D(
             this._framework,
-            vec2.fromValues(width, height),
-            data,
-            textureUsage,
-            textureFormat,
-            useMipMaps,
-            label
+         desc
         );
 
         texture.initialize();
@@ -63,16 +150,19 @@ export class WebGlTextureFactory implements ITextureFactory {
             textureFormat = this._framework.renderer.preferredTextureFormat;
         }
 
+        const desc = new TextureDescriptor();
+        desc.width = width;
+        desc.height = height;
+        desc.textureUsage = textureUsage;
+        desc.textureFormat = textureFormat;
+        desc.label = label;
+        desc.generateMipmaps = useMipmap;
+
         // Fast path: avoid generating & uploading a big CPU-side buffer when not needed.
         if (!color || color.equals(Color.black())) {
             const texture = new WebGlTexture2D(
                 this._framework,
-                vec2.fromValues(width, height),
-                null,
-                textureUsage,
-                textureFormat,
-                useMipmap ?? false,
-                label ?? ""
+               desc
             );
 
             texture.initialize();

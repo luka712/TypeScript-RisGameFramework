@@ -4,6 +4,7 @@ import {useSamplerStore} from "../store/SamplerStore.ts";
 import TextureFormatSelect from "../components/TextureFormatSelect.tsx";
 import {useTextureStore} from "../store/TextureStore.ts";
 import {GenerateMipmapsSelect} from "../components/GenerateMipmapsSelect.tsx";
+import {VkFormat} from "../../../ris-ktx2-api";
 
 /**
  * The properties of a texture.
@@ -11,6 +12,7 @@ import {GenerateMipmapsSelect} from "../components/GenerateMipmapsSelect.tsx";
  */
 export function PropertiesView() {
 
+    const getSelectedTexture = useTextureStore(store => store.getSelectedTexture);
 
     const setMagFilter = useSamplerStore(store => store.setMagFilter);
     const setMinFilter = useSamplerStore(store => store.setMinFilter);
@@ -22,6 +24,10 @@ export function PropertiesView() {
     const textureFormat = useTextureStore(store => store.textureFormat);
     const generateMipmaps = useTextureStore(store => store.generateMipmaps);
 
+    // If it's ktx and compressed format, we cannot generate mip levels.
+    const shouldGenMips = () => !getSelectedTexture()?.ktxContainer ||
+        getSelectedTexture()!.ktxContainer?.vkFormat == VkFormat.R8G8B8A8_UNORM;
+
     return (
         <Container>
             <Stack direction="column">
@@ -31,7 +37,7 @@ export function PropertiesView() {
                 <Divider />
                 <TextureFormatSelect label={"Texture Format"} value={textureFormat} onValueChange={setTextureFormat} />
                 <Divider />
-                <GenerateMipmapsSelect label={"Generate Mipmaps"} value={generateMipmaps} onValueChange={setGenerateMipmaps} bottomMost={true} />
+                {shouldGenMips() && <GenerateMipmapsSelect label={"Generate Mipmaps"} value={generateMipmaps} onValueChange={setGenerateMipmaps} bottomMost={true} />}
             </Stack>
         </Container>
     );

@@ -4,8 +4,8 @@
 export class ContentConfig {
 
     /**
-     * Should image data be kept in memory?
+     * Should data be kept in memory?
      * This allows fast loading of content on repeated loads, for example, when texture needs to be reloaded.
      */
-    public keepImageDataCached = false;
+    public keepDataCached = false;
 }

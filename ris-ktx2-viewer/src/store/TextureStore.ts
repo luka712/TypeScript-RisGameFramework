@@ -5,7 +5,7 @@ import {
 } from "ris-framework-api";
 import {create, type StoreApi, type UseBoundStore} from "zustand";
 import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
-import {decodeImage, getKtxContainerTexture} from "../service/TextureUtilities.ts";
+import {decodeImage, getKtx2Texture} from "../service/TextureUtilities.ts";
 import {ContentConfig} from "../../../ris-framework-api/dist/ris-framework/content/ContentConfig";
 import {TextureUsage} from "../../../ris-framework-api";
 
@@ -160,7 +160,6 @@ export const useTextureStore: UseBoundStore<StoreApi<TextureStore>> = create<Tex
 
             if (canBeDecoded) {
                 const image = await decodeImage(file);
-
                 const texture = framework.textureFactory.create(
                     image.width,
                     image.height,
@@ -185,19 +184,20 @@ export const useTextureStore: UseBoundStore<StoreApi<TextureStore>> = create<Tex
                 }));
             } else if (file.name.endsWith(".ktx2")) {
 
-                const ktx = await getKtxContainerTexture(file);
+                const ktx = await getKtx2Texture(file);
+                const texture = framework.textureFactory.createFromKtx2(ktx);
+
                 const container: ITexture2DContainer = {
                     name: file.name,
-                    texture: null,
+                    texture: texture,
                     ktxContainer: ktx
                 }
-
-                // Set as selected texture
-                get().selectedTexture = container;
 
                 for (const callback of get().onTextureSelectedCallbacks) {
                     callback(container);
                 }
+
+                get().setSelectedTexture(container);
 
                 set((state) => ({
                     textures: [

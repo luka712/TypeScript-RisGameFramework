@@ -2,15 +2,11 @@ import {Culling} from "../../core/renderer/enums";
 import {BlendFactor, BlendOperation} from "../../core/rendering/blending/enums";
 import {CullMode, FrontFace, PrimitiveTopology} from "../../core/rendering/primitive/enums";
 import {VertexFormat} from "../../VertexFormat.ts";
-import {
-    BufferUsage,
-    MipMapSamplerFilter,
-    SamplerAddressMode,
-    SamplerFilter,
-    TextureFormat
-} from "ris-framework-api";
+import {BufferUsage, MipMapSamplerFilter, SamplerAddressMode, SamplerFilter, TextureFormat} from "ris-framework-api";
 
 export class WebGlConverter {
+
+    private static GL_COMPRESSED_RGBA_BPTC_UNORM = 0x8E8C;
 
     /**
      * Converts PrimitiveTopology to WebGL enum.
@@ -175,6 +171,8 @@ export class WebGlConverter {
                 return gl.DEPTH_COMPONENT32F;
             case TextureFormat.DEPTH_24_STENCIL_8:
                 return gl.DEPTH24_STENCIL8;
+            case TextureFormat.BC7_RGBA_UNORM:
+                return WebGlConverter.GL_COMPRESSED_RGBA_BPTC_UNORM;
             default:
                 throw new Error("NotImplementedException");
         }
@@ -189,7 +187,6 @@ export class WebGlConverter {
     public static convertToPixelFormat(gl: WebGL2RenderingContext, textureFormat: TextureFormat): number {
         switch (textureFormat) {
             case TextureFormat.RGBA_8_UNORM:
-            case TextureFormat.BGRA_8_UNORM:
                 return gl.RGBA;
             case TextureFormat.DEPTH_32_FLOAT:
                 return gl.DEPTH_COMPONENT;

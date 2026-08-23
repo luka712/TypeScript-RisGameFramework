@@ -3,12 +3,11 @@ import {
     type IContentManager,
     type IShaderModuleLoader,
     type ITexture2D,
-    type IKtx2Container,
-    type IImageLoader, type IFramework, type TextureDescriptor, TextureFormat
+    type IImageLoader, type IFramework, TextureDescriptor, TextureFormat, ContentConfig, TextureUsage
 } from "ris-framework-api";
 import {ImageLoader} from "../loaders/ImageLoader.ts";
-import {TextureUsage} from "../../../../ris-framework-api";
-import type {ContentConfig} from "../../../../ris-framework-api/dist/ris-framework/content/ContentConfig";
+import {Ktx2Loader} from "ris-ktx2";
+import type {IKtx2Texture} from "ris-ktx2-api";
 
 /**
  * The content manager.
@@ -17,6 +16,9 @@ import type {ContentConfig} from "../../../../ris-framework-api/dist/ris-framewo
 export class ContentManager implements IContentManager {
 
     private readonly _imageLoader: IImageLoader;
+    private readonly _ktx2Loader = new Ktx2Loader();
+    private readonly _ktx2TextureCache: {[key: string]: IKtx2Texture} = {};
+
     /**
      * The constructor.
      * @param shaderModuleLoader The shader module loader.
@@ -27,8 +29,18 @@ export class ContentManager implements IContentManager {
     }
 
     /** @inheritDoc */
-    public loadKtx2Async(path: string): Promise<IKtx2Container> {
-        throw new Error("Method not implemented.");
+    public async loadKtx2Async(path: string, contentConfig?: ContentConfig): Promise<IKtx2Texture> {
+
+        let ktx2Texture = this._ktx2TextureCache[path];
+        if(ktx2Texture) {
+            return ktx2Texture;
+        }
+
+        ktx2Texture = await this._ktx2Loader.loadAsync(path);
+        if(contentConfig?.keepDataCached == true){
+            this._ktx2TextureCache[path] = ktx2Texture;
+        }
+        return ktx2Texture;
     }
 
     /** @inheritDoc */
@@ -42,6 +54,12 @@ export class ContentManager implements IContentManager {
                                     contentConfig?: ContentConfig,
                                     ): Promise<ITexture2D> {
 
+        if(path.endsWith(".ktx2")) {
+            const ktx2Texture = await this.loadKtx2Async(path);
+            textureDescriptor = textureDescriptor ?? new TextureDescriptor();
+            return this._framework.textureFactory.createFromKtx2(ktx2Texture, textureDescriptor);
+        }
+
         let format =  this._framework.renderer.preferredTextureFormat;
 
         if(textureDescriptor && textureDescriptor.format != TextureFormat.UNDEFINED) {
@@ -49,7 +67,7 @@ export class ContentManager implements IContentManager {
         }
 
         // TODO: pass texture descriptor
-        const data = await this._imageLoader.loadAsync(path, contentConfig?.keepImageDataCached);
+        const data = await this._imageLoader.loadAsync(path, contentConfig?.keepDataCached);
         return this._framework.textureFactory.create(
             data.width, data.height,
             data.getData(0) as Uint8Array,

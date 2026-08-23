@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { Ktx2Texture } from '../src/ktx2-texture';
+import { Ktx2Texture } from '../src/Ktx2Texture';
 import { KtxTranscodeFormat, KtxTranscodeFlags } from '../src/enums';
+import {Ktx2Loader} from "../src";
 
 describe('Ktx2Texture', () => {
     // Mock KTX texture object that simulates the native library
@@ -238,5 +239,13 @@ describe('Ktx2Texture', () => {
             
             consoleSpy.mockRestore();
         });
+
+        it('get array data', async () => {
+            const loader = new Ktx2Loader();
+            await loader.initializeAsync();
+            const tex = loader.loadAsync("test-data/cat.ktx2");
+            const data = (await tex).getTextureDataAsByteArray(0, 0,0);
+            expect(data).not.toBeNull();
+        })
     });
 });

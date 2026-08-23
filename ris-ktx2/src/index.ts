@@ -1,10 +1,11 @@
 // src/index.ts
 import wasmUrl from '../libktx_read.wasm?url';
 
-export * from './ktx2-loader.ts';
-export * from './ktx2-texture.ts';
+export * from "./Ktx2Loader.ts"
+export * from "./Ktx2Loader.ts";
 
 export async function createKtxReadModuleAsync(options: any = {}) {
+
     // 1. Load WASM binary
     const wasmResponse = await fetch(wasmUrl);
     const wasmBinary = await wasmResponse.arrayBuffer();

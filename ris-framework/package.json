@@ -17,6 +17,7 @@
     "reflect-metadata": "^0.2.2",
     "tsyringe": "^4.10.0",
     "ris-ktx2": "file:../ris-ktx2",
+    "ris-ktx2-api": "file:../ris-ktx2-api",
     "ris-framework-api": "file:../ris-framework-api"
   }
 }

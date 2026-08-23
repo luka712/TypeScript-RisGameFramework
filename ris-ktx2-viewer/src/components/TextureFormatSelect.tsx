@@ -1,5 +1,7 @@
 import {MenuItem, Paper, Select, Stack, Typography} from "@mui/material";
-import { TextureFormat} from "ris-framework-api";
+import {TextureFormat} from "ris-framework-api";
+import {useTextureStore} from "../store/TextureStore.ts";
+import {VkFormat} from "../../../ris-ktx2-api";
 
 interface TextureFormatSelectProps {
     label: string;
@@ -28,6 +30,11 @@ export default function TextureFormatSelect({label, value, topMost, bottomMost, 
         onValueChange(newValue);
     }
 
+    const getSelectedTexture = useTextureStore(state => state.getSelectedTexture);
+
+    const isBasisCompressed = () => getSelectedTexture()?.ktxContainer?.needsTranscoding
+        && getSelectedTexture()?.ktxContainer?.vkFormat == VkFormat.UNDEFINED;
+
     return (
         <Paper
             elevation={3}
@@ -50,7 +57,8 @@ export default function TextureFormatSelect({label, value, topMost, bottomMost, 
                     onChange={handleChange}
                 >
                     <MenuItem value={TextureFormat.RGBA_8_UNORM}>RGBA_8_UNORM</MenuItem>
-                    <MenuItem value={TextureFormat.BGRA_8_UNORM}>BGRA_8_UNORM</MenuItem>
+                    {isBasisCompressed() && <MenuItem value={TextureFormat.BC7_RGBA_UNORM}>BC7_RGBA_UNORM</MenuItem>}
+                    {isBasisCompressed() && <MenuItem value={TextureFormat.ATSC_4X4_RGBA}>ASTC_4X4_RGBA</MenuItem>}
                 </Select>
             </Stack>
         </Paper>

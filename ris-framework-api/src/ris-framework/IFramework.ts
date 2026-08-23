@@ -8,11 +8,17 @@ import {IGeometryBuilder} from "./geometry/IGeometryBuilder";
 import {ICameraFactory} from "./camera/ICameraFactory";
 import {ITextureFactory} from "./rendering/texture/ITextureFactory";
 import {IContentManager} from "./content/IContentManager";
+import {IImageLoader} from "./loaders/IImageLoader";
 
 /**
  * The framework interface.
  */
 export interface IFramework {
+
+    /**
+     * The image loader.
+     */
+    readonly imageLoader: IImageLoader;
 
     /**
      * The used rendering backend.

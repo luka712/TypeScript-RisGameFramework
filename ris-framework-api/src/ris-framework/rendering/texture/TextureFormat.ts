@@ -44,5 +44,5 @@ export enum TextureFormat {
     /**
      * The ASTC 4x4 compressed format with four 8-bit normalized unsigned integer components in RGBA order.
      */
-    ATSC_4X4_RGBA = 9
+    ASTC_4X4_RGBA = 9
 }

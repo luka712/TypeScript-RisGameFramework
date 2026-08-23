@@ -22,6 +22,7 @@
     "ris-framework": "file:../ris-framework",
     "ris-framework-api": "file:../ris-framework-api",
     "ris-ktx2": "file:../ris-ktx2",
+    "ris-ktx2-api": "file:../ris-ktx2-api",
     "zustand": "^5.0.14"
   },
   "devDependencies": {

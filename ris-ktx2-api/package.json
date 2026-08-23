@@ -1,6 +1,6 @@
 {
-  "name": "RisFramework.API.csproj",
-  "version": "1.0.0",
+  "name": "ris-ktx2-api",
+  "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,11 +15,11 @@
     "src"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && vite build",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build"
   },
-  "description": "TypeScript types generated from RisFramework.API.csproj",
+  "description": "Interfaces for ris-ktx2 package.",
   "license": "MIT",
   "keywords": [
     "types",
@@ -27,10 +27,10 @@
     "generated"
   ],
   "dependencies": {
-    "gl-matrix": "^3.4.4",
-    "ris-ktx2-api": "file:../ris-ktx2-api"
+    "vite": "^8.1.5",
+    "vite-plugin-dts": "^5.0.3"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "@typescript/typescript6": "^6.0.2"
   }
 }

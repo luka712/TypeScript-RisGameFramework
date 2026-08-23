@@ -47,7 +47,7 @@ export interface ITexture2D extends IContent {
     /**
      * The label.
      */
-    readonly label?: string;
+    readonly label: string | null;
 
     /**
      * The current state.

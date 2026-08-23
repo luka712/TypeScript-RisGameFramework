@@ -1,5 +1,6 @@
 import {WebGlConverter} from "./WebGlConverter.ts";
 import {TextureFormat} from "ris-framework-api";
+import {vec2} from "gl-matrix";
 
 /**
  * The utilities for working with WebGL textures.
@@ -21,8 +22,8 @@ export class WebGlTextureUtilities {
     public createTexture2D(
         gl: WebGL2RenderingContext,
         width: number, height: number,
-        data: Uint8Array | HTMLImageElement | null = null,
-        textureFormat = TextureFormat.BGRA_8_UNORM,
+        data: Uint8Array[] | HTMLImageElement[] | null = null,
+        textureFormat = TextureFormat.RGBA_8_UNORM,
         useMipMaps = false,
         anisotropy = 1.0,
         label: string | null = null
@@ -48,14 +49,93 @@ export class WebGlTextureUtilities {
 
         gl.texStorage2D(gl.TEXTURE_2D, mipLevels, internalFormat, width, height);
 
-        if (data instanceof HTMLImageElement) {
-            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, data);
-        } else if (data instanceof Uint8Array) {
-            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, data);
-        } else if (!data) {
-            gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, data);
-        } else {
-            throw new Error("unsupported data type");
+        if(data) {
+            for (let i = 0; i < mipLevels; i++) {
+
+                const mipLevelData = data[i];
+
+                if (mipLevelData instanceof HTMLImageElement) {
+                    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, mipLevelData);
+                } else if (mipLevelData instanceof Uint8Array) {
+                    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, mipLevelData);
+                } else if (!mipLevelData) {
+                    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, mipLevelData);
+                } else {
+                    throw new Error("unsupported data type");
+                }
+            }
+        }
+
+        // Generate mipmaps.
+        if (mipLevels > 1) {
+            gl.generateMipmap(gl.TEXTURE_2D);
+        }
+
+        // Set anisotropy.
+        if (anisotropy > 1.0) {
+            throw new Error("Not implemented yet.");
+            //OpenGLESUtilities.Anisotropy.SetAnisotropy(gl, texture, anisotropy);
+        }
+
+        return texture;
+    }
+
+    /**
+     * Creates a compressed 2D texture.
+     * @param gl The WebGL rendering context.
+     * @param dimension The dimensions of the texture.
+     * @param blockSize The block size of a compressed format.
+     * @param data The texture data. If null, an uninitialized texture will be created.
+     * @param textureFormat The format of the texture. If not specified, BGRA_8_UNORM will be used.
+     * @param anisotropy The level of anisotropic filtering to use when sampling the texture. A value of 1 means no anisotropic filtering, while higher values (e.g., 4, 8, 16) indicate increasing levels of anisotropic filtering. By default, it is 1 (no anisotropic filtering).
+     * @param label The label for the texture. This can be used for debugging purposes to identify the texture in graphics debuggers.
+     * @returns The created WebGL texture.
+     */
+    public createCompressedTexture2D(
+        gl: WebGL2RenderingContext,
+        dimension: vec2, blockSize: vec2,
+        data: Uint8Array[] | null = null,
+        label: string | null = null,
+        textureFormat = TextureFormat.RGBA_8_UNORM,
+        anisotropy = 1.0,
+    ): WebGLTexture {
+
+        const baseWidth = dimension[0];
+        const baseHeight = dimension[1];
+        const mipLevels = data?.length ?? 1;
+
+        const texture = gl.createTexture();
+
+        if (label != null) {
+            (texture as any).__SPECTOR_Metadata = {
+                name: label,
+            };
+        }
+
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        const internalFormat = WebGlConverter.convertInternalFormat(gl, textureFormat);
+
+        gl.texStorage2D(gl.TEXTURE_2D, mipLevels, internalFormat, baseWidth, baseHeight);
+
+        if(data && data.length > 0) {
+
+            let width = baseWidth;
+            let height = baseHeight;
+
+            for (let i = 0; i < mipLevels; i++) {
+
+                const mipLevelData = data[i];
+
+                if (mipLevelData instanceof Uint8Array) {
+                    gl.compressedTexSubImage2D(gl.TEXTURE_2D, i,  0, 0, width, height, internalFormat, mipLevelData, 0);
+                } else {
+                    throw new Error("unsupported data type");
+                }
+
+                width /= 2;
+                height /= 2;
+            }
         }
 
         // Generate mipmaps.

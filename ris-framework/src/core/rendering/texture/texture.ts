@@ -1,12 +1,12 @@
 import {
-    type ITexture2D,
-    type ITextureView,
+    type ITexture2D, type ITextureView,
     State,
+    type TextureDescriptor,
     type TextureFormat,
-    type TextureUsage,
+    TextureUsage,
     TextureViewDescriptor
 } from "ris-framework-api";
-
+import {vec2} from "gl-matrix";
 
 /**
  * The ATexture2D class is an abstract base class that implements the ITexture2D interface. It provides common properties and a constructor for initializing a 2D texture, but it does not implement the actual texture creation and management logic, which must be provided by subclasses that extend this base class.
@@ -18,37 +18,38 @@ export abstract class ATexture2D implements ITexture2D {
     protected _handle: any;
     protected _state: State = State.CREATED;
     protected _size = 0;
+    protected _generateMipMaps: boolean = false;
     protected _mipLevels = 0;
+    protected _data?: Uint8Array[];
+    protected _blockSize: vec2;
 
     protected _disposedListeners: ((tex: ITexture2D) => void)[] = [];
 
     /**
      * The constructor for the ATexture2D class.
-     * @param _width The width of the texture.
-     * @param _height The height of the texture.
-     * @param textureUsage The texture usage.
-     * @param textureFormat The texture format.
-     * @param label The label for the texture. This can be used for debugging purposes to identify the texture in graphics debuggers.
-     * @param useMipMaps This determines whether mipmaps should be generated for the texture. Mipmaps are smaller versions of the texture that are used when the texture is minified to improve performance and reduce aliasing.
-     * @param anisotropy This determines the level of anisotropic filtering to use when sampling the texture. Anisotropic filtering improves the quality of texture sampling at oblique viewing angles, but it can also reduce performance. A value of 1 means no anisotropic filtering, while higher values (e.g., 4, 8, 16) indicate increasing levels of anisotropic filtering.
+     * @param descriptor - The texture descriptor.
      */
-    constructor(
-        protected readonly _width: number,
-        protected readonly _height: number,
-        textureUsage: TextureUsage,
-        textureFormat: TextureFormat,
-        protected readonly _label: string | null = null,
-        protected readonly _useMipMaps: boolean = false,
-        protected readonly _anisotropy: number = 1
+    protected constructor(
+        descriptor: TextureDescriptor,
     ) {
         this.id = ATexture2D.generateId();
+        this.textureFormat = descriptor.textureFormat;
+        this.textureUsage = descriptor.textureUsage;
+        this.textureViewFormat = descriptor.textureFormat;
+        this.width = descriptor.width;
+        this.height = descriptor.height;
+        this._generateMipMaps = descriptor.generateMipmaps;
+        this._data = descriptor.data;
+        this.label = descriptor.label;
+        this._blockSize = descriptor.blockSize ?? vec2.fromValues(1,1);
+
+        if (this.width == 0 || this.height == 0) {
+            throw new Error("Width or height cannot be zero.");
+        }
 
         // @ts-ignore
         this.defaultTextureView = null;
 
-        this.textureUsage = textureUsage;
-        this.textureFormat = textureFormat;
-        this.textureViewFormat = textureFormat;
     }
 
     /** @inheritDoc */
@@ -109,14 +110,10 @@ export abstract class ATexture2D implements ITexture2D {
     }
 
     /** @inheritdoc */
-    public get width(): number {
-        return this._width;
-    }
+    public readonly width: number;
 
     /** @inheritdoc */
-    public get height(): number {
-        return this._height;
-    }
+    public readonly height: number;
 
     /** @inheritDoc */
     public get size(): number {
@@ -129,9 +126,7 @@ export abstract class ATexture2D implements ITexture2D {
     }
 
     /** @inheritdoc */
-    public get label(): string {
-        return this._label as string;
-    }
+    public readonly label: string | null;
 
     /**
      * Creates a texture view for the texture.

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "The RIS KTX2 library.",
   "type": "module",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -21,9 +21,11 @@
     "libktx_read.wasm",
     "libktx_read.js"
   ],
+
   "dependencies": {
     "vite": "^8.1.5",
-    "vite-plugin-dts": "^5.0.3"
+    "vite-plugin-dts": "^5.0.3",
+    "ris-ktx2-api": "file:../ris-ktx2-api"
   },
   "devDependencies": {
     "@typescript/typescript6": "^6.0.2",

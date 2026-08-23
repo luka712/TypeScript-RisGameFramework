@@ -1,6 +1,6 @@
-import type {IKtx2Texture} from "./ktx-texture-interface.ts";
-import {Ktx2Texture} from "./ktx2-texture.ts";
+import {Ktx2Texture} from "./Ktx2Texture.ts";
 import {createKtxReadModuleAsync} from "./index.ts";
+import type {IKtx2Texture} from "ris-ktx2-api";
 
 /**
  * The Ktx2Loader class is responsible for loading KTX2 textures from a URL.
@@ -40,6 +40,6 @@ export class Ktx2Loader {
 
         const uint8Array = new Uint8Array(buffer);
         const ktxTexture = new Ktx2Loader._ktxLib.texture(uint8Array);
-        return new Ktx2Texture(ktxTexture, filePath);
+        return new Ktx2Texture(Ktx2Loader._ktxLib, ktxTexture, filePath);
     }
 }
