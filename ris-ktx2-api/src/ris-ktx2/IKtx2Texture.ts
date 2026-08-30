@@ -132,4 +132,9 @@ export interface IKtx2Texture {
      * @returns The TextureFormatInfo
      */
     getTextureFormatInfo(format: KtxTranscodeFormat): TextureFormatInfo;
+
+    /** TODO: */
+    createCopy(): IKtx2Texture;
+
+
 }

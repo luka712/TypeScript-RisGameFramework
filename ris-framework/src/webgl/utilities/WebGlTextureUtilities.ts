@@ -128,6 +128,7 @@ export class WebGlTextureUtilities {
                 const mipLevelData = data[i];
 
                 if (mipLevelData instanceof Uint8Array) {
+                    debugger;
                     gl.compressedTexSubImage2D(gl.TEXTURE_2D, i,  0, 0, width, height, internalFormat, mipLevelData, 0);
                 } else {
                     throw new Error("unsupported data type");

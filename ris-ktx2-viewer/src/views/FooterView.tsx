@@ -101,6 +101,7 @@ export function FooterView() {
                             {memory}
                         </Typography>
                     </Stack>
+
                 </Stack>
         </Paper>
     );

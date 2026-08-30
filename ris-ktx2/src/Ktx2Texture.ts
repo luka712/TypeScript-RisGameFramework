@@ -17,7 +17,6 @@ export class Ktx2Texture implements IKtx2Texture {
 
     // @ts-ignore
     private readonly _ktxTexture: any;
-
     /**
      * The constructor.
      * @param ktxLib - The KTX library.
@@ -57,6 +56,7 @@ export class Ktx2Texture implements IKtx2Texture {
 
     /** @inheritdoc */
     public readonly numLevels;
+
 
     compressAstc(quality: number): void {
         console.log(quality);
@@ -137,6 +137,12 @@ export class Ktx2Texture implements IKtx2Texture {
         else {
             throw new Error("Unrecognized texture format for " + format);
         }
+    }
+
+    /** @inheritDoc */
+    public createCopy(): IKtx2Texture {
+        const copy = this._ktxTexture.createCopy();
+        return  new Ktx2Texture(this._ktxLib, copy, this.filePath);
     }
 
 }

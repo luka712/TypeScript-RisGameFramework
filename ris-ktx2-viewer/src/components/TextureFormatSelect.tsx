@@ -27,6 +27,7 @@ export default function TextureFormatSelect({label, value, topMost, bottomMost, 
 
     const handleChange = (e: { target: { value: TextureFormat; }; }) => {
         const newValue = e.target.value as TextureFormat;
+        debugger;
         onValueChange(newValue);
     }
 
@@ -58,7 +59,7 @@ export default function TextureFormatSelect({label, value, topMost, bottomMost, 
                 >
                     <MenuItem value={TextureFormat.RGBA_8_UNORM}>RGBA_8_UNORM</MenuItem>
                     {isBasisCompressed() && <MenuItem value={TextureFormat.BC7_RGBA_UNORM}>BC7_RGBA_UNORM</MenuItem>}
-                    {isBasisCompressed() && <MenuItem value={TextureFormat.ATSC_4X4_RGBA}>ASTC_4X4_RGBA</MenuItem>}
+                    {isBasisCompressed() && <MenuItem value={TextureFormat.ASTC_4X4_RGBA}>ASTC_4X4_RGBA</MenuItem>}
                 </Select>
             </Stack>
         </Paper>

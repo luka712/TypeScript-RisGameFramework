@@ -1,13 +1,12 @@
 import {
+    ContentConfig,
     type IFramework,
     type ITexture2D, TextureDescriptor,
-    TextureFormat
+    TextureFormat, TextureUsage
 } from "ris-framework-api";
 import {create, type StoreApi, type UseBoundStore} from "zustand";
 import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
 import {decodeImage, getKtx2Texture} from "../service/TextureUtilities.ts";
-import {ContentConfig} from "../../../ris-framework-api/dist/ris-framework/content/ContentConfig";
-import {TextureUsage} from "../../../ris-framework-api";
 
 interface TextureStore {
     framework?: IFramework;
@@ -75,17 +74,20 @@ export const useTextureStore: UseBoundStore<StoreApi<TextureStore>> = create<Tex
             const image = selectedTex.image;
 
             const texDesc = new TextureDescriptor();
-            texDesc.format = v;
+            texDesc.textureFormat = v;
             texDesc.generateMipmaps = get().generateMipmaps;
             get().texture?.dispose();
 
             const contentConfig = new ContentConfig();
-            contentConfig.keepImageDataCached = true;
+            contentConfig.keepDataCached = false;
+
+            const width = image?.width ?? selectedTex.ktxContainer?.width;
+            const height = image?.height ?? selectedTex.ktxContainer?.height;
 
             const newTex = fw.textureFactory.create(
-                image.width, image.height, image.pixels, 4, undefined,
+                image!.width, image!.height, image!.pixels, 4, undefined,
                 TextureUsage.TEXTURE_BINDING | TextureUsage.COPY_DST,
-                texDesc.format,
+                texDesc.textureFormat,
                 texDesc.generateMipmaps
             );
 
@@ -104,20 +106,20 @@ export const useTextureStore: UseBoundStore<StoreApi<TextureStore>> = create<Tex
                 return;
             }
 
-            const image = selectedTex.image;
+            const image = selectedTex.image!;
 
             const texDesc = new TextureDescriptor();
             texDesc.generateMipmaps = v;
-            texDesc.format = get().textureFormat;
+            texDesc.textureFormat = get().textureFormat;
             get().texture?.dispose();
 
             const contentConfig = new ContentConfig();
-            contentConfig.keepImageDataCached = true;
+            contentConfig.keepDataCached = false;
 
             const newTex = fw.textureFactory.create(
                 image.width, image.height, image.pixels, 4, undefined,
                 TextureUsage.TEXTURE_BINDING | TextureUsage.COPY_DST,
-                texDesc.format,
+                texDesc.textureFormat,
                 texDesc.generateMipmaps
             );
 
@@ -185,12 +187,13 @@ export const useTextureStore: UseBoundStore<StoreApi<TextureStore>> = create<Tex
             } else if (file.name.endsWith(".ktx2")) {
 
                 const ktx = await getKtx2Texture(file);
-                const texture = framework.textureFactory.createFromKtx2(ktx);
+                const texture = framework.textureFactory.createFromKtx2(ktx.createCopy());
 
                 const container: ITexture2DContainer = {
                     name: file.name,
                     texture: texture,
-                    ktxContainer: ktx
+                    ktxContainer: ktx,
+                    image: null
                 }
 
                 for (const callback of get().onTextureSelectedCallbacks) {
