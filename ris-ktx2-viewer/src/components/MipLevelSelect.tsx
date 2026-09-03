@@ -1,26 +1,35 @@
 import {MenuItem, Paper, Select, type SelectChangeEvent, Stack, Typography} from "@mui/material";
-import {SamplerFilter} from "ris-framework-api";
+import {TextureFormat} from "ris-framework-api";
+import {useTextureStore} from "../store/TextureStore.ts";
 
-interface SamplerFilterSelectProps {
+interface MipLevelSelectProps {
     label: string;
-    value: SamplerFilter;
-    onValueChange: (value: SamplerFilter) => void;
+    value: number;
+    valueMax: number,
+    onValueChange: (value: TextureFormat) => void;
     topMost?: boolean;
     bottomMost?: boolean;
 }
 
-export default function SamplerFilterSelect({
-    label,
-    value,
-    topMost,
-    bottomMost,
-    onValueChange,
-}: SamplerFilterSelectProps) {
+export default function MipLevelSelect({
+                                                label,
+                                                value,
+                                                topMost,
+                                                bottomMost,
+                                                onValueChange,
+                                            }: MipLevelSelectProps) {
     const topRadius = topMost ? 20 : 0;
     const bottomRadius = bottomMost ? 20 : 0;
 
-    const handleChange = (e: SelectChangeEvent<SamplerFilter>) => {
-        onValueChange(e.target.value as SamplerFilter);
+    const mipLevels = useTextureStore((state) => state.mipLevels);
+
+    const levels = [];
+    for(let i = 0; i < mipLevels; i++) {
+        levels.push(<MenuItem value={i}>{i}</MenuItem>);
+    }
+
+    const handleChange = (e: SelectChangeEvent<TextureFormat>) => {
+        onValueChange(e.target.value as TextureFormat);
     };
 
     return (
@@ -47,8 +56,7 @@ export default function SamplerFilterSelect({
                     sx={{marginTop: 1, marginBottom: 1, height: "40px"}}
                     onChange={handleChange}
                 >
-                    <MenuItem value={SamplerFilter.NEAREST}>Nearest</MenuItem>
-                    <MenuItem value={SamplerFilter.LINEAR}>Linear</MenuItem>
+                    {levels}
                 </Select>
             </Stack>
         </Paper>

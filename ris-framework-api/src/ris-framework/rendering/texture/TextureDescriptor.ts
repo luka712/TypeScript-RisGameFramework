@@ -37,7 +37,7 @@ export class TextureDescriptor {
     /**
      * The data per mip level.
      */
-    public data: Uint8Array[] = [];
+    public data?: Uint8Array[] = undefined;
 
     /**
      * Should mipmaps be generated.

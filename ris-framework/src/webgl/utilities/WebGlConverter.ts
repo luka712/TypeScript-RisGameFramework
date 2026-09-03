@@ -7,6 +7,7 @@ import {BufferUsage, MipMapSamplerFilter, SamplerAddressMode, SamplerFilter, Tex
 export class WebGlConverter {
 
     private static GL_COMPRESSED_RGBA_BPTC_UNORM = 0x8E8C;
+    private static GL_COMPRESSED_RGBA_ASTC_4x4_KHR = 0x93B0;
 
     /**
      * Converts PrimitiveTopology to WebGL enum.
@@ -71,15 +72,14 @@ export class WebGlConverter {
      */
     public static convertBufferUsage(usage: BufferUsage): GLenum {
 
-        switch (usage) {
-            case BufferUsage.VERTEX:
-            case BufferUsage.INDEX:
-            case BufferUsage.UNIFORM:
-                case BufferUsage.VERTEX | BufferUsage.COPY_DST:
-                return WebGL2RenderingContext.STATIC_DRAW;
-            default:
-                throw new Error("NotImplementedException");
+        let bufferUsage: number = WebGL2RenderingContext.STATIC_DRAW;
+
+        if((usage & BufferUsage.COPY_DST) == BufferUsage.COPY_DST)
+        {
+            bufferUsage = WebGL2RenderingContext.DYNAMIC_DRAW;
         }
+
+        return bufferUsage;
     }
     /**
      * Conversts BlendOperation to WebGL enum.
@@ -173,6 +173,8 @@ export class WebGlConverter {
                 return gl.DEPTH24_STENCIL8;
             case TextureFormat.BC7_RGBA_UNORM:
                 return WebGlConverter.GL_COMPRESSED_RGBA_BPTC_UNORM;
+            case TextureFormat.ASTC_4X4_RGBA:
+                return WebGlConverter.GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
             default:
                 throw new Error("NotImplementedException");
         }

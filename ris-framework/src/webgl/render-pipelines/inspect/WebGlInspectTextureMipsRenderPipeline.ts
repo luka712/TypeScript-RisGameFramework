@@ -1,7 +1,6 @@
 import type {
     IFramework,
     ISampler,
-    ISpriteRenderPipeline,
     ITexture2D,
     IUniformBuffer,
     IVertexBuffer
@@ -16,18 +15,27 @@ import {AWebGlRenderPipeline} from "../AWebGlRenderPipeline.ts";
 import type {WebGLIndexBuffer} from "../../buffers/webgl-index-buffer";
 import {type IIndexBuffer, IndexBufferType} from "ris-framework-api";
 import type {WebGlSampler} from "../../sampler/webgl-sampler.ts";
+import type {
+    IInspectTextureMipsRenderPipeline
+} from "ris-framework-api";
 
 /**
  * The WebGL implementation of the sprite render pipeline.
  */
-export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements ISpriteRenderPipeline {
+export class WebGlInspectTextureMipsRenderPipeline extends AWebGlRenderPipeline implements IInspectTextureMipsRenderPipeline {
 
-    private static readonly CAMERA_BINDING_POINT: number = 0;
+    private static readonly CAMERA_BINDING_POINT = 0;
+    private static readonly  MODEL_BINDING_POINT = 1;
+    private static readonly TEXTURE_CONSTANTS_BINDING_POINT = 2;
 
     private _texture: WebGlTexture2D = null!;
     private _sampler?: WebGlSampler;
     private _projectionViewBuffer: WebGlUniformBuffer;
+    private _modelBuffer: WebGlUniformBuffer;
+    private _textureConstantsBuffer: WebGlUniformBuffer;
     private _cameraBlockIndex: number = -1;
+    private _modelBlockIndex: number = -1;
+    private  _textureConstantsBlockIndex : number = -1;
     private _buffersArray: WebGLBuffer[] = [null!];
     private _lastVertexBuffer: WebGlVertexBuffer | null = null;
 
@@ -35,11 +43,20 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
      * The constructor.
      * @param framework The framework.
      * @param projectionViewBuffer The projection view buffer.
+     * @param modelBuffer The model buffer.
+     * @param textureConstantsBuffer The texture constants buffer.
      */
-    constructor(framework: IFramework, projectionViewBuffer: IUniformBuffer) {
+    constructor(framework: IFramework,
+                projectionViewBuffer: IUniformBuffer,
+                modelBuffer: IUniformBuffer,
+                textureConstantsBuffer: IUniformBuffer
+                ) {
         super(framework);
-        this._projectionViewBuffer = asWebGLUniformBuffer(projectionViewBuffer);
+        this._projectionViewBuffer = projectionViewBuffer as WebGlUniformBuffer;
+        this._modelBuffer = modelBuffer as WebGlUniformBuffer;
+        this._textureConstantsBuffer = textureConstantsBuffer as WebGlUniformBuffer;
     }
+
 
     /** @inheritdoc */
     public get projectionViewBuffer(): IUniformBuffer {
@@ -49,6 +66,26 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
     /** @inheritdoc */
     public set projectionViewBuffer(value: IUniformBuffer) {
         this._projectionViewBuffer = asWebGLUniformBuffer(value);
+    }
+
+    /** @inheritdoc */
+    public get modelBuffer(): IUniformBuffer {
+        return this._modelBuffer;
+    }
+
+    /** @inheritdoc */
+    public set modelBuffer(value: IUniformBuffer) {
+        this._modelBuffer = asWebGLUniformBuffer(value);
+    }
+
+    /** @inheritdoc */
+    public get textureConstantsBuffer(): IUniformBuffer {
+        return this._textureConstantsBuffer;
+    }
+
+    /** @inheritdoc */
+    public set textureConstantsBuffer(value: IUniformBuffer) {
+        this._textureConstantsBuffer = asWebGLUniformBuffer(value);
     }
 
     /** @inheritdoc */
@@ -73,7 +110,7 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
     /** @inheritdoc */
     public override initialize(): void {
 
-        const module = this._framework.content.loadShaderModule("sprite") as WebGlShaderModule;
+        const module = this._framework.content.loadShaderModule("inspect_texture_mips") as WebGlShaderModule;
         this._program = module.program!;
         this._createResources();
         this.vertexBufferLayouts = [VertexBufferLayout.createFloat3Float4Float2Layout()];
@@ -85,7 +122,13 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
             this._texture = WebGlTexture2D.getOrCreateDefault(this._framework);
 
             this._cameraBlockIndex = this._gl.getUniformBlockIndex(this._program, "CameraBuffer");
-            this._gl.uniformBlockBinding(this._program, this._cameraBlockIndex, WebGlSpriteRenderPipeline.CAMERA_BINDING_POINT);
+            this._gl.uniformBlockBinding(this._program, this._cameraBlockIndex, WebGlInspectTextureMipsRenderPipeline.CAMERA_BINDING_POINT);
+
+            this._modelBlockIndex = this._gl.getUniformBlockIndex(this._program, "ModelBuffer");
+            this._gl.uniformBlockBinding(this._program, this._modelBlockIndex, WebGlInspectTextureMipsRenderPipeline.MODEL_BINDING_POINT);
+
+            this._textureConstantsBlockIndex = this._gl.getUniformBlockIndex(this._program, "TextureConstantsBuffer");
+            this._gl.uniformBlockBinding(this._program, this._textureConstantsBlockIndex, WebGlInspectTextureMipsRenderPipeline.TEXTURE_CONSTANTS_BINDING_POINT);
         }
     }
 
@@ -126,7 +169,15 @@ export class WebGlSpriteRenderPipeline extends AWebGlRenderPipeline implements I
         // Bind the vao. It contains all the information about the vertex buffer layout ( vertices + instances)
         this._gl.bindVertexArray(this._vertexArrayObject);
         this._gl.bindBuffer(this._gl.ELEMENT_ARRAY_BUFFER, webGlIndexBuffer.buffer);
-        this._gl.bindBufferBase(this._gl.UNIFORM_BUFFER, WebGlSpriteRenderPipeline.CAMERA_BINDING_POINT, this._projectionViewBuffer.glBuffer!);
+        this._gl.bindBufferBase(this._gl.UNIFORM_BUFFER,
+            WebGlInspectTextureMipsRenderPipeline.CAMERA_BINDING_POINT,
+            this._projectionViewBuffer.glBuffer!);
+        this._gl.bindBufferBase(this._gl.UNIFORM_BUFFER,
+            WebGlInspectTextureMipsRenderPipeline.MODEL_BINDING_POINT,
+            this._modelBuffer.glBuffer!);
+        this._gl.bindBufferBase(this._gl.UNIFORM_BUFFER,
+            WebGlInspectTextureMipsRenderPipeline.TEXTURE_CONSTANTS_BINDING_POINT,
+            this._textureConstantsBuffer.glBuffer!);
         this._gl.activeTexture(this._gl.TEXTURE0);
         this._gl.bindTexture(this._gl.TEXTURE_2D, this._texture!.glTexture);
         this._gl.bindSampler(0, webGlSampler.glSampler);

@@ -1,6 +1,7 @@
 import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
 import type { WebGlGraphicsDevice } from "../WebGlGraphicsDevice.ts";
 import type {BufferUsage, IFramework, IUniformBuffer} from "ris-framework-api";
+import {AlignUtilities} from "../../../../ris-framework-api";
 
 /**
  * The WebGL implementation of the uniform buffer.
@@ -19,7 +20,7 @@ export class WebGlUniformBuffer implements IUniformBuffer {
      * @param label The label to use.
      */
     public constructor(framework: IFramework,
-                       dataOrByteSize: number[] | number,
+                       dataOrByteSize: ArrayLike<number> | number,
                        bufferUsage: BufferUsage,
                        label?: string) {
 
@@ -31,7 +32,7 @@ export class WebGlUniformBuffer implements IUniformBuffer {
             this._data = new Float32Array(dataOrByteSize);
         }
         else {
-            this._data = new Float32Array(dataOrByteSize);
+            this._data = new Float32Array(AlignUtilities.alignArray(dataOrByteSize, 4));
         }
 
         this._byteSize = this._data.byteLength;

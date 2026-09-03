@@ -38,6 +38,11 @@ export class WebGlFrameBufferUtilities {
 
         for (let i = 0; i < textureIdsArray.length; i++) {
             const textureId = textureIdsArray[i];
+
+            if(textureId == null) {
+                throw new Error("Cannot bind texture to the frame buffer. Texture id not specified");
+            }
+
             // Bind the texture to the framebuffer, so we can render to it.
             gl.bindTexture(gl.TEXTURE_2D, textureId);
 

@@ -106,6 +106,12 @@ export class Ktx2Texture implements IKtx2Texture {
         else if(transcodeFormat == KtxTranscodeFormat.BC3_RGBA){
             ktxTranscodeFormat = transcodeTarget.BC3_RGBA;
         }
+        else if(transcodeFormat == KtxTranscodeFormat.ETC2_RGBA) {
+            ktxTranscodeFormat = transcodeTarget.ETC2_RGBA;
+        }
+        else if(transcodeFormat == KtxTranscodeFormat.RGBA32) {
+            ktxTranscodeFormat = transcodeTarget.RGBA32;
+        }
         else {
             throw new Error("Unsupported transcodeFormat");
         }

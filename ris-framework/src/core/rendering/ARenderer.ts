@@ -211,8 +211,6 @@ export abstract class ARenderer implements ITempRenderer {
             return;
         }
 
-        debugger;
-
         // Note: surface texture and surface texture view must be released before trying to resize.
         this._swapChain.resize(this.backBufferSize[0], this.backBufferSize[1]);
 

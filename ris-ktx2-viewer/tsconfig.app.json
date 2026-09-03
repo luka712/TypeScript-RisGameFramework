@@ -20,7 +20,19 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+
+    /*
+     * Prefer built API packages for types.
+     * ris-framework is shimmed (see src/shims) so sibling implementation sources
+     * are not pulled into this project's typecheck.
+     */
+    "paths": {
+      "ris-framework": ["./src/shims/ris-framework.d.ts"],
+      "ris-framework-api": ["../ris-framework-api/dist/index.d.ts"],
+      "ris-ktx2-api": ["../ris-ktx2-api/dist/index.d.ts"],
+      "ris-ktx2": ["../ris-ktx2/src/index.ts"]
+    }
   },
   "include": ["src"]
 }

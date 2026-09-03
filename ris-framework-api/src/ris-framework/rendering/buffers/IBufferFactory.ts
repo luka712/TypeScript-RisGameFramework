@@ -14,7 +14,7 @@ export interface IBufferFactory {
      * @param label - The buffer label.
      * @returns The .
      */
-    createIndexBuffer(data: number[], label?: string): IIndexBuffer;
+    createIndexBuffer(data: ArrayLike<number>, label?: string): IIndexBuffer;
 
     /**
      * Creates a new vertex buffer and prefills it with data.
@@ -24,7 +24,7 @@ export interface IBufferFactory {
      * @param label - The buffer label.
      * @returns The .
      */
-    createVertexBuffer(data: number[], vertexStride: number, usage: BufferUsage, label?: string): IVertexBuffer;
+    createVertexBuffer(data: ArrayLike<number>, vertexStride: number, usage: BufferUsage, label?: string): IVertexBuffer;
 
     /**
      * Creates a new uniform buffer.
@@ -33,6 +33,6 @@ export interface IBufferFactory {
      * @param label - The optional label of the buffer.
      * @returns The uniform buffer.
      */
-    createUniformBuffer(data: number[], usage: BufferUsage, label?: string): IUniformBuffer;
+    createUniformBuffer(data: ArrayLike<number>, usage: BufferUsage, label?: string): IUniformBuffer;
 
 }

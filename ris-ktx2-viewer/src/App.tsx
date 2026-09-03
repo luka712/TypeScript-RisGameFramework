@@ -1,169 +1,215 @@
 import {Box, createTheme, Grid, Paper, Stack, Tab, Tabs, ThemeProvider} from "@mui/material";
 import './App.css'
-import { useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import DropArea from "./components/DropArea.tsx";
 import TextureList from "./components/TextureList.tsx";
 import GenericPropertiesView from "./views/GenericPropertiesView.tsx";
 import AddFileButton from "./components/AddFileButton.tsx";
-import {Color, type IFramework, Rect} from "ris-framework-api";
-import {Framework} from "../../ris-framework/src/core/Framework.ts";
+import {
+    BufferUsage,
+    Color,
+    type IFramework,
+    type IInspectTextureMipsRenderPipeline,
+    type IUniformBuffer,
+    type IMesh,
+    Rect
+} from "ris-framework-api";
+import {Framework} from "ris-framework";
 import {useAppStore} from "./store/AppStore.ts";
 import {vec2} from "gl-matrix";
-import SelectedTexturePropertiesView from "./views/SelectedTexturePropertiesView.tsx";
 import {PropertiesView} from "./views/PropertiesView.tsx";
 import {useSamplerStore} from "./store/SamplerStore.ts";
 import {useTextureStore} from "./store/TextureStore.ts";
 import {FooterView} from "./views/FooterView.tsx";
+import {TextureSamplerFilteringPreset} from "../../ris-framework/src/core/rendering/enums.ts";
+import {mat4, vec3} from "gl-matrix";
 
-const imageRect = new Rect(0,0,0,0);
 
+const imageRect = new Rect(0, 0, 0, 0);
 const whiteColor = Color.white();
 
 function App() {
-    const theme = createTheme({cssVariables: true, palette: {mode: 'dark'}});
+    const theme = useMemo(
+        () => createTheme({cssVariables: true, palette: {mode: "dark"}}),
+        [],
+    );
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const frameworkRef = useRef<IFramework | null>(null);
+    const modelBufferRef = useRef<IUniformBuffer | null>(null);
+    const mipmapPipelineRef = useRef<IInspectTextureMipsRenderPipeline| null>(null);
+    const quadMeshRef = useRef<IMesh | null>(null);
+    const texBuffer = useRef<IUniformBuffer | null>(null);
 
-    const setFrameworkAppStore = useAppStore(state => state.setFramework);
-    const setFrameworkSamplerStore = useSamplerStore(state => state.setFramework);
-    const setFrameworkTextureStore = useTextureStore(state => state.setFramework);
-
-    const getSelectedTexture = useTextureStore(state => state.getSelectedTexture);
-    const getSampler = useSamplerStore(state => state.getSampler);
+    const setFrameworkAppStore = useAppStore((state) => state.setFramework);
+    const setFrameworkSamplerStore = useSamplerStore((state) => state.setFramework);
+    const setFrameworkTextureStore = useTextureStore((state) => state.setFramework);
+    const subscribeTextureSelected = useTextureStore((state) => state.subscribeTextureSelected);
+    const getSelectedTexture = useTextureStore((state) => state.getSelectedTexture);
+    const getSampler = useSamplerStore((state) => state.getSampler);
+    const getMipLevel = useTextureStore((state) => state.getMipLevel);
 
     const [framework, setFramework] = useState<IFramework | null>(null);
-
     const [tab, setTab] = useState(0);
 
-    const onTextureSelected = useTextureStore(state => state.onTextureSelected);
-    onTextureSelected(tex => {
-
-        const texture = tex.texture;
-        if(texture) {
+    useEffect(() => {
+        return subscribeTextureSelected((tex) => {
+            const texture = tex?.texture;
+            if (!texture) {
+                return;
+            }
 
             const canvas = canvasRef.current;
-            if(canvas) {
+            if (canvas) {
                 canvas.width = texture.width;
                 canvas.height = texture.height;
             }
 
             const fw = frameworkRef.current;
-            if(fw){
+            if (fw) {
                 fw.renderer.backBufferSize = vec2.fromValues(texture.width, texture.height);
             }
-        }
+        });
+    }, [subscribeTextureSelected]);
 
-    });
+    let modelMatrix = mat4.create();
+    let previousTexWidth = 0;
+    let previousTexHeight = 0;
+    let previousMipLevel = 0;
 
     useEffect(() => {
-        if (!canvasRef.current) {
+        const canvas = canvasRef.current;
+        if (!canvas || frameworkRef.current) {
             return;
         }
 
-        const canvas = canvasRef.current;
-        const fw = frameworkRef.current;
+        const fw: IFramework = new Framework({
+            canvas,
+            backBufferSize: vec2.fromValues(1920, 1080),
+            textureFiltering: TextureSamplerFilteringPreset.TRILINEAR
+        });
+        fw.renderer.clearColor = Color.gray();
 
-        if (canvas) {
+        fw.addOnInitializedListener(() => {
+            const modelBuffer = fw.bufferFactory.createUniformBuffer(modelMatrix, BufferUsage.UNIFORM, "ModelBuffer");
+            const viewProjBuffer = fw.bufferFactory.createUniformBuffer(modelMatrix, BufferUsage.UNIFORM, "ViewProjectionBuffer");
+            const textureConstantsBuffer = fw.bufferFactory.createUniformBuffer(
+                [0],
+                BufferUsage.UNIFORM | BufferUsage.COPY_DST,
+                "TextureConstantsBuffer");
 
-            const observer = new ResizeObserver(entries => {
-                const rect = entries[0].contentRect;
-               // frameworkSize[0] = rect.width * 2;
-                //frameworkSize[1] = rect.height * 2;
+            debugger;
 
-                if(fw) {
-                    // fw.renderer.backBufferSize = frameworkSize;
+            const inspectTextureMipsRenderPipeline = fw.renderPipelineFactory.createInspectTextureMipsRenderPipeline(
+                modelBuffer, viewProjBuffer, textureConstantsBuffer);
+
+            const quadMesh = fw.meshFactory.createQuadMesh(true, vec2.fromValues(2, 2));
+
+            modelBufferRef.current = modelBuffer;
+            mipmapPipelineRef.current = inspectTextureMipsRenderPipeline;
+            quadMeshRef.current = quadMesh;
+            texBuffer.current = textureConstantsBuffer;
+        });
+
+        fw.addOnRenderListener(() => {
+            const spriteBatch = fw.spriteBatch;
+            const selectedTexture = getSelectedTexture();
+            const sampler = getSampler();
+            const mipLevel = getMipLevel();
+
+            spriteBatch.begin(undefined, sampler);
+
+            if (selectedTexture?.texture) {
+                // imageRect.width = selectedTexture.texture.width;
+                // imageRect.height = selectedTexture.texture.height;
+                // spriteBatch.draw(selectedTexture.texture, imageRect, whiteColor);
+
+                const tex = selectedTexture.texture;
+
+                // Clamp to edge
+                const width = tex.width;
+                const height = tex.height;
+
+                if (previousTexWidth != width || previousTexHeight != height)
+                {
+                    const aspectRatio = width / height;
+                    let widthScale = 1.0;
+                    let heightScale = 1.0;
+
+                    if (aspectRatio > 1)
+                    {
+                        heightScale /= aspectRatio;
+                    }
+                    else
+                    {
+                        widthScale *= aspectRatio;
+                    }
+
+                    previousTexWidth = width;
+                    previousTexHeight = height;
+
+                    mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(widthScale, heightScale, 1));
+                    modelBufferRef.current?.update(modelMatrix);
                 }
-            });
+                const pipeline = mipmapPipelineRef.current!;
 
-            observer.observe(canvas);
+                pipeline.spriteTexture = tex;
+                pipeline.textureSampler = sampler;
+
+                if (mipLevel != previousMipLevel)
+                {
+                    previousMipLevel = mipLevel;
+                    texBuffer.current?.update([mipLevel]);
+                }
+
+                const mesh = quadMeshRef.current!;
+                pipeline!.render(mesh!.vertexBuffer!, mesh!.indexBuffer!);
+            }
+
+            spriteBatch.end();
+        });
+        fw.initialize();
+
+        frameworkRef.current = fw;
+        setFramework(fw);
+        setFrameworkAppStore(fw);
+        setFrameworkSamplerStore(fw);
+        setFrameworkTextureStore(fw);
+    }, [
+        getSampler,
+        getSelectedTexture,
+        setFrameworkAppStore,
+        setFrameworkSamplerStore,
+        setFrameworkTextureStore,
+    ]);
+
+    const gpuProperties = useMemo(
+        () =>
+            framework
+                ? [
+                    {name: "GPU Vendor", value: framework.renderer.graphicsDevice.gpuInfo.vendor},
+                    {name: "GPU", value: framework.renderer.graphicsDevice.gpuInfo.name},
+                ]
+                : [],
+        [framework],
+    );
+
+    const gpuFeatures = useMemo(() => {
+        if (!framework) {
+            return [];
         }
 
-        if (!fw) {
-            const fw: IFramework = new Framework({
-                canvas: canvasRef.current,
-                backBufferSize: vec2.fromValues(1920,1080),
-            });
-            fw.renderer.clearColor = Color.gray();
-            fw.addOnRenderListener(() => {
-                const spriteBatch = fw!.spriteBatch;
-                const selectedTexture = getSelectedTexture();
-                const sampler = getSampler();
+        const features = framework.renderer.graphicsDevice.features;
+        const supported = (value: boolean) => (value ? "Supported" : "Not Supported");
 
-                spriteBatch.begin(undefined, sampler);
-
-                if (selectedTexture && selectedTexture.texture) {
-
-                    imageRect.width = selectedTexture.texture.width;
-                    imageRect.height = selectedTexture.texture.height;
-
-                    spriteBatch.draw(selectedTexture.texture, imageRect, whiteColor);
-                }
-                // spriteBatch.drawRect(imageRect, whiteColor);
-                spriteBatch.end();
-            });
-            fw.initialize();
-
-            frameworkRef.current = fw;
-            setFramework(fw);
-            setFrameworkAppStore(fw);
-            setFrameworkSamplerStore(fw);
-            setFrameworkTextureStore(fw);
-        }
-
-        // optional cleanup if Framework has a dispose method
-        // return () => fw.dispose?.();
-    }, []);
-
-    const properties = [
-        {name: "Width", value: "1024"},
-        {name: "Height", value: "1024"},
-        {name: "Mipmaps", value: "1"},
-        {name: "Format", value: "RGBA8"},
-    ];
-
-    // Guard against null framework
-    const gpuProperties = framework
-        ? [
-            {name: "GPU Vendor", value: framework.renderer.graphicsDevice.gpuInfo.vendor},
-            {name: "GPU", value: framework.renderer.graphicsDevice.gpuInfo.name},
-        ]
-        : [];
-
-    const gpuFeatures = framework
-        ? [
-            {
-                name: "S3TC Texture Compression (BC1-BC3)",
-                value: framework.renderer.graphicsDevice.features.supportsTextureCompressionS3TC
-                    ? "Supported"
-                    : "Not Supported",
-            },
-            {
-                name: "BPTC Texture Compression (BC6-BC7)",
-                value: framework.renderer.graphicsDevice.features.supportsTextureCompressionBC
-                    ? "Supported"
-                    : "Not Supported",
-            },
-            {
-                name: "ETC2 Texture Compression",
-                value: framework.renderer.graphicsDevice.features.supportsTextureCompressionETC2
-                    ? "Supported"
-                    : "Not Supported",
-            },
-            {
-                name: "ASTC Texture Compression",
-                value: framework.renderer.graphicsDevice.features.supportsTextureCompressionASTC
-                    ? "Supported"
-                    : "Not Supported",
-            },
-            {
-                name: "PVRTC Texture Compression",
-                value: framework.renderer.graphicsDevice.features.supportsTextureCompressionPVRTC
-                    ? "Supported"
-                    : "Not Supported",
-            },
-        ]
-        : [];
+        return [
+            {name: "S3TC Texture Compression (BC1-BC3)", value: supported(features.supportsTextureCompressionS3TC)},
+            {name: "BPTC Texture Compression (BC6-BC7)", value: supported(features.supportsTextureCompressionBC)},
+            {name: "ETC2 Texture Compression", value: supported(features.supportsTextureCompressionETC2)},
+            {name: "ASTC Texture Compression", value: supported(features.supportsTextureCompressionASTC)},
+            {name: "PVRTC Texture Compression", value: supported(features.supportsTextureCompressionPVRTC)},
+        ];
+    }, [framework]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -177,10 +223,9 @@ function App() {
                                     <Tabs
                                         value={tab}
                                         sx={{paddingTop: 2, paddingBottom: 2}}
-                                        onChange={(_event, newValue) => setTab(newValue)}
+                                        onChange={(_event, newValue: number) => setTab(newValue)}
                                     >
                                         <Tab label="Files"/>
-                                        <Tab label="Properties"/>
                                         <Tab label="GPU Info"/>
                                     </Tabs>
 
@@ -190,8 +235,7 @@ function App() {
                                             <TextureList/>
                                         </Stack>
                                     )}
-                                    {tab === 1 && <GenericPropertiesView properties={properties}/>}
-                                    {tab === 2 && (
+                                    {tab === 1 && (
                                         <Stack direction="column" spacing={2}>
                                             {framework ? (
                                                 <>
@@ -207,18 +251,17 @@ function App() {
                             </Grid>
                             <Grid size={6}>
                                 <Box>
-                                    <canvas ref={canvasRef} width={1920} height={1080} />
+                                    <canvas ref={canvasRef} width={1920} height={1080}/>
                                 </Box>
                             </Grid>
                             <Grid size={3}>
                                 <Box sx={{paddingTop: 2, paddingBottom: 2}}>
-                                    <PropertiesView />
-                                    <SelectedTexturePropertiesView />
+                                    <PropertiesView/>
                                 </Box>
                             </Grid>
                         </Grid>
                         <Grid size={12}>
-                            <FooterView />
+                            <FooterView/>
                         </Grid>
                     </Paper>
                 </Stack>

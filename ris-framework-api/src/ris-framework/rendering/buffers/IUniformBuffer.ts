@@ -16,6 +16,6 @@ export interface IUniformBuffer extends IBuffer  {
      * @param offset - Defines where to start buffer write. Must be in bytes.
      * @param length - Defines how many bytes to write. By default, -1 that means data length is used.
      */
-    update(data: number[], offset?: number, length?: number): void;
+    update(data: ArrayLike<number>, offset?: number, length?: number): void;
 
 }

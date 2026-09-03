@@ -47,7 +47,7 @@ export class WebGlTextureFactory implements ITextureFactory {
                 else if(gpuFeatures.supportsTextureCompressionASTC)
                 {
                     transcodeFormat = KtxTranscodeFormat.ASTC_4X4_RGBA;
-                    textureFormat = TextureFormat.ATSC_4X4_RGBA
+                    textureFormat = TextureFormat.ASTC_4X4_RGBA
                 }
                 else if(gpuFeatures.supportsTextureCompressionS3TC)
                 {
@@ -86,6 +86,7 @@ export class WebGlTextureFactory implements ITextureFactory {
         textureDescriptor.height = ktxTexture.height;
         textureDescriptor.data = data;
         textureDescriptor.textureFormat = textureFormat;
+        textureDescriptor.generateMipmaps = descriptor.generateMipmaps;
         textureDescriptor.blockSize = vec2.fromValues(texFormatInfo.blockWidth, texFormatInfo.blockHeight);
 
         const texture = new WebGlTexture2D(this._framework, textureDescriptor);

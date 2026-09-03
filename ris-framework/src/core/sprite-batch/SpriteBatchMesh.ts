@@ -1,6 +1,5 @@
 import type {vec2, vec3} from "gl-matrix";
-import {Mesh} from "../mesh/mesh";
-import {BufferUsage, type Color, type IFramework} from "ris-framework-api";
+import {BufferUsage, type Color, type IFramework, Mesh} from "ris-framework-api";
 
 /**
  * The sprite batch mesh.
@@ -57,7 +56,7 @@ export class SpriteBatchMesh extends Mesh {
     /** @inheritDoc */
     public override initialize(): void {
         this._vertexBuffer = this._framework.bufferFactory.createVertexBuffer(
-            this._vertexData,
+            this._vertexData!,
             this.maxInstances * 4,
             BufferUsage.VERTEX | BufferUsage.COPY_DST,
             "SpriteBatchMesh.VertexBuffer");
@@ -108,48 +107,48 @@ export class SpriteBatchMesh extends Mesh {
         let index = instance * SpriteBatchMesh.TOTAL_FLOATS_IN_SPRITE; // 36 due to 9 * 4 vertices.
 
         // Top left.
-        this._vertexData[index++] = position[0]
-        this._vertexData[index++] = position[1];
-        this._vertexData[index++] = position[2];
-        this._vertexData[index++] = color.r;
-        this._vertexData[index++] = color.g;
-        this._vertexData[index++] = color.b;
-        this._vertexData[index++] = color.a;
-        this._vertexData[index++] = u0;
-        this._vertexData[index++] = v0;
+        this._vertexData![index++] = position[0]
+        this._vertexData![index++] = position[1];
+        this._vertexData![index++] = position[2];
+        this._vertexData![index++] = color.r;
+        this._vertexData![index++] = color.g;
+        this._vertexData![index++] = color.b;
+        this._vertexData![index++] = color.a;
+        this._vertexData![index++] = u0;
+        this._vertexData![index++] = v0;
 
         // Top right.
-        this._vertexData[index++] = position[0] + size[0];
-        this._vertexData[index++] = position[1];
-        this._vertexData[index++] = position[2];
-        this._vertexData[index++] = color.r;
-        this._vertexData[index++] = color.g;
-        this._vertexData[index++] = color.b;
-        this._vertexData[index++] = color.a;
-        this._vertexData[index++] = u1;
-        this._vertexData[index++] = v0;
+        this._vertexData![index++] = position[0] + size[0];
+        this._vertexData![index++] = position[1];
+        this._vertexData![index++] = position[2];
+        this._vertexData![index++] = color.r;
+        this._vertexData![index++] = color.g;
+        this._vertexData![index++] = color.b;
+        this._vertexData![index++] = color.a;
+        this._vertexData![index++] = u1;
+        this._vertexData![index++] = v0;
 
         // Bottom left.
-        this._vertexData[index++] = position[0];
-        this._vertexData[index++] = position[1] + size[1];
-        this._vertexData[index++] = position[2];
-        this._vertexData[index++] = color.r;
-        this._vertexData[index++] = color.g;
-        this._vertexData[index++] = color.b;
-        this._vertexData[index++] = color.a;
-        this._vertexData[index++] = u0;
-        this._vertexData[index++] = v1;
+        this._vertexData![index++] = position[0];
+        this._vertexData![index++] = position[1] + size[1];
+        this._vertexData![index++] = position[2];
+        this._vertexData![index++] = color.r;
+        this._vertexData![index++] = color.g;
+        this._vertexData![index++] = color.b;
+        this._vertexData![index++] = color.a;
+        this._vertexData![index++] = u0;
+        this._vertexData![index++] = v1;
 
         // Bottom right.
-        this._vertexData[index++] = position[0] + size[0];
-        this._vertexData[index++] = position[1] + size[1];
-        this._vertexData[index++] = position[2];
-        this._vertexData[index++] = color.r;
-        this._vertexData[index++] = color.g;
-        this._vertexData[index++] = color.b;
-        this._vertexData[index++] = color.a;
-        this._vertexData[index++] = u1;
-        this._vertexData[index] = v1;
+        this._vertexData![index++] = position[0] + size[0];
+        this._vertexData![index++] = position[1] + size[1];
+        this._vertexData![index++] = position[2];
+        this._vertexData![index++] = color.r;
+        this._vertexData![index++] = color.g;
+        this._vertexData![index++] = color.b;
+        this._vertexData![index++] = color.a;
+        this._vertexData![index++] = u1;
+        this._vertexData![index] = v1;
 
         this._lastIndex = index;
     }
@@ -239,6 +238,6 @@ export class SpriteBatchMesh extends Mesh {
 
         // Update only to last index.
         // Increment index by 1, since it's index, not a count.
-        this._vertexBuffer!.update(this._vertexData, 0, this._lastIndex + 1);
+        this._vertexBuffer!.update(this._vertexData!, 0, this._lastIndex + 1);
     }
 }

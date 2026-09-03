@@ -9,6 +9,7 @@ import {ICameraFactory} from "./camera/ICameraFactory";
 import {ITextureFactory} from "./rendering/texture/ITextureFactory";
 import {IContentManager} from "./content/IContentManager";
 import {IImageLoader} from "./loaders/IImageLoader";
+import {IMeshFactory} from "./meshes/IMeshFactory";
 
 /**
  * The framework interface.
@@ -73,6 +74,11 @@ export interface IFramework {
      * The content manager.
      */
     readonly content: IContentManager;
+
+    /**
+     * The mesh factory.
+     */
+    readonly meshFactory: IMeshFactory;
 
     /**
      * Called right after the framework is initialized and before the render loop starts.

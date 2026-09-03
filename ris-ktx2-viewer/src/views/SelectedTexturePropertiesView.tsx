@@ -1,44 +1,17 @@
-import {useEffect, useState} from "react";
 import GenericPropertiesView from "./GenericPropertiesView.tsx";
-import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
-import {Mapper} from "../service/Mapper.ts";
 import {useTextureStore} from "../store/TextureStore.ts";
+import {textureFormatToString} from "../service/Mapper.ts";
 
 export default function SelectedTexturePropertiesView() {
-    const onTexSelected = useTextureStore(
-        store => store.onTextureSelectedCallbacks
-    );
+    const selectedTexture = useTextureStore((store) => store.selectedTexture);
+    const texture = selectedTexture?.texture;
 
-    const [properties, setProperties] = useState([
-        { name: "Width", value: "0" },
-        { name: "Height", value: "0" },
-        { name: "Mipmaps", value: "1" },
-        { name: "Format", value: "RGBA8" },
-    ]);
+    const properties = [
+        {name: "Width", value: texture?.width?.toString() ?? "0"},
+        {name: "Height", value: texture?.height?.toString() ?? "0"},
+        {name: "Mipmaps", value: texture?.mipLevels?.toString() ?? "0"},
+        {name: "Format", value: textureFormatToString(texture?.textureFormat)},
+    ];
 
-    useEffect(() => {
-        const callback = (tex: ITexture2DContainer) => {
-
-            setProperties([
-                { name: "Width", value: tex?.texture?.width?.toString() ?? "0" },
-                { name: "Height", value: tex?.texture?.height?.toString() ?? "0" },
-                { name: "Mipmaps", value: "1" },
-                { name: "Format", value: Mapper.mapTextureFormatToString[tex.texture!.textureFormat!] }
-            ]);
-        };
-
-        onTexSelected.push(callback);
-
-        return () => {
-            const index = onTexSelected.indexOf(callback);
-
-            if (index !== -1) {
-                onTexSelected.splice(index, 1);
-            }
-        };
-    }, [onTexSelected]);
-
-    return (
-        <GenericPropertiesView properties={properties} />
-    );
+    return <GenericPropertiesView properties={properties}/>;
 }

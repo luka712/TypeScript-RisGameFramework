@@ -1,12 +1,14 @@
-import { WebGlUtilities } from "../utilities/WebGlUtilities.ts";
+import {WebGlUtilities} from "../utilities/WebGlUtilities.ts";
 import {
     TextureDescriptor,
     type IFramework, State,
     type ITextureView,
-    type TextureViewDescriptor, TextureUtilities} from "ris-framework-api";
+    type TextureViewDescriptor, TextureUtilities
+} from "ris-framework-api";
 import type {WebGlGraphicsDevice} from "../WebGlGraphicsDevice.ts";
 import {ATexture2D} from "../../core/rendering/texture/texture.ts";
 import {vec2} from "gl-matrix";
+
 /**
  * The WebGL implementation of ITexture2D.
  */
@@ -25,14 +27,14 @@ export class WebGlTexture2D extends ATexture2D {
         private readonly _framework: IFramework,
         textureDescriptor: TextureDescriptor
     ) {
-            super(textureDescriptor);
+        super(textureDescriptor);
         this._graphicsDevice = this._framework.renderer.graphicsDevice as WebGlGraphicsDevice;
         this._gl = this._graphicsDevice.gl!;
     }
 
     /**
      * Gets the underlying WebGL texture.
-     * @returns The WebGL texture. 
+     * @returns The WebGL texture.
      */
     public get glTexture(): WebGLTexture {
         return this._glTexture!;
@@ -42,28 +44,24 @@ export class WebGlTexture2D extends ATexture2D {
     public initialize(): void {
         if (this._state == State.INITIALIZED) {
             throw new Error("Texture is already initialized.");
-        }
-        else if (this._state == State.DISPOSED) {
+        } else if (this._state == State.DISPOSED) {
             throw new Error("Texture is already disposed.");
         }
 
-        if(this._data){
-            if(TextureUtilities.isCompressedTextureFormat(this.textureFormat)){
-                this._glTexture = WebGlUtilities.texture.createCompressedTexture2D(
-                    this._gl, vec2.fromValues(this.width, this.height),
-                    this._blockSize, this._data, this.label, this.textureFormat,0);
-            }
-            else {
-                this._glTexture = WebGlUtilities.texture.createTexture2D(
-                    this._gl,
-                    this.width, this.height,
-                    this._data,
-                    this.textureFormat,
-                    this._generateMipMaps,
-                    0,
-                    this.label
-                );
-            }
+        if (TextureUtilities.isCompressedTextureFormat(this.textureFormat)) {
+            this._glTexture = WebGlUtilities.texture.createCompressedTexture2D(
+                this._gl, vec2.fromValues(this.width, this.height),
+                this._blockSize, this._data, this.label, this.textureFormat, 0);
+        } else {
+            this._glTexture = WebGlUtilities.texture.createTexture2D(
+                this._gl,
+                this.width, this.height,
+                this._data,
+                this.textureFormat,
+                this._generateMipMaps,
+                0,
+                this.label
+            );
         }
 
         this._state = State.INITIALIZED;
@@ -74,7 +72,7 @@ export class WebGlTexture2D extends ATexture2D {
         this._mipLevels = this._generateMipMaps ? TextureUtilities.mipLevels(width, height) : 1;
         this._size = 0;
 
-        for(let i = 0; i < this.mipLevels; i++) {
+        for (let i = 0; i < this.mipLevels; i++) {
             this._size += TextureUtilities.getVRamSize(this.textureFormat, width, height);
             width /= 2;
             height /= 2;
@@ -98,8 +96,7 @@ export class WebGlTexture2D extends ATexture2D {
         this._glTexture = null;
         this._state = State.DISPOSED;
 
-        for(const listener of this._disposedListeners)
-        {
+        for (const listener of this._disposedListeners) {
             listener(this);
         }
     }
@@ -118,7 +115,7 @@ export class WebGlTexture2D extends ATexture2D {
             const desc = new TextureDescriptor();
             desc.width = 1;
             desc.height = 1;
-            desc.data = [new Uint8Array([255,255,255,255])];
+            desc.data = [new Uint8Array([255, 255, 255, 255])];
             desc.textureFormat = framework.renderer.preferredTextureFormat;
             desc.label = "RisDefaultFilledTexture";
 

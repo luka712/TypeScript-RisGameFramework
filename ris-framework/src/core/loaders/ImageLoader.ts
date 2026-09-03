@@ -45,7 +45,6 @@ export class ImageLoader implements IImageLoader {
         return new Promise((resolve, reject) => {
             const image = new Image();
             image.onload = () => {
-                debugger;
                 resolve(new ImageData(image, image.width, image.height, 4));
             };
             image.onerror = (e) => {

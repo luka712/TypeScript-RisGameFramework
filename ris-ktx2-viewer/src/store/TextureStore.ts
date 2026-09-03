@@ -1,245 +1,235 @@
 import {
-    ContentConfig,
     type IFramework,
     type ITexture2D, TextureDescriptor,
-    TextureFormat, TextureUsage
+    TextureFormat,
+    TextureUsage,
 } from "ris-framework-api";
-import {create, type StoreApi, type UseBoundStore} from "zustand";
+import {create} from "zustand";
 import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
-import {decodeImage, getKtx2Texture} from "../service/TextureUtilities.ts";
+import {decodeImage, getKtx2Texture, isDecodableImage, isKtx2File} from "../service/TextureUtilities.ts";
+import {VkFormat} from "ris-ktx2-api";
+
+type TextureSelectedListener = (tex: ITexture2DContainer | null) => void;
 
 interface TextureStore {
-    framework?: IFramework;
-    texture?: ITexture2D;
-    textureFormat: TextureFormat,
-    generateMipmaps: boolean,
-
-    resolution: string,
-    getResolution: () => string,
-    size: string,
-    mipLevels: number,
-
+    framework: IFramework | null;
+    textureFormat: TextureFormat;
+    generateMipmaps: boolean;
+    resolution: string;
+    size: string;
+    mipLevel: number,
+    mipLevels: number;
     textures: ITexture2DContainer[];
     selectedTexture: ITexture2DContainer | null;
+
+    setFramework: (framework: IFramework) => void;
+    getMipLevel: () => number;
     getSelectedTexture: () => ITexture2DContainer | null;
-    setSelectedTexture: (texture: ITexture2DContainer) => void;
-    onTextureSelectedCallbacks: ((tex: ITexture2DContainer) => void)[],
-    onTextureSelected: (callback: (tex: ITexture2DContainer) => void) => void;
-    addTexture: (filePath: File) => void;
+    setSelectedTexture: (texture: ITexture2DContainer | null) => void;
+    subscribeTextureSelected: (listener: TextureSelectedListener) => () => void;
+    addTexture: (file: File) => Promise<void>;
     removeTexture: (texContainer: ITexture2DContainer) => void;
-
-    getTexture: () => ITexture2D | undefined,
-
-    setFramework: (frame: IFramework) => void,
-    setTexture: (value: ITexture2D) => void,
-    setTextureFormat: (value: TextureFormat) => void,
-    setGenerateMipmaps: (value: boolean) => void,
+    setTextureFormat: (value: TextureFormat) => void;
+    setMipmapLevel: (value: number) => void;
+    setGenerateMipmaps: (value: boolean) => void;
+    canGenerateMipmaps: () => boolean;
 }
 
-export const useTextureStore: UseBoundStore<StoreApi<TextureStore>> = create<TextureStore>(
-    (set, get) => ({
-        onTextureSelectedCallbacks: [],
+const DEFAULT_USAGE = TextureUsage.TEXTURE_BINDING | TextureUsage.COPY_DST;
 
-        selectedTexture: null,
-        getSelectedTexture: () => get().selectedTexture,
-        ktxTextures: [],
-        textures: [],
+function formatSizeMiB(bytes: number): string {
+    return `${(bytes / (1024 * 1024)).toPrecision(3)} MiB`;
+}
 
-        resolution: "0x0",
-        getResolution: () => get().resolution,
-        size: "0MiB",
-        mipLevels: 0,
+function metricsFromTexture(texture: ITexture2D | null | undefined) {
+    if (!texture) {
+        return {resolution: "0x0", size: "0 MiB", mipLevels: 0};
+    }
 
-        setFramework: (v) => set({
-            framework: v
-        }),
+    return {
+        resolution: `${texture.width}x${texture.height}`,
+        size: formatSizeMiB(texture.size),
+        mipLevels: texture.mipLevels,
+    };
+}
 
-        setTexture: (v) => set({
-            texture: v
-        }),
 
+function recreateTexture(
+    framework: IFramework,
+    container: ITexture2DContainer,
+    textureFormat: TextureFormat,
+    generateMipmaps: boolean,
+): ITexture2D | null {
+    const image = container.image;
+    const ktx2 = container.ktxContainer;
+    let texture = null;
+
+    if(ktx2) {
+        container.texture?.dispose();
+        const desc = new TextureDescriptor();
+        desc.textureFormat = textureFormat;
+        desc.generateMipmaps = generateMipmaps;
+        // Always use copy, in order to be able to change texture format.
+        texture = framework.textureFactory.createFromKtx2(ktx2.createCopy(), desc);
+    }
+    else if (image) {
+        container.texture?.dispose();
+
+        texture = framework.textureFactory.create(
+            image.width,
+            image.height,
+            image.pixels,
+            4,
+            container.name,
+            DEFAULT_USAGE,
+            textureFormat,
+            generateMipmaps,
+        );
+    }
+    
+    container.texture = texture;
+    return texture;
+}
+
+export const useTextureStore = create<TextureStore>((set, get) => {
+    const listeners = new Set<TextureSelectedListener>();
+
+    const notifySelected = (tex: ITexture2DContainer | null) => {
+        for (const listener of listeners) {
+            listener(tex);
+        }
+    };
+
+    const applySelection = (tex: ITexture2DContainer | null) => {
+        set({
+            selectedTexture: tex,
+            ...metricsFromTexture(tex?.texture),
+            textureFormat: tex?.texture?.textureFormat ?? get().textureFormat,
+            generateMipmaps: (tex?.texture?.mipLevels ?? 1) > 1,
+        });
+        notifySelected(tex);
+    };
+
+    return {
+        framework: null,
         textureFormat: TextureFormat.RGBA_8_UNORM,
         generateMipmaps: false,
+        resolution: "0x0",
+        size: "0 MiB",
+        mipLevel: 0,
+        mipLevels: 1,
+        textures: [],
+        selectedTexture: null,
 
-        setTextureFormat: (v) => {
+        setFramework: (framework) => set({framework}),
 
+        getMipLevel: () => get().mipLevel,
 
-            const fw = get().framework!;
-            const selectedTex = get().selectedTexture;
+        getSelectedTexture: () => get().selectedTexture,
 
-            if (!selectedTex) {
-                return;
-            }
+        setSelectedTexture: (tex) => applySelection(tex),
 
-            const image = selectedTex.image;
-
-            const texDesc = new TextureDescriptor();
-            texDesc.textureFormat = v;
-            texDesc.generateMipmaps = get().generateMipmaps;
-            get().texture?.dispose();
-
-            const contentConfig = new ContentConfig();
-            contentConfig.keepDataCached = false;
-
-            const width = image?.width ?? selectedTex.ktxContainer?.width;
-            const height = image?.height ?? selectedTex.ktxContainer?.height;
-
-            const newTex = fw.textureFactory.create(
-                image!.width, image!.height, image!.pixels, 4, undefined,
-                TextureUsage.TEXTURE_BINDING | TextureUsage.COPY_DST,
-                texDesc.textureFormat,
-                texDesc.generateMipmaps
-            );
-
-            selectedTex.texture = newTex;
-            set(() => ({
-                textureFormat: v
-            }));
-            get().setSelectedTexture(selectedTex);
+        subscribeTextureSelected: (listener) => {
+            listeners.add(listener);
+            return () => {
+                listeners.delete(listener);
+            };
         },
 
-        setGenerateMipmaps: (v) => {
-            const fw = get().framework!;
-            const selectedTex = get().selectedTexture;
+        removeTexture: (texture) => {
+            const {textures, selectedTexture} = get();
+            const nextTextures = textures.filter((t) => t !== texture);
 
-            if (!selectedTex) {
-                return;
-            }
-
-            const image = selectedTex.image!;
-
-            const texDesc = new TextureDescriptor();
-            texDesc.generateMipmaps = v;
-            texDesc.textureFormat = get().textureFormat;
-            get().texture?.dispose();
-
-            const contentConfig = new ContentConfig();
-            contentConfig.keepDataCached = false;
-
-            const newTex = fw.textureFactory.create(
-                image.width, image.height, image.pixels, 4, undefined,
-                TextureUsage.TEXTURE_BINDING | TextureUsage.COPY_DST,
-                texDesc.textureFormat,
-                texDesc.generateMipmaps
-            );
-
-            selectedTex.texture = newTex;
-            get().setSelectedTexture(selectedTex);
-            set(() => ({
-                 generateMipmaps: v
-            }));
-        },
-
-        removeTexture: (texture: ITexture2DContainer) => {
-
-            set((state) => ({
-                textures: [
-                    ...state.textures.splice(state.textures.indexOf(texture))
-                ],
-            }));
             texture.texture?.dispose();
+
+            set({textures: nextTextures});
+
+            if (selectedTexture === texture) {
+                applySelection(nextTextures[0] ?? null);
+            }
         },
 
         addTexture: async (file) => {
-
-            if (get().textures.map(t => t.name).indexOf(file.name) > -1) {
-                // TODO: message as texture is already added
-
+            if (get().textures.some((t) => t.name === file.name)) {
+                console.warn(`Texture already added: ${file.name}`);
                 return;
             }
 
             const framework = get().framework;
-
             if (!framework) {
                 throw new Error("Framework has not been initialized");
             }
 
-            const canBeDecoded =
-                file.type === "image/png" ||
-                file.type === "image/jpeg" ||
-                file.type === "image/jpg" ||
-                file.type === "image/webp";
+            let container: ITexture2DContainer;
 
-            if (canBeDecoded) {
+            if (isDecodableImage(file)) {
                 const image = await decodeImage(file);
                 const texture = framework.textureFactory.create(
                     image.width,
                     image.height,
-                    image.pixels
+                    image.pixels,
+                    4,
+                    file.name,
                 );
 
-                const container: ITexture2DContainer = {
+                container = {
                     name: file.name,
-                    texture: texture,
-                    image: image,
-                    ktxContainer: null
-                }
-
-                // Set as selected texture
-                get().setSelectedTexture(container);
-
-                set((state) => ({
-                    textures: [
-                        ...state.textures,
-                        container,
-                    ],
-                }));
-            } else if (file.name.endsWith(".ktx2")) {
-
+                    texture,
+                    image,
+                    ktxContainer: null,
+                };
+            } else if (isKtx2File(file)) {
                 const ktx = await getKtx2Texture(file);
                 const texture = framework.textureFactory.createFromKtx2(ktx.createCopy());
 
-                const container: ITexture2DContainer = {
+                container = {
                     name: file.name,
-                    texture: texture,
+                    texture,
                     ktxContainer: ktx,
-                    image: null
-                }
-
-                for (const callback of get().onTextureSelectedCallbacks) {
-                    callback(container);
-                }
-
-                get().setSelectedTexture(container);
-
-                set((state) => ({
-                    textures: [
-                        ...state.textures,
-                        container,
-                    ],
-                }));
+                    image: null,
+                };
             } else {
-                throw new Error("Not implemented");
+                throw new Error(`Unsupported file type: ${file.name}`);
             }
 
+            set((state) => ({
+                textures: [...state.textures, container],
+            }));
+            applySelection(container);
         },
 
-        onTextureSelected: (callback) => get().onTextureSelectedCallbacks.push(callback),
-        setSelectedTexture: (tex: ITexture2DContainer) => {
-
-            let resolution = "0x0";
-            let size = "0MiB";
-            let mips = 1;
-            const texture = tex.texture;
-            if(texture){
-                resolution = `${texture.width}x${texture.height}`;
-                size = `${(texture.size / (1024.0 * 1024.0)).toPrecision(3)} MiB`;
-                mips = texture.mipLevels;
+        setTextureFormat: (value) => {
+            const {framework, selectedTexture, generateMipmaps} = get();
+            if (!framework || !selectedTexture) {
+                return;
             }
 
-            set({
-                selectedTexture: tex,
-                resolution: resolution,
-                size: size,
-                mipLevels: mips
-            })
-
-            for (const callback of get().onTextureSelectedCallbacks) {
-                callback(tex);
-            }
-
+            set({textureFormat: value});
+            recreateTexture(framework, selectedTexture, value, generateMipmaps && get().canGenerateMipmaps());
+            applySelection(selectedTexture);
         },
 
-        getTexture: () => get().texture
-    })
-);
+        setMipmapLevel: (value) => {
+            get().mipLevel = value;
+
+            // TODO: set uniform buffer
+        },
+
+        setGenerateMipmaps: (value) => {
+            const {framework, selectedTexture, textureFormat} = get();
+            if (!framework || !selectedTexture) {
+                return;
+            }
+
+            set({generateMipmaps: value});
+            recreateTexture(framework, selectedTexture, textureFormat, value && get().canGenerateMipmaps());
+            applySelection(selectedTexture);
+        },
+
+        canGenerateMipmaps: () => {
+            const ktx = get().selectedTexture?.ktxContainer;
+            const textureFormat = get().textureFormat;
+            return !ktx || ktx.vkFormat === VkFormat.R8G8B8A8_UNORM || textureFormat === TextureFormat.RGBA_8_UNORM;
+        }
+    };
+});

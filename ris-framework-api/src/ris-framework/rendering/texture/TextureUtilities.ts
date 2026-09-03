@@ -1,5 +1,6 @@
 import {TextureFormat} from "./TextureFormat";
 import {KtxTranscodeFormat, TextureFormatInfo, VkFormat} from "ris-ktx2-api";
+import {AlignUtilities} from "../../utilities/AlignUtilities";
 
 /**
  * The texture utilities.
@@ -21,6 +22,8 @@ export class TextureUtilities {
         [TextureFormat.DEPTH_24_STENCIL_8]: VkFormat.D24_UNORM_S8_UINT,
         [TextureFormat.BC3_RGBA_UNORM]: VkFormat.BC3_UNORM_BLOCK,
         [TextureFormat.BC7_RGBA_UNORM]: VkFormat.BC7_UNORM_BLOCK,
+        [TextureFormat.ASTC_4X4_RGBA]: VkFormat.ASTC_4X4_UNORM_BLOCK,
+        [TextureFormat.ETC2_RGBA8_UNORM] : VkFormat.ETC2_R8G8B8_UNORM_BLOCK,
     };
 
     private static readonly _mapTextureFormatKtxTranscodeFormat: { [key: number]: number } = {
@@ -67,9 +70,14 @@ export class TextureUtilities {
 
         const texInfo = TextureFormatInfo.fromVkFormat(vkFormat);
 
-        const blocksX = Math.ceil(width / texInfo.blockWidth);
-        const blocksY = Math.ceil(height / texInfo.blockHeight);
-        return blocksX * blocksY * texInfo.blockWidth;
+        if(texInfo.blockWidth > 1){
+            width = AlignUtilities.align(width, texInfo.blockWidth);
+        }
+        if(texInfo.blockHeight > 1){
+            height = AlignUtilities.align(height, texInfo.blockHeight);
+        }
+
+        return width * height * texInfo.pixelSize;
     }
 
     /**

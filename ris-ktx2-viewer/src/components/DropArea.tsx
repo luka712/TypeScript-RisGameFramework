@@ -1,36 +1,36 @@
 import {useDropzone} from "react-dropzone";
-import {useAppStore} from "../store/AppStore.ts";
-
-
+import {useTextureStore} from "../store/TextureStore.ts";
+import {TEXTURE_FILE_ACCEPT} from "../service/fileAccept.ts";
 
 /**
- * The drop area component.
- * @constructor
+ * Full-width drop zone for loading texture files.
  */
 export default function DropArea() {
+    const addTexture = useTextureStore((state) => state.addTexture);
 
-    const addTexture = useAppStore(state => state.addTexture);
-
-
-    const {getRootProps, getInputProps} = useDropzone({
-        accept: {
-            "image/ktx2": [".ktx2", ".png", ".jpg", ".webp", ".jpeg"],
-        },
+    const {getRootProps, getInputProps, isDragActive} = useDropzone({
+        accept: TEXTURE_FILE_ACCEPT,
         onDrop: async (files) => {
-
             for (const file of files) {
-
-                addTexture(file);
+                await addTexture(file);
             }
         },
     });
 
     return (
-        <button style={{border: '1px dashed grey'}}>
-            <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                <p>Drop a KTX2 file here or click to browse.</p>
-            </div>
-        </button>
+        <div
+            {...getRootProps()}
+            style={{
+                border: "1px dashed grey",
+                borderRadius: 8,
+                padding: 16,
+                textAlign: "center",
+                cursor: "pointer",
+                opacity: isDragActive ? 0.8 : 1,
+            }}
+        >
+            <input {...getInputProps()} />
+            <p>Drop a KTX2 / PNG / JPEG / WebP file here or click to browse.</p>
+        </div>
     );
 }

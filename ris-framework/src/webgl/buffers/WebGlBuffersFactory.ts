@@ -20,21 +20,21 @@ export class WebGlBuffersFactory implements IBufferFactory {
     }
 
     /** @inheritDoc */
-    public createVertexBuffer(data: number[], vertexStride: number, usage: BufferUsage, label?: string): IVertexBuffer {
+    public createVertexBuffer(data: ArrayLike<number>, vertexStride: number, usage: BufferUsage, label?: string): IVertexBuffer {
         const vertexBuffer = new WebGlVertexBuffer(this._framework, data, vertexStride, usage, label );
         vertexBuffer.initialize();
         return vertexBuffer;
     }
 
     /** @inheritDoc */
-    public createUniformBuffer(data: number[], usage: BufferUsage, label?: string): IUniformBuffer {
+    public createUniformBuffer(data: ArrayLike<number>, usage: BufferUsage, label?: string): IUniformBuffer {
         const uniformBuffer = new WebGlUniformBuffer(this._framework, data, usage, label);
         uniformBuffer.initialize();
         return uniformBuffer;
     }
 
     /** @inheritdoc */
-    public createIndexBuffer(data: number[], label?: string): IIndexBuffer {
+    public createIndexBuffer(data: ArrayLike<number>, label?: string): IIndexBuffer {
         const buffer = new WebGLIndexBuffer(this._framework, label);
         buffer.initialize(data);
         return buffer;

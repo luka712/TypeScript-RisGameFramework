@@ -7,7 +7,10 @@ import {GeometryBuilder} from "../geometry/GeometryBuilder.ts";
 import {ContentManager} from "./content/ContentManager.ts";
 import {WebGlRenderer} from "../webgl/WebGlRenderer.ts";
 import {WebGlBuffersFactory} from "../webgl/buffers/WebGlBuffersFactory.ts";
-import type {IBufferFactory, IGeometryBuilder, IGraphicsDevice, ISpriteBatch, ITextureFactory, RenderingBackend} from "ris-framework-api";
+import type {
+    IBufferFactory, IGeometryBuilder, IGraphicsDevice,
+    IMeshFactory, ISpriteBatch, ITextureFactory, RenderingBackend
+} from "ris-framework-api";
 import {WebGlShaderModuleLoader} from "../webgl/shader/WebGlShaderModuleLoader.ts";
 import {TextureSamplerFilteringPreset} from "./rendering/enums.ts";
 import {SpriteBatch} from "./sprite-batch/SpriteBatch.ts";
@@ -16,6 +19,7 @@ import {CameraFactory} from "./camera/CameraFactory.ts";
 import {WebGlTextureFactory} from "../webgl/texture/WebGlTextureFactory.ts";
 import {WebGlRenderPipelineFactory} from "../webgl/render-pipelines/WebGlRenderPipelineFactory.ts";
 import type {IRenderPipelineFactory} from "ris-framework-api";
+import {MeshFactory} from "ris-framework-api";
 
 export class Framework implements IFramework {
 
@@ -29,6 +33,7 @@ export class Framework implements IFramework {
     private readonly _contentManager: IContentManager;
     private readonly _geometryBuilder: IGeometryBuilder;
     private readonly _cameraFactory: CameraFactory;
+    private readonly _meshFactory: IMeshFactory;
 
     /**
      * The constructor for the Framework class.
@@ -51,6 +56,7 @@ export class Framework implements IFramework {
         this._geometryBuilder = new GeometryBuilder();
         this.renderPipelineFactory = new WebGlRenderPipelineFactory(this);
         this._contentManager = new ContentManager(this, new WebGlShaderModuleLoader(this));
+        this._meshFactory = new MeshFactory(this);
 
         this._buffersFactory = new WebGlBuffersFactory(this);
         this.spriteBatch = new SpriteBatch(this);
@@ -131,6 +137,11 @@ export class Framework implements IFramework {
     /** @inheritdoc */
     public get content(): IContentManager {
         return this._contentManager;
+    }
+
+    /** @inheritdoc */
+    public get meshFactory(): IMeshFactory {
+        return this._meshFactory;
     }
 
     /** @inheritdoc */

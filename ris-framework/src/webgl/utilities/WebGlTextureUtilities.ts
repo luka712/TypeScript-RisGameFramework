@@ -58,9 +58,13 @@ export class WebGlTextureUtilities {
                     gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, mipLevelData);
                 } else if (mipLevelData instanceof Uint8Array) {
                     gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, mipLevelData);
-                } else if (!mipLevelData) {
+                } else if (mipLevelData) {
                     gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, mipLevelData);
-                } else {
+                }
+                else if(!mipLevelData) {
+                    // If not must be empty array, so we can safely ignore it.
+                }
+                else {
                     throw new Error("unsupported data type");
                 }
             }
@@ -128,7 +132,6 @@ export class WebGlTextureUtilities {
                 const mipLevelData = data[i];
 
                 if (mipLevelData instanceof Uint8Array) {
-                    debugger;
                     gl.compressedTexSubImage2D(gl.TEXTURE_2D, i,  0, 0, width, height, internalFormat, mipLevelData, 0);
                 } else {
                     throw new Error("unsupported data type");

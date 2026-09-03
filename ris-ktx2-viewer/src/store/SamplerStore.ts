@@ -1,61 +1,54 @@
-import {type IFramework, type ISampler, SamplerDescriptor, SamplerFilter} from "ris-framework-api";
-import {create, type StoreApi, type UseBoundStore} from "zustand";
+import {type IFramework, type ISampler, MipMapSamplerFilter, SamplerDescriptor, SamplerFilter} from "ris-framework-api";
+import {create} from "zustand";
 
 interface SamplerStore {
-    framework?: IFramework;
-    sampler?: ISampler;
-    minFilter: SamplerFilter,
-    magFilter: SamplerFilter,
+    framework: IFramework | null;
+    sampler: ISampler | undefined;
+    filter: SamplerFilter;
 
-    getSampler: () => ISampler | undefined,
-
-    setFramework: (frame: IFramework) => void,
-    setSampler: (value: ISampler) => void,
-    setMinFilter: (minFilter: SamplerFilter) => void,
-    setMagFilter: (magFilter: SamplerFilter) => void,
+    getSampler: () => ISampler | undefined;
+    setFramework: (framework: IFramework) => void;
+    setFilter: (filter: SamplerFilter) => void;
 }
 
-export const useSamplerStore: UseBoundStore<StoreApi<SamplerStore>> = create<SamplerStore>(
-    (set, get) => ({
+function createSampler(
+    framework: IFramework,
+    filter: SamplerFilter,
+    previous?: ISampler,
+): ISampler {
+    previous?.dispose();
 
-        setFramework: (v) => set({
-            framework: v
-        }),
+    const descriptor = new SamplerDescriptor();
+    descriptor.minFilter = filter;
+    descriptor.magFilter = filter;
+    descriptor.mipMapFilter = filter == SamplerFilter.LINEAR ? MipMapSamplerFilter.LINEAR : MipMapSamplerFilter.NEAREST;
+    return framework.graphicsDevice.createSampler(descriptor);
+}
 
-        setSampler: (v) => set({
-            sampler: v
-        }),
+export const useSamplerStore = create<SamplerStore>((set, get) => ({
+    framework: null,
+    sampler: undefined,
+    filter: SamplerFilter.LINEAR,
 
-        minFilter: SamplerFilter.LINEAR,
-        magFilter: SamplerFilter.LINEAR,
+    getSampler: () => get().sampler,
 
-        setMinFilter: (v) => {
+    setFramework: (framework) => {
+        const { filter, sampler} = get();
+        set({
+            framework,
+            sampler: createSampler(framework, filter, sampler),
+        });
+    },
 
-            const graphicsDevice = get().framework!.graphicsDevice;
+    setFilter: (filter) => {
+        const {framework, sampler} = get();
+        if (!framework) {
+            return;
+        }
 
-            const samplerDesc = new SamplerDescriptor();
-            samplerDesc.minFilter = v;
-            samplerDesc.magFilter = get().magFilter;
-            get().sampler?.dispose();
-            set(() => ({
-                minFilter :v,
-                sampler: graphicsDevice.createSampler(samplerDesc),
-            }));
-        },
-
-        setMagFilter: (v) => {
-            const graphicsDevice = get().framework!.graphicsDevice;
-
-            const samplerDesc = new SamplerDescriptor();
-            samplerDesc.magFilter = v;
-            samplerDesc.minFilter = get().minFilter;
-            get().sampler?.dispose();
-            set(() => ({
-                magFilter :v,
-                sampler: graphicsDevice.createSampler(samplerDesc),
-            }));
-        },
-
-        getSampler: () => get().sampler
-    })
-);
+        set({
+            filter,
+            sampler: createSampler(framework, filter, sampler),
+        });
+    }
+}));
