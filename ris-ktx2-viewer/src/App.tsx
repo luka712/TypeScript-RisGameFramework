@@ -12,7 +12,7 @@ import {
     type IInspectTextureMipsRenderPipeline,
     type IUniformBuffer,
     type IMesh,
-    Rect
+    Rect, InspectTextureMipsMaterial
 } from "ris-framework-api";
 import {Framework} from "ris-framework";
 import {useAppStore} from "./store/AppStore.ts";
@@ -36,10 +36,8 @@ function App() {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const frameworkRef = useRef<IFramework | null>(null);
-    const modelBufferRef = useRef<IUniformBuffer | null>(null);
-    const mipmapPipelineRef = useRef<IInspectTextureMipsRenderPipeline| null>(null);
+    const materialBufferRef = useRef<InspectTextureMipsMaterial | null>(null);
     const quadMeshRef = useRef<IMesh | null>(null);
-    const texBuffer = useRef<IUniformBuffer | null>(null);
 
     const setFrameworkAppStore = useAppStore((state) => state.setFramework);
     const setFrameworkSamplerStore = useSamplerStore((state) => state.setFramework);
@@ -72,10 +70,9 @@ function App() {
         });
     }, [subscribeTextureSelected]);
 
-    let modelMatrix = mat4.create();
+    const modelMatrix = mat4.create();
     let previousTexWidth = 0;
     let previousTexHeight = 0;
-    let previousMipLevel = 0;
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -91,24 +88,14 @@ function App() {
         fw.renderer.clearColor = Color.gray();
 
         fw.addOnInitializedListener(() => {
-            const modelBuffer = fw.bufferFactory.createUniformBuffer(modelMatrix, BufferUsage.UNIFORM, "ModelBuffer");
-            const viewProjBuffer = fw.bufferFactory.createUniformBuffer(modelMatrix, BufferUsage.UNIFORM, "ViewProjectionBuffer");
-            const textureConstantsBuffer = fw.bufferFactory.createUniformBuffer(
-                [0],
-                BufferUsage.UNIFORM | BufferUsage.COPY_DST,
-                "TextureConstantsBuffer");
 
-            debugger;
+            const geometry = fw.geometryBuilder.quadGeometry(vec2.fromValues(2, 2));
+            const material = fw.materialFactory.createInspectTextureMipsMaterial();
+            const mesh = fw.meshFactory.create(geometry, material.geometryFormat);
 
-            const inspectTextureMipsRenderPipeline = fw.renderPipelineFactory.createInspectTextureMipsRenderPipeline(
-                modelBuffer, viewProjBuffer, textureConstantsBuffer);
 
-            const quadMesh = fw.meshFactory.createQuadMesh(true, vec2.fromValues(2, 2));
-
-            modelBufferRef.current = modelBuffer;
-            mipmapPipelineRef.current = inspectTextureMipsRenderPipeline;
-            quadMeshRef.current = quadMesh;
-            texBuffer.current = textureConstantsBuffer;
+            materialBufferRef.current = material;
+            quadMeshRef.current = mesh;
         });
 
         fw.addOnRenderListener(() => {
@@ -130,18 +117,14 @@ function App() {
                 const width = tex.width;
                 const height = tex.height;
 
-                if (previousTexWidth != width || previousTexHeight != height)
-                {
+                if (previousTexWidth != width || previousTexHeight != height) {
                     const aspectRatio = width / height;
                     let widthScale = 1.0;
                     let heightScale = 1.0;
 
-                    if (aspectRatio > 1)
-                    {
+                    if (aspectRatio > 1) {
                         heightScale /= aspectRatio;
-                    }
-                    else
-                    {
+                    } else {
                         widthScale *= aspectRatio;
                     }
 
@@ -149,21 +132,25 @@ function App() {
                     previousTexHeight = height;
 
                     mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(widthScale, heightScale, 1));
-                    modelBufferRef.current?.update(modelMatrix);
+                    const mat = materialBufferRef.current;
+                    if (mat) {
+                        mat.modelMatrix = modelMatrix;
+                    }
                 }
-                const pipeline = mipmapPipelineRef.current!;
 
-                pipeline.spriteTexture = tex;
-                pipeline.textureSampler = sampler;
+                const mat = materialBufferRef.current;
 
-                if (mipLevel != previousMipLevel)
-                {
-                    previousMipLevel = mipLevel;
-                    texBuffer.current?.update([mipLevel]);
+                if(!mat){
+                    return;
                 }
+
+                mat.texture = tex;
+                mat.textureSampler = sampler;
+                mat.mipLevel = mipLevel;
 
                 const mesh = quadMeshRef.current!;
-                pipeline!.render(mesh!.vertexBuffer!, mesh!.indexBuffer!);
+                mat.beforeRender();
+                mat.renderMesh(mesh);
             }
 
             spriteBatch.end();

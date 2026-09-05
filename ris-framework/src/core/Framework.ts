@@ -19,7 +19,7 @@ import {CameraFactory} from "./camera/CameraFactory.ts";
 import {WebGlTextureFactory} from "../webgl/texture/WebGlTextureFactory.ts";
 import {WebGlRenderPipelineFactory} from "../webgl/render-pipelines/WebGlRenderPipelineFactory.ts";
 import type {IRenderPipelineFactory} from "ris-framework-api";
-import {MeshFactory} from "ris-framework-api";
+import {MeshFactory, type IMaterialFactory, MaterialFactory} from "ris-framework-api";
 
 export class Framework implements IFramework {
 
@@ -57,6 +57,7 @@ export class Framework implements IFramework {
         this.renderPipelineFactory = new WebGlRenderPipelineFactory(this);
         this._contentManager = new ContentManager(this, new WebGlShaderModuleLoader(this));
         this._meshFactory = new MeshFactory(this);
+        this.materialFactory = new MaterialFactory(this);
 
         this._buffersFactory = new WebGlBuffersFactory(this);
         this.spriteBatch = new SpriteBatch(this);
@@ -143,6 +144,9 @@ export class Framework implements IFramework {
     public get meshFactory(): IMeshFactory {
         return this._meshFactory;
     }
+
+    /** @inheritDoc */
+    public readonly materialFactory: IMaterialFactory;
 
     /** @inheritdoc */
     public initialize(): void {

@@ -10,6 +10,7 @@ import {BufferUsage} from "../rendering/buffers/BufferUsage";
 import {IGeometry} from "../geometry/IGeometry";
 import {GeometryFormat} from "../geometry/GeometryFormat";
 import {MeshParameters} from "./MeshParameters";
+import {GeometryUtilities} from "../utilities/GeometryUtilities";
 
 /**
  * The mesh.
@@ -205,7 +206,30 @@ export class Mesh implements IMesh {
      * @param format - The format for geometry.
      */
     public setGeometry(geometry: IGeometry, format: GeometryFormat): void {
-        throw new Error('Not implemented');
+        if (geometry.vertexCount == 0)
+        {
+            const message =
+            "Cannot create buffers for a Mesh as Mesh has no positions. Check that geometry.vertexCount is set.";
+            //_framework.Logger.LogError(message);
+            throw new Error(message);
+        }
+
+        const interleavedData = geometry.toInterleaved(format);
+        const stride = GeometryUtilities.stride(format);
+
+        // Vertices
+        this._vertexBuffer?.dispose();
+        this._vertexBuffer = this._framework.bufferFactory.createVertexBuffer(
+            interleavedData,
+            stride,
+            this._bufferUsage);
+
+        // Indices
+        this._indexBuffer?.dispose();
+        if (geometry.indices)
+        {
+            this._indexBuffer = this._framework.bufferFactory.createIndexBuffer(geometry.indices);
+        }
     }
 
     /**

@@ -20,3 +20,4 @@ export * from "./rendering/swapchain/_export";
 export * from "./rendering/sampler/_export"
 export * from "./utilities/_export"
 export * from "./meshes/_export";
+export * from "./material/_export";

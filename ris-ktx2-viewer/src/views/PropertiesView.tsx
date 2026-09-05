@@ -47,11 +47,10 @@ export function PropertiesView() {
                             label="Generate Mipmaps"
                             value={generateMipmaps}
                             onValueChange={setGenerateMipmaps}
-                            bottomMost
                         />
                     </>
                 )}
-                <MipLevelSelect label="Mipmap Level" value={mipmapLevel} valueMax={mipmapLevels} onValueChange={setMipmapLevel} />
+                <MipLevelSelect label="Mipmap Level" value={mipmapLevel} valueMax={mipmapLevels} onValueChange={setMipmapLevel} bottomMost />
             </Stack>
         </Container>
     );
