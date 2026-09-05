@@ -4,6 +4,8 @@ import spriteVS from "../../shaders/glsl/sprite_vs.glsl?raw";
 import spriteFS from "../../shaders/glsl/sprite_fs.glsl?raw";
 import inspectTextureMipsVS from "../../shaders/glsl/inspect_texture_mips_vs.glsl?raw";
 import inspectTextureMipsFS from "../../shaders/glsl/inspect_texture_mips_fs.glsl?raw";
+import unlitMaterialVS from "../../shaders/glsl/unlit_material_vs.glsl?raw";
+import unlitMaterialFS from "../../shaders/glsl/unlit_material_fs.glsl?raw";
 
 /**
  * The api should look something like this for internal ones.
@@ -34,6 +36,12 @@ export const ShaderModuleContent : {[id: string]: any} = {
     "inspect_texture_mips": {
         "vertex": inspectTextureMipsVS,
         "fragment": inspectTextureMipsFS,
+        "reflection": {}
+    },
+
+    "unlit_material": {
+        "vertex": unlitMaterialVS,
+        "fragment": unlitMaterialFS,
         "reflection": {}
     }
 }

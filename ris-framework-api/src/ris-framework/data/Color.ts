@@ -166,6 +166,17 @@ export class Color implements Iterable<number>{
     }
 
     /**
+     * Sets the value of this color to be equal to other color.
+     * @param other The other color.
+     */
+    public set(other: Color): void {
+        this.r = other.r;
+        this.g = other.g;
+        this.b = other.b;
+        this.a = other.a;
+    }
+
+    /**
      * Are two colors equal.
      * @param other The other color.
      */

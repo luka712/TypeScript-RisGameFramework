@@ -1,22 +1,22 @@
 import {ITexture2D} from "../texture/ITexture2D";
 import {ISampler} from "../sampler/ISampler";
-import {IUniformBuffer} from "../buffers/IUniformBuffer";
 import {IRenderPipeline} from "./IRenderPipeline";
+import {IUniformBuffer} from "../buffers/IUniformBuffer";
 
 /**
- * The pipeline for inspecting texture mip levels.
+ * The unlit render pipeline.
  */
-export interface IInspectTextureMipsRenderPipeline extends IRenderPipeline {
+export interface IUnlitRenderPipeline extends IRenderPipeline {
 
     /**
      * The diffuse texture.
      */
-    spriteTexture: ITexture2D;
+    diffuseTexture: ITexture2D;
 
     /**
      * The texture sampler.
      */
-    textureSampler?: ISampler;
+    diffuseTextureSampler?: ISampler;
 
     /**
      * The projection view uniform buffer.
@@ -31,8 +31,8 @@ export interface IInspectTextureMipsRenderPipeline extends IRenderPipeline {
     modelBuffer: IUniformBuffer;
 
     /**
-     * The buffer of texture constants.
-     * For now, it is just a single float value representing the mip level.
+     * The material buffer that contains the material properties.
+     * - vec4 diffuseColor
      */
-    textureConstantsBuffer: IUniformBuffer;
+    materialBuffer: IUniformBuffer;
 }

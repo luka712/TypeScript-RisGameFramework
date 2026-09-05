@@ -3,6 +3,7 @@ import {IMainRenderTargetRenderPipeline} from "./IMainRenderTargetRenderPipeline
 import {IUniformBuffer} from "../buffers/IUniformBuffer";
 import {ISpriteRenderPipeline} from "./ISpriteRenderPipeline";
 import {IInspectTextureMipsRenderPipeline} from "./IInspectTextureMipsRenderPipeline";
+import {IUnlitRenderPipeline} from "./IUnlitRenderPipeline";
 
 /**
  * The pipeline factory.
@@ -19,7 +20,7 @@ export interface IRenderPipelineFactory {
     /**
      * Creates the .
      * @param projectionViewBuffer - The projection view .
-     * @returns The .
+     * @returns The sprite render pipeline.
      */
     createSpriteRenderPipeline(projectionViewBuffer: IUniformBuffer): ISpriteRenderPipeline;
 
@@ -31,5 +32,17 @@ export interface IRenderPipelineFactory {
      * @returns The .
      */
     createInspectTextureMipsRenderPipeline(projectionViewBuffer: IUniformBuffer, modelBuffer: IUniformBuffer, textureConstantsBuffer: IUniformBuffer): IInspectTextureMipsRenderPipeline;
+
+
+    /**
+     * Creates the unlit render pipeline.
+     * @param projectionViewBuffer - The projection view buffer.
+     * @param modelBuffer - The world buffer.
+     * @param materialBuffer - The material buffer.
+     * @returns The unlit render pipeline.
+     */
+    createUnlitRenderPipeline(projectionViewBuffer: IUniformBuffer,
+                              modelBuffer: IUniformBuffer,
+                              materialBuffer: IUniformBuffer): IUnlitRenderPipeline;
 
 }

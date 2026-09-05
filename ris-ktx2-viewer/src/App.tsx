@@ -12,7 +12,7 @@ import {
     type IInspectTextureMipsRenderPipeline,
     type IUniformBuffer,
     type IMesh,
-    Rect, InspectTextureMipsMaterial
+    Rect, InspectTextureMipsMaterial, UnlitMaterial
 } from "ris-framework-api";
 import {Framework} from "ris-framework";
 import {useAppStore} from "./store/AppStore.ts";
@@ -36,7 +36,8 @@ function App() {
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const frameworkRef = useRef<IFramework | null>(null);
-    const materialBufferRef = useRef<InspectTextureMipsMaterial | null>(null);
+    const mipMaterialRef = useRef<InspectTextureMipsMaterial | null>(null);
+    const unlitMaterialRef = useRef<UnlitMaterial | null>(null);
     const quadMeshRef = useRef<IMesh | null>(null);
 
     const setFrameworkAppStore = useAppStore((state) => state.setFramework);
@@ -90,11 +91,12 @@ function App() {
         fw.addOnInitializedListener(() => {
 
             const geometry = fw.geometryBuilder.quadGeometry(vec2.fromValues(2, 2));
-            const material = fw.materialFactory.createInspectTextureMipsMaterial();
-            const mesh = fw.meshFactory.create(geometry, material.geometryFormat);
+            const mipMaterial = fw.materialFactory.createInspectTextureMipsMaterial();
+            const unlitMaterial = fw.materialFactory.createUnlitMaterial();
+            const mesh = fw.meshFactory.create(geometry, mipMaterial.geometryFormat);
 
-
-            materialBufferRef.current = material;
+            mipMaterialRef.current = mipMaterial;
+            unlitMaterialRef.current = unlitMaterial;
             quadMeshRef.current = mesh;
         });
 
@@ -132,25 +134,39 @@ function App() {
                     previousTexHeight = height;
 
                     mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(widthScale, heightScale, 1));
-                    const mat = materialBufferRef.current;
-                    if (mat) {
-                        mat.modelMatrix = modelMatrix;
+                    const mipMaterial = mipMaterialRef.current;
+                    if (mipMaterial) {
+                        mipMaterial.modelMatrix = modelMatrix;
+                    }
+                    const unlitMaterial = unlitMaterialRef.current;
+                    if (unlitMaterial) {
+                        unlitMaterial.modelMatrix = modelMatrix;
                     }
                 }
 
-                const mat = materialBufferRef.current;
+                const mipMaterial = mipMaterialRef.current;
+                const unlitMaterial = unlitMaterialRef.current;
 
-                if(!mat){
-                    return;
+                if(mipMaterial){
+                    mipMaterial.texture = tex;
+                    mipMaterial.textureSampler = sampler;
+                    mipMaterial.mipLevel = mipLevel;
+
+                    const mesh = quadMeshRef.current!;
+                    mipMaterial.beforeRender();
+                    mipMaterial.renderMesh(mesh);
                 }
 
-                mat.texture = tex;
-                mat.textureSampler = sampler;
-                mat.mipLevel = mipLevel;
+                if(unlitMaterial) {
+                    unlitMaterial.diffuseTexture = tex;
+                    unlitMaterial.diffuseTextureSampler = sampler;
 
-                const mesh = quadMeshRef.current!;
-                mat.beforeRender();
-                mat.renderMesh(mesh);
+                    const mesh = quadMeshRef.current!;
+                    unlitMaterial.beforeRender();
+                    unlitMaterial.renderMesh(mesh);
+                }
+
+
             }
 
             spriteBatch.end();

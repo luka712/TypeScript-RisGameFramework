@@ -1,10 +1,12 @@
 import {InspectTextureMipsMaterial} from "./InspectTextureMipsMaterial";
 import {IFramework} from "../IFramework";
+import {IMaterialFactory} from "./IMaterialFactory";
+import {UnlitMaterial} from "./UnlitMaterial";
 
 /**
  * The material factory.
  */
-export class MaterialFactory {
+export class MaterialFactory implements IMaterialFactory {
 
     /**
      * The constructor.
@@ -13,11 +15,13 @@ export class MaterialFactory {
     public constructor(private readonly _framework: IFramework) {
     }
 
-    /**
-     * Creates the Inspect Texture Mips Material.
-     * @returns The InspectTextureMipsMaterial
-     */
+    /** @inheritDoc */
     public createInspectTextureMipsMaterial(): InspectTextureMipsMaterial {
         return new InspectTextureMipsMaterial(this._framework);
+    }
+
+    /** @inheritDoc */
+    public createUnlitMaterial(): UnlitMaterial {
+        return new UnlitMaterial(this._framework);
     }
 }

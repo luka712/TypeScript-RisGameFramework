@@ -1,4 +1,4 @@
-import { inject, injectable } from "tsyringe";
+import { inject, } from "tsyringe";
 import { WebGlMainRenderTargetRenderPipeline } from "./WebGlMainRenderTargetRenderPipeline.ts";
 import { IFrameworkSymbol } from "../../core/dependency-injection/register-services-interface";
 import { WebGlSpriteRenderPipeline } from "./sprite/WebGlSpriteRenderPipeline.ts";
@@ -7,22 +7,34 @@ import type {
     IInspectTextureMipsRenderPipeline,
     IMainRenderTargetRenderPipeline, IRenderPipelineFactory,
     ISpriteRenderPipeline, ITexture2D,
-    IUniformBuffer
+    IUniformBuffer,
+    IUnlitRenderPipeline
 } from "ris-framework-api";
 import {WebGlInspectTextureMipsRenderPipeline} from "./inspect/WebGlInspectTextureMipsRenderPipeline.ts";
+import {WebGlUnlitRenderPipeline} from "./material/WebGlUnlitRenderPipeline.ts";
 
 /**
  * The WebGL implementation of the IRenderPipelineFactory interface.
  * This factory is responsible for creating render pipelines for WebGL rendering.
  */
-@injectable()
 export class WebGlRenderPipelineFactory implements IRenderPipelineFactory {
 
     /**
      * The constructor for the WebGLRenderPipelineFactory class.
      * @param _framework The framework instance.
      */
-    constructor(@inject(IFrameworkSymbol) private readonly _framework: IFramework) {
+    constructor(private readonly _framework: IFramework) {
+    }
+
+    /** @inheritDoc */
+    public createUnlitRenderPipeline(projectionViewBuffer: IUniformBuffer,
+                                     modelBuffer: IUniformBuffer,
+                                     materialBuffer: IUniformBuffer): IUnlitRenderPipeline {
+        const pipeline = new WebGlUnlitRenderPipeline(this._framework,
+            projectionViewBuffer, modelBuffer, materialBuffer
+            );
+        pipeline.initialize();
+        return pipeline;
     }
 
     /** @inheritDoc */
