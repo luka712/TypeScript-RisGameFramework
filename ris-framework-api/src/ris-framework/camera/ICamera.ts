@@ -1,11 +1,9 @@
 import {IDisposable} from "../core/IDisposable";
-import {vec3, mat4} from "gl-matrix"
+import {mat4} from "gl-matrix"
 import {IUniformBuffer} from "../rendering/buffers/IUniformBuffer";
 import {GameTime} from "../time/GameTime";
 
-/**
- * The camera interface.
- */
+/** The camera interface. */
 export interface ICamera extends IDisposable {
 
     /**
@@ -39,13 +37,8 @@ export interface ICamera extends IDisposable {
     readonly viewBuffer: IUniformBuffer;
 
     /**
-     * Initialize the camera.
-     */
-    initialize(): void;
-
-    /**
      * Update the GPU buffers.
-     *     This needs to be called when camera properties are changed.
+     * This needs to be called when camera properties are changed.
      */
     updateBuffers(): void;
 

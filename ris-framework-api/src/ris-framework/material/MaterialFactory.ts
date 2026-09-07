@@ -1,7 +1,7 @@
 import {InspectTextureMipsMaterial} from "./InspectTextureMipsMaterial";
 import {IFramework} from "../IFramework";
 import {IMaterialFactory} from "./IMaterialFactory";
-import {UnlitMaterial} from "./UnlitMaterial";
+import {UnlitMaterial, UnlitMaterialDescriptor} from "./UnlitMaterial";
 
 /**
  * The material factory.
@@ -21,7 +21,7 @@ export class MaterialFactory implements IMaterialFactory {
     }
 
     /** @inheritDoc */
-    public createUnlitMaterial(): UnlitMaterial {
-        return new UnlitMaterial(this._framework);
+    public createUnlitMaterial(descriptor? : UnlitMaterialDescriptor): UnlitMaterial {
+        return new UnlitMaterial(this._framework, descriptor );
     }
 }

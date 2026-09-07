@@ -4,11 +4,6 @@
 export class GameTime {
 
     /**
-     * Time since last call to framework update method.
-     */
-    public elapsedTotalTime: number = 0;
-
-    /**
      * Total elapsed time in milliseconds.
      */
     public elapsedTimeMs: number = 0;
@@ -16,7 +11,9 @@ export class GameTime {
     /**
      * Elapsed time in seconds.
      */
-    public elapsedTimeSec: number = 0;
+    public get elapsedTimeSec() {
+        return this.elapsedTimeMs / 1000;
+    }
 
     /**
      * Delta time in milliseconds.
@@ -27,5 +24,7 @@ export class GameTime {
     /**
      * Delta time in seconds. This is the time between the current frame and the last frame in seconds.
      */
-    public deltaTimeSec: number = 0;
+    public get deltaTimeSec() {
+        return this.deltaTimeMs / 1000;
+    }
 }

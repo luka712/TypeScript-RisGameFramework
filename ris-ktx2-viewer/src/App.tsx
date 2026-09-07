@@ -6,23 +6,26 @@ import TextureList from "./components/TextureList.tsx";
 import GenericPropertiesView from "./views/GenericPropertiesView.tsx";
 import AddFileButton from "./components/AddFileButton.tsx";
 import {
-    BufferUsage,
     Color,
+    CullMode,
     type IFramework,
-    type IInspectTextureMipsRenderPipeline,
-    type IUniformBuffer,
     type IMesh,
-    Rect, InspectTextureMipsMaterial, UnlitMaterial
+    InspectTextureMipsMaterial,
+    OrbitCamera,
+    PrimitiveStateDescriptor,
+    Rect,
+    UnlitMaterial, UnlitMaterialDescriptor
 } from "ris-framework-api";
 import {Framework} from "ris-framework";
 import {useAppStore} from "./store/AppStore.ts";
-import {vec2} from "gl-matrix";
+import {mat4, vec2, vec3} from "gl-matrix";
 import {PropertiesView} from "./views/PropertiesView.tsx";
 import {useSamplerStore} from "./store/SamplerStore.ts";
 import {useTextureStore} from "./store/TextureStore.ts";
 import {FooterView} from "./views/FooterView.tsx";
 import {TextureSamplerFilteringPreset} from "../../ris-framework/src/core/rendering/enums.ts";
-import {mat4, vec3} from "gl-matrix";
+import {View2D, View3D} from "./model/View.ts";
+import {UnlitMaterialConfig} from "../../ris-framework-api/dist/ris-framework/material/UnlitMaterialConfig";
 
 
 const imageRect = new Rect(0, 0, 0, 0);
@@ -39,6 +42,7 @@ function App() {
     const mipMaterialRef = useRef<InspectTextureMipsMaterial | null>(null);
     const unlitMaterialRef = useRef<UnlitMaterial | null>(null);
     const quadMeshRef = useRef<IMesh | null>(null);
+    const camera3DRef = useRef<OrbitCamera | null>(null);
 
     const setFrameworkAppStore = useAppStore((state) => state.setFramework);
     const setFrameworkSamplerStore = useSamplerStore((state) => state.setFramework);
@@ -47,6 +51,7 @@ function App() {
     const getSelectedTexture = useTextureStore((state) => state.getSelectedTexture);
     const getSampler = useSamplerStore((state) => state.getSampler);
     const getMipLevel = useTextureStore((state) => state.getMipLevel);
+    const getView = useAppStore((state) => state.getView);
 
     const [framework, setFramework] = useState<IFramework | null>(null);
     const [tab, setTab] = useState(0);
@@ -90,9 +95,19 @@ function App() {
 
         fw.addOnInitializedListener(() => {
 
+            camera3DRef.current = fw.cameraFactory.createOrbitCamera()
+            camera3DRef.current.eye = vec3.fromValues(0, 0, -2);
+            camera3DRef.current.sensitivity = 0.5;
+
             const geometry = fw.geometryBuilder.quadGeometry(vec2.fromValues(2, 2));
             const mipMaterial = fw.materialFactory.createInspectTextureMipsMaterial();
-            const unlitMaterial = fw.materialFactory.createUnlitMaterial();
+
+            const primitiveStateDesc = new PrimitiveStateDescriptor();
+            primitiveStateDesc.cullFace = CullMode.NONE;
+            const unlitMaterialDesc = new UnlitMaterialDescriptor();
+            unlitMaterialDesc.primitiveState = fw.graphicsDevice.createPrimitiveState(primitiveStateDesc);
+            unlitMaterialDesc.projectionViewBuffer = camera3DRef.current.projectionViewBuffer;
+            const unlitMaterial = fw.materialFactory.createUnlitMaterial(unlitMaterialDesc);
             const mesh = fw.meshFactory.create(geometry, mipMaterial.geometryFormat);
 
             mipMaterialRef.current = mipMaterial;
@@ -101,17 +116,14 @@ function App() {
         });
 
         fw.addOnRenderListener(() => {
-            const spriteBatch = fw.spriteBatch;
+
+            camera3DRef.current?.update(fw.timeManager.time);
+
             const selectedTexture = getSelectedTexture();
             const sampler = getSampler();
             const mipLevel = getMipLevel();
 
-            spriteBatch.begin(undefined, sampler);
-
             if (selectedTexture?.texture) {
-                // imageRect.width = selectedTexture.texture.width;
-                // imageRect.height = selectedTexture.texture.height;
-                // spriteBatch.draw(selectedTexture.texture, imageRect, whiteColor);
 
                 const tex = selectedTexture.texture;
 
@@ -144,32 +156,35 @@ function App() {
                     }
                 }
 
-                const mipMaterial = mipMaterialRef.current;
-                const unlitMaterial = unlitMaterialRef.current;
 
-                if(mipMaterial){
-                    mipMaterial.texture = tex;
-                    mipMaterial.textureSampler = sampler;
-                    mipMaterial.mipLevel = mipLevel;
+                if (getView() == View2D) {
+                    const mipMaterial = mipMaterialRef.current;
 
-                    const mesh = quadMeshRef.current!;
-                    mipMaterial.beforeRender();
-                    mipMaterial.renderMesh(mesh);
-                }
+                    if (mipMaterial) {
+                        mipMaterial.texture = tex;
+                        mipMaterial.textureSampler = sampler;
+                        mipMaterial.mipLevel = mipLevel;
 
-                if(unlitMaterial) {
-                    unlitMaterial.diffuseTexture = tex;
-                    unlitMaterial.diffuseTextureSampler = sampler;
+                        const mesh = quadMeshRef.current!;
+                        mipMaterial.beforeRender();
+                        mipMaterial.renderMesh(mesh);
+                    }
+                } else if (getView() == View3D) {
 
-                    const mesh = quadMeshRef.current!;
-                    unlitMaterial.beforeRender();
-                    unlitMaterial.renderMesh(mesh);
+                    const unlitMaterial = unlitMaterialRef.current;
+
+                    if (unlitMaterial) {
+                        unlitMaterial.diffuseTexture = tex;
+                        unlitMaterial.diffuseTextureSampler = sampler;
+
+                        const mesh = quadMeshRef.current!;
+                        unlitMaterial.beforeRender();
+                        unlitMaterial.renderMesh(mesh);
+                    }
                 }
 
 
             }
-
-            spriteBatch.end();
         });
         fw.initialize();
 

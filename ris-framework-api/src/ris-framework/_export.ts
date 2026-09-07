@@ -6,7 +6,7 @@ export * from "./geometry/_export-geometry";
 export * from "./rendering/_export-rendering";
 export * from "./rendering/render-pipelines/_export-render-pipelines";
 export * from "./sprites/_export_sprites";
-export * from "./camera/_export_camera";
+export * from "./camera/_export";
 export * from "./time/_export_time";
 export * from "./core/_export-core";
 export * from "./shader/_export-shader";
@@ -21,3 +21,4 @@ export * from "./rendering/sampler/_export"
 export * from "./utilities/_export"
 export * from "./meshes/_export";
 export * from "./material/_export";
+export * from "./input/_export";

@@ -13,6 +13,18 @@ import {IFramework} from "../IFramework";
 import {BufferUsage} from "../rendering/buffers/BufferUsage";
 import {Color} from "../data/Color";
 import {IUnlitRenderPipeline} from "../rendering/render-pipelines/IUnlitRenderPipeline";
+import {IPrimitiveState} from "../rendering/primitive/IPrimitiveState";
+
+/** The additional material config options */
+export class UnlitMaterialDescriptor {
+
+    /** The primitive state. */
+    public primitiveState?: IPrimitiveState;
+
+    /** The projection view buffer to use */
+    public projectionViewBuffer?: IUniformBuffer;
+}
+
 
 /**
  * Unlit material.
@@ -28,16 +40,22 @@ export class UnlitMaterial {
     private _modelBuffer: IUniformBuffer;
     private _previousModelMatrix = mat4.create();
 
-    public constructor(framework: IFramework) {
+    /**
+     * The constructor.
+     * @param framework
+     * @param config
+     */
+    public constructor(framework: IFramework, config? :UnlitMaterialDescriptor) {
         this._framework = framework;
         const usage = BufferUsage.UNIFORM | BufferUsage.COPY_DST;
-        this._projectionViewBuffer = framework.bufferFactory.createUniformBuffer(this._previousModelMatrix, usage);
+        this._projectionViewBuffer = config?.projectionViewBuffer ?? framework.bufferFactory.createUniformBuffer(this._previousModelMatrix, usage);
         this._modelBuffer = framework.bufferFactory.createUniformBuffer(this._previousModelMatrix, usage);
         this._materialBuffer = framework.bufferFactory.createUniformBuffer(this._materialData, usage);
         this._pipeline = framework.renderPipelineFactory.createUnlitRenderPipeline(
             this._projectionViewBuffer,
             this._modelBuffer,
             this._materialBuffer,
+            config?.primitiveState
         );
     }
 

@@ -1,5 +1,5 @@
 import type {
-    IFramework,
+    IFramework, IPrimitiveState,
     ISampler,
     ITexture2D,
     IUniformBuffer,
@@ -49,9 +49,10 @@ export class WebGlInspectTextureMipsRenderPipeline extends AWebGlRenderPipeline 
     constructor(framework: IFramework,
                 projectionViewBuffer: IUniformBuffer,
                 modelBuffer: IUniformBuffer,
-                textureConstantsBuffer: IUniformBuffer
+                textureConstantsBuffer: IUniformBuffer,
+                primitiveState? : IPrimitiveState
                 ) {
-        super(framework);
+        super(framework, primitiveState);
         this._projectionViewBuffer = projectionViewBuffer as WebGlUniformBuffer;
         this._modelBuffer = modelBuffer as WebGlUniformBuffer;
         this._textureConstantsBuffer = textureConstantsBuffer as WebGlUniformBuffer;
@@ -155,8 +156,8 @@ export class WebGlInspectTextureMipsRenderPipeline extends AWebGlRenderPipeline 
         const webGlSampler = this._sampler ?? this._defaultTextureSampler;
 
 
-        // this._primitiveState.apply(this._gl);
-        //  this._blendState.apply(this._gl);
+        this.primitiveState.apply(this._gl);
+        this._blendState.apply(this._gl);
 
         // if it was changed, we need to create a new vao.
         if (this._lastVertexBuffer != webGlVertexBuffer) {
@@ -193,7 +194,7 @@ export class WebGlInspectTextureMipsRenderPipeline extends AWebGlRenderPipeline 
         const toIndices = indicesCount > 0 ? indicesCount : indexBuffer.indicesCount;
         const fromIndices = indicesOffset * indexBuffer.elementByteSize;
 
-        this._gl.drawElements(this._primitiveState.glPrimitiveType, toIndices, type, fromIndices);
+        this._gl.drawElements(this.primitiveState.glPrimitiveType, toIndices, type, fromIndices);
     }
 
 }

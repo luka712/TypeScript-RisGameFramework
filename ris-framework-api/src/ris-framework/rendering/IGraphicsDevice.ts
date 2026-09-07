@@ -9,6 +9,7 @@ import {IRenderPass} from "./renderpass/IRenderPass";
 import {SwapChainDescriptor} from "./swapchain/SwapChainDescriptor";
 import {ISwapChain} from "./swapchain/ISwapChain";
 import {SamplerDescriptor} from "./sampler/SamplerDescriptor";
+import {PrimitiveStateDescriptor} from "./primitive/PrimitiveStateDescriptor";
 
 /**
  * The interface for a graphics device.
@@ -64,6 +65,13 @@ export interface IGraphicsDevice extends IDisposable {
      * @returns The sampler.
      */
     createSampler(samplerDescriptor: SamplerDescriptor): ISampler;
+
+    /**
+     * Creates a primitive state for the graphics device.
+     * @param descriptor - The primitive state descriptor.
+     * @returns The created primitive state.
+     */
+    createPrimitiveState(descriptor: PrimitiveStateDescriptor): IPrimitiveState;
 
     /**
      * Creates a render pass for the graphics device.

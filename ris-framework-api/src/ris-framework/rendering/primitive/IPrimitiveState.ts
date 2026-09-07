@@ -22,5 +22,4 @@ export interface IPrimitiveState {
      * The front face.
      */
     readonly frontFace: FrontFace;
-
 }

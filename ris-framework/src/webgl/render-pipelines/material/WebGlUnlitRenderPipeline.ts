@@ -1,5 +1,5 @@
 import type {
-    IFramework,
+    IFramework, IPrimitiveState,
     ISampler,
     ITexture2D,
     IUniformBuffer, IUnlitRenderPipeline,
@@ -7,7 +7,7 @@ import type {
 } from "ris-framework-api";
 import {VertexBufferLayout} from "../../../core/rendering/vertex-buffer-layout";
 import type {WebGlUniformBuffer} from "../../buffers/WebGlUniformBuffer.ts";
-import {asWebGLTexture2D, asWebGLUniformBuffer} from "../../cast/cast";
+import { asWebGLUniformBuffer} from "../../cast/cast";
 import WebGlShaderModule from "../../shader/WebGlShaderModule.ts";
 import {WebGlTexture2D} from "../../texture/WebGlTexture2D.ts";
 import {WebGlVertexBuffer} from '../../buffers/WebGlVertexBuffer.ts';
@@ -42,13 +42,15 @@ export class WebGlUnlitRenderPipeline extends AWebGlRenderPipeline implements IU
      * @param projectionViewBuffer The projection view buffer.
      * @param modelBuffer The model buffer.
      * @param materialBuffer The material buffer.
+     * @param primitiveState The primitive state.
      */
     constructor(framework: IFramework,
                 projectionViewBuffer: IUniformBuffer,
                 modelBuffer: IUniformBuffer,
-                materialBuffer: IUniformBuffer
+                materialBuffer: IUniformBuffer,
+                primitiveState?: IPrimitiveState,
     ) {
-        super(framework);
+        super(framework, primitiveState);
         this._projectionViewBuffer = projectionViewBuffer as WebGlUniformBuffer;
         this._modelBuffer = modelBuffer as WebGlUniformBuffer;
         this._materialBuffer = materialBuffer as WebGlUniformBuffer;
@@ -151,9 +153,8 @@ export class WebGlUnlitRenderPipeline extends AWebGlRenderPipeline implements IU
         const webGlIndexBuffer = indexBuffer as WebGLIndexBuffer;
         const webGlSampler = this._sampler ?? this._defaultTextureSampler;
 
-
-        // this._primitiveState.apply(this._gl);
-        //  this._blendState.apply(this._gl);
+        this.primitiveState.apply(this._gl);
+        this._blendState.apply(this._gl);
 
         // if it was changed, we need to create a new vao.
         if (this._lastVertexBuffer != webGlVertexBuffer) {
@@ -190,7 +191,7 @@ export class WebGlUnlitRenderPipeline extends AWebGlRenderPipeline implements IU
         const toIndices = indicesCount > 0 ? indicesCount : indexBuffer.indicesCount;
         const fromIndices = indicesOffset * indexBuffer.elementByteSize;
 
-        this._gl.drawElements(this._primitiveState.glPrimitiveType, toIndices, type, fromIndices);
+        this._gl.drawElements(this.primitiveState.glPrimitiveType, toIndices, type, fromIndices);
     }
 
 }

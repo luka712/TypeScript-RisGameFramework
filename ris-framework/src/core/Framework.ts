@@ -7,19 +7,22 @@ import {GeometryBuilder} from "../geometry/GeometryBuilder.ts";
 import {ContentManager} from "./content/ContentManager.ts";
 import {WebGlRenderer} from "../webgl/WebGlRenderer.ts";
 import {WebGlBuffersFactory} from "../webgl/buffers/WebGlBuffersFactory.ts";
-import type {
-    IBufferFactory, IGeometryBuilder, IGraphicsDevice,
-    IMeshFactory, ISpriteBatch, ITextureFactory, RenderingBackend
+import {
+    CameraFactory,
+    type IBufferFactory, type IGeometryBuilder, type IGraphicsDevice,
+    type IMeshFactory, type ISpriteBatch, type ITextureFactory, type RenderingBackend
 } from "ris-framework-api";
 import {WebGlShaderModuleLoader} from "../webgl/shader/WebGlShaderModuleLoader.ts";
 import {TextureSamplerFilteringPreset} from "./rendering/enums.ts";
 import {SpriteBatch} from "./sprite-batch/SpriteBatch.ts";
 import type {ICameraFactory, IContentManager, IFramework, IRenderer, IWindowManager} from "ris-framework-api";
-import {CameraFactory} from "./camera/CameraFactory.ts";
 import {WebGlTextureFactory} from "../webgl/texture/WebGlTextureFactory.ts";
 import {WebGlRenderPipelineFactory} from "../webgl/render-pipelines/WebGlRenderPipelineFactory.ts";
 import type {IRenderPipelineFactory} from "ris-framework-api";
 import {MeshFactory, type IMaterialFactory, MaterialFactory} from "ris-framework-api";
+import type {ITimeManager} from "../../../ris-framework-api/src/ris-framework/time/ITimeManager.ts";
+import {TimeManager} from "../../../ris-framework-api/src/ris-framework/time/TimeManager.ts";
+import {InputManager} from "./input/InputManager.ts";
 
 export class Framework implements IFramework {
 
@@ -32,7 +35,6 @@ export class Framework implements IFramework {
     private readonly _buffersFactory: IBufferFactory;
     private readonly _contentManager: IContentManager;
     private readonly _geometryBuilder: IGeometryBuilder;
-    private readonly _cameraFactory: CameraFactory;
     private readonly _meshFactory: IMeshFactory;
 
     /**
@@ -61,7 +63,9 @@ export class Framework implements IFramework {
 
         this._buffersFactory = new WebGlBuffersFactory(this);
         this.spriteBatch = new SpriteBatch(this);
-        this._cameraFactory = new CameraFactory(this);
+        this.cameraFactory = new CameraFactory(this);
+        this.timeManager = new TimeManager(this);
+        this.input = new InputManager(this);
     }
 
     renderingBackend: RenderingBackend;
@@ -75,9 +79,7 @@ export class Framework implements IFramework {
     public readonly spriteBatch: ISpriteBatch;
 
     /** @inheritDoc */
-    public get cameraFactory(): ICameraFactory {
-        return this._cameraFactory;
-    }
+    public cameraFactory: ICameraFactory;
 
     /** @inheritDoc */
     public addOnInitializedListener(event: () => void): void {
@@ -148,11 +150,20 @@ export class Framework implements IFramework {
     /** @inheritDoc */
     public readonly materialFactory: IMaterialFactory;
 
+    /** @inheritDoc */
+    public readonly timeManager: ITimeManager;
+
+    /** @inheritDoc */
+    public readonly input: IInputManager;
+
     /** @inheritdoc */
     public initialize(): void {
 
         this.renderer.initialize();
         this.spriteBatch.initialize();
+        this.input.initialize();
+
+        this.timeManager.prepareStart();
 
         // Load content events.
         for(const listener of this._onLoadContentListeners){
@@ -163,10 +174,12 @@ export class Framework implements IFramework {
             listener();
         }
 
+
         this.renderer.afterInitialize();
 
         this.windowManager.updateEvent(() => {
             // Update logic here
+            this.timeManager.frameStart();
         });
         this.windowManager.renderEvent(() => {
             this.renderer.beginRenderPass();

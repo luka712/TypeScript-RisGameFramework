@@ -1,6 +1,9 @@
-import {GameTime, type IOrthographicCamera} from "../../../../ris-framework-api/src";
-import {BufferUsage, type IFramework, type IUniformBuffer} from "ris-framework-api";
+import {IOrthographicCamera} from "./IOrthographicCamera";
+import {IFramework} from "../IFramework";
 import {vec3, mat4} from "gl-matrix";
+import {IUniformBuffer} from "../rendering/buffers/IUniformBuffer";
+import {BufferUsage} from "../rendering/buffers/BufferUsage";
+import {GameTime} from "../time/GameTime";
 
 /**
  * The Orthographic Camera.
@@ -66,7 +69,7 @@ export class OrthographicCamera implements IOrthographicCamera {
         this._near = near;
         this._far = far;
 
-        this._eye = vec3.fromValues(0, 0, 1);
+        this._eye = vec3.fromValues(0, 0, -1);
         this._target = vec3.fromValues(0, 0, 0);
 
         this._zSpaceLength = 2; // For WebGL2 it is 2, WebGPU it is 1.
@@ -206,7 +209,7 @@ export class OrthographicCamera implements IOrthographicCamera {
      */
     protected _updateMatrices() {
         mat4.lookAt(this._viewMatrix, this._eye, this._target, OrthographicCamera.UP_VECTOR);
-        mat4.ortho(this._projectionMatrix, this._left, this._right, this._bottom, this._top, this._near, this._far);
+        mat4.orthoNO(this._projectionMatrix, this._left, this._right, this._bottom, this._top, this._near, this._far);
         mat4.multiply(this._projectionViewMatrix, this._projectionMatrix, this._viewMatrix);
     }
 

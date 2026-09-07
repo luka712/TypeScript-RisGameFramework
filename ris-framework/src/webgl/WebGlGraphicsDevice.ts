@@ -1,11 +1,11 @@
-import type { IRenderPass } from "../core/rendering/render-pass/render-pass-interface";
-import { WebGlSampler } from "./sampler/webgl-sampler";
-import { WebGlRenderPass } from "./render-pass/WebGlRenderPass.ts";
-import { AGraphicsDevice, GraphicsDeviceDescriptor } from "../core/rendering/AGraphicsDevice.ts";
-import  { type BlendStateDescriptor } from "../core/rendering/blending/blend-state-descriptor";
-import { WebGlBlendState } from "./blending/webgl-blend-state";
-import { WebGlPrimitiveState } from "./primitive/webgl-primitive-state";
-import { PrimitiveStateDescriptor } from "../core/rendering/primitive/PrimitiveStateDescriptor.ts";
+import type {IRenderPass} from "../core/rendering/render-pass/render-pass-interface";
+import {WebGlSampler} from "./sampler/webgl-sampler";
+import {WebGlRenderPass} from "./render-pass/WebGlRenderPass.ts";
+import {AGraphicsDevice, GraphicsDeviceDescriptor} from "../core/rendering/AGraphicsDevice.ts";
+import {type BlendStateDescriptor} from "../core/rendering/blending/blend-state-descriptor";
+import {WebGlBlendState} from "./blending/webgl-blend-state";
+import {WebGlPrimitiveState} from "./primitive/WebGlPrimitiveState.ts";
+import {PrimitiveStateDescriptor} from "../core/rendering/primitive/PrimitiveStateDescriptor.ts";
 import {WebGLGraphicsDeviceFeatures} from "./WebGLGraphicsDeviceFeatures.ts";
 import {WebGlSwapChain} from "./swap-chain/WebGlSwapChain.ts";
 import {WebGlGpuInfo} from "./WebGlGpuInfo.ts";
@@ -26,12 +26,15 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
     public setupDebugCallback(): void {
         throw new Error("Method not implemented.");
     }
+
     public frameEnd(): void {
         throw new Error("Method not implemented.");
     }
+
     public pushDebugGroup(groupName: string): void {
         throw new Error("Method not implemented.");
     }
+
     public popDebugGroup(): void {
         throw new Error("Method not implemented.");
     }
@@ -45,7 +48,7 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
 
     /**
      * The constructor.
-     * @param windowManager The window manager that provides access to the canvas element and other window-related functionalities needed for initializing the graphics device and creating rendering contexts. 
+     * @param windowManager The window manager that provides access to the canvas element and other window-related functionalities needed for initializing the graphics device and creating rendering contexts.
      * @param descriptor The descriptor for the graphics device. This is used to configure the graphics device during initialization.
      */
     public constructor(windowManager: IWindowManager, descriptor: GraphicsDeviceDescriptor) {
@@ -119,7 +122,8 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
     }
 
     /** @inheritdoc */
-       public createPrimitiveState(descriptor?: PrimitiveStateDescriptor): IPrimitiveState {
+    public createPrimitiveState(descriptor?: PrimitiveStateDescriptor): IPrimitiveState {
+       debugger;
         descriptor = descriptor ?? new PrimitiveStateDescriptor();
         return new WebGlPrimitiveState(this._gl, descriptor);
     }

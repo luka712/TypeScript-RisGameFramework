@@ -1,11 +1,11 @@
-import type { IBlendState } from '../../core/rendering/blending/blend-state-interface';
-import type { VertexBufferLayout } from '../../core/rendering/vertex-buffer-layout';
-import type { WebGlBlendState } from '../blending/webgl-blend-state';
-import { asWebGLGraphicsDevice } from '../cast/cast';
-import type { WebGlPrimitiveState } from '../primitive/webgl-primitive-state';
-import type { WebGlSampler } from '../sampler/webgl-sampler';
-import { WebGlConverter } from '../utilities/WebGlConverter.ts';
-import type {IFramework, IRenderPipeline} from "ris-framework-api";
+import type {IBlendState} from '../../core/rendering/blending/blend-state-interface';
+import type {VertexBufferLayout} from '../../core/rendering/vertex-buffer-layout';
+import type {WebGlBlendState} from '../blending/webgl-blend-state';
+import {asWebGLGraphicsDevice} from '../cast/cast';
+import type {WebGlPrimitiveState} from '../primitive/WebGlPrimitiveState.ts';
+import type {WebGlSampler} from '../sampler/webgl-sampler';
+import {WebGlConverter} from '../utilities/WebGlConverter.ts';
+import type {IFramework, IPrimitiveState, IRenderPipeline} from "ris-framework-api";
 import type {WebGlRenderer} from "../WebGlRenderer.ts";
 import type {WebGlGraphicsDevice} from "../WebGlGraphicsDevice.ts";
 
@@ -19,23 +19,23 @@ export abstract class AWebGlRenderPipeline implements IRenderPipeline {
     protected readonly _gl: WebGL2RenderingContext;
     protected readonly _defaultTextureSampler: WebGlSampler;
     protected readonly _blendState: WebGlBlendState;
-    protected readonly _primitiveState: WebGlPrimitiveState;
     protected _vertexArrayObject: WebGLVertexArrayObject | null = null;
-    
+
 
     protected _program: WebGLProgram = null!;
 
     /**
      * The constructor.
      * @param framework The framework.
+     * @param primitiveState The primitive state.
      */
-    public constructor(framework: IFramework) {
+    public constructor(framework: IFramework, primitiveState?: IPrimitiveState) {
         this._framework = framework;
         const graphicsDevice = framework.renderer.graphicsDevice as WebGlGraphicsDevice;
         this._gl = graphicsDevice.gl;
         this._blendState = graphicsDevice.defaultBlendState as WebGlBlendState;
         this._defaultTextureSampler = graphicsDevice.defaultTextureSampler as WebGlSampler;
-        this._primitiveState = graphicsDevice.defaultPrimitiveState as WebGlPrimitiveState;
+        this.primitiveState = (primitiveState ?? graphicsDevice.defaultPrimitiveState) as WebGlPrimitiveState;
     }
 
     /** @inheritDoc */
@@ -44,15 +44,13 @@ export abstract class AWebGlRenderPipeline implements IRenderPipeline {
     }
 
     /** @inheritDoc */
-    public get primitiveState(): WebGlPrimitiveState {
-        return this._primitiveState;
-    }
+    public readonly primitiveState: WebGlPrimitiveState;
 
     /** @inheritDoc */
-    public vertexBufferLayouts : VertexBufferLayout[] = null!;
+    public vertexBufferLayouts: VertexBufferLayout[] = null!;
 
     /**
-     * Provide WebGL buffers for the render pipeline. 
+     * Provide WebGL buffers for the render pipeline.
      * This method should be implemented by subclasses to provide the necessary buffers
      * for creatine the vertex array object.
      * @returns An array of WebGLBuffer objects to be used in the vertex array object.
@@ -67,7 +65,7 @@ export abstract class AWebGlRenderPipeline implements IRenderPipeline {
         this._vertexArrayObject = this._gl.createVertexArray();
         const buffers = this._provideBuffers();
 
-        if(!buffers || buffers.length === 0) {
+        if (!buffers || buffers.length === 0) {
             return;
         }
 

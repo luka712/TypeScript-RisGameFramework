@@ -8,20 +8,21 @@ import { WebGlConverter } from "../utilities/WebGlConverter.ts";
 */
 export class WebGlPrimitiveState implements IPrimitiveState {
     private readonly _cullingEnabled: boolean;
-    private _glPrimitiveType: number;
-    private _glCullFace: number;
-    private _glFrontFace: number;
+    private readonly _glPrimitiveType: number;
+    private readonly _glCullFace: number;
+    private readonly _glFrontFace: number;
 
     /**
-    * The constructor.
-    * @param gl The WebGL rendering context.
-        * @param descriptor The descriptor of the primitive state.
-    */
+     * The constructor.
+     * @param _gl The WebGL2 Rendering Context.
+     * @param descriptor The descriptor of the primitive state.
+     */
     public constructor(_gl: WebGL2RenderingContext, descriptor: PrimitiveStateDescriptor) {
         this.topology = descriptor.topology;
         this.cullFace = descriptor.cullFace;
         this.frontFace = descriptor.frontFace;
 
+        debugger;
         this._cullingEnabled = this.cullFace != CullMode.NONE;
 
         this._glPrimitiveType = WebGlConverter.convertPrimitiveType(this.topology);

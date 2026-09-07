@@ -11,6 +11,9 @@ import {IContentManager} from "./content/IContentManager";
 import {IImageLoader} from "./loaders/IImageLoader";
 import {IMeshFactory} from "./meshes/IMeshFactory";
 import {IMaterialFactory} from "./material/IMaterialFactory";
+import {ITimeManager} from "./time/ITimeManager";
+import {IInputManager} from "./input/IInputManager";
+import {IWindowManager} from "./window/IWindowManager";
 
 /**
  * The framework interface.
@@ -85,6 +88,19 @@ export interface IFramework {
      * The material factory.
      */
     readonly materialFactory: IMaterialFactory;
+
+    /**
+     * The time manager.
+     */
+    readonly timeManager: ITimeManager;
+
+    /**
+     * The input manager.
+     */
+    readonly input: IInputManager;
+
+    /** The window manager. */
+    readonly windowManager: IWindowManager;
 
     /**
      * Called right after the framework is initialized and before the render loop starts.

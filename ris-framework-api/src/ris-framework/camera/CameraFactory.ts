@@ -1,6 +1,11 @@
-import type {ICameraFactory, IFramework, IOrthographicCamera} from "ris-framework-api";
 import  {vec2} from "gl-matrix";
-import {OrthographicCamera} from "./OrthographicCamera.ts";
+import {ICameraFactory} from "./ICameraFactory";
+import {IFramework} from "../IFramework";
+import {IOrthographicCamera} from "./IOrthographicCamera";
+import {OrthographicCamera} from "./OrthographicCamera";
+import {OrbitCamera} from "./OrbitCamera";
+import {PerspectiveCamera} from "./PerspectiveCamera";
+import {MathHelper} from "../utilities/MathHelper";
 
 /** The Camera Factory */
 export class CameraFactory implements ICameraFactory {
@@ -30,6 +35,20 @@ export class CameraFactory implements ICameraFactory {
     /** @inheritDoc */
     public createOrthographicCamera(left: number, right: number, top: number, bottom: number, near: number, far: number): IOrthographicCamera {
         const camera = new OrthographicCamera(this._framework, left, right, top, bottom, near, far);
+        camera.initialize();
+        return camera;
+    }
+
+    /** @inheritDoc */
+    public createOrbitCamera(fov = 60, aspectRatio = 1, near = 0.01, far = 100): OrbitCamera {
+        return new OrbitCamera(this.createPerspectiveCamera(fov, aspectRatio, near, far), this._framework.input);
+
+    }
+
+    /** @inheritDoc */
+    public createPerspectiveCamera(fov= 60, aspectRatio = 1, near= 0.01, far = 100): PerspectiveCamera {
+        fov = MathHelper.toRadians(fov);
+        const camera = new PerspectiveCamera(this._framework, fov, aspectRatio, near, far);
         camera.initialize();
         return camera;
     }

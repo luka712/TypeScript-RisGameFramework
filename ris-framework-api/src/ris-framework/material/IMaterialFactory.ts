@@ -1,5 +1,5 @@
 import {InspectTextureMipsMaterial} from "./InspectTextureMipsMaterial";
-import {UnlitMaterial} from "./UnlitMaterial";
+import {UnlitMaterial, UnlitMaterialDescriptor} from "./UnlitMaterial";
 
 /**
  * The material factory.
@@ -14,7 +14,8 @@ export interface IMaterialFactory {
 
     /**
      * Creates an unlit material.
+     * @param config The optional additional configuration options for material, such as rendering options.
      * @returns The Unlit Material.
      */
-    createUnlitMaterial(): UnlitMaterial;
+    createUnlitMaterial(config?: UnlitMaterialDescriptor): UnlitMaterial;
 }

@@ -5,7 +5,7 @@ import { WebGlSpriteRenderPipeline } from "./sprite/WebGlSpriteRenderPipeline.ts
 import type {
     IFramework,
     IInspectTextureMipsRenderPipeline,
-    IMainRenderTargetRenderPipeline, IRenderPipelineFactory,
+    IMainRenderTargetRenderPipeline, IPrimitiveState, IRenderPipelineFactory,
     ISpriteRenderPipeline, ITexture2D,
     IUniformBuffer,
     IUnlitRenderPipeline
@@ -29,9 +29,11 @@ export class WebGlRenderPipelineFactory implements IRenderPipelineFactory {
     /** @inheritDoc */
     public createUnlitRenderPipeline(projectionViewBuffer: IUniformBuffer,
                                      modelBuffer: IUniformBuffer,
-                                     materialBuffer: IUniformBuffer): IUnlitRenderPipeline {
+                                     materialBuffer: IUniformBuffer,
+                                     primitiveState?: IPrimitiveState
+                                     ): IUnlitRenderPipeline {
         const pipeline = new WebGlUnlitRenderPipeline(this._framework,
-            projectionViewBuffer, modelBuffer, materialBuffer
+            projectionViewBuffer, modelBuffer, materialBuffer, primitiveState
             );
         pipeline.initialize();
         return pipeline;
@@ -45,9 +47,14 @@ export class WebGlRenderPipelineFactory implements IRenderPipelineFactory {
     }
 
     /** @inheritDoc */
-    public createInspectTextureMipsRenderPipeline(projectionViewBuffer: IUniformBuffer, modelBuffer: IUniformBuffer, textureConstantsBuffer: IUniformBuffer): IInspectTextureMipsRenderPipeline {
+    public createInspectTextureMipsRenderPipeline(
+        projectionViewBuffer: IUniformBuffer,
+        modelBuffer: IUniformBuffer,
+        textureConstantsBuffer: IUniformBuffer,
+        primitiveState?: IPrimitiveState,
+        ): IInspectTextureMipsRenderPipeline {
         const pipeline = new WebGlInspectTextureMipsRenderPipeline(
-            this._framework, projectionViewBuffer, modelBuffer, textureConstantsBuffer
+            this._framework, projectionViewBuffer, modelBuffer, textureConstantsBuffer, primitiveState
         );
         pipeline.initialize();
         return pipeline;

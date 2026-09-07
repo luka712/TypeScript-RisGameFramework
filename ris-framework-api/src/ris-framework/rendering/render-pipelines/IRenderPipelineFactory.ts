@@ -4,6 +4,7 @@ import {IUniformBuffer} from "../buffers/IUniformBuffer";
 import {ISpriteRenderPipeline} from "./ISpriteRenderPipeline";
 import {IInspectTextureMipsRenderPipeline} from "./IInspectTextureMipsRenderPipeline";
 import {IUnlitRenderPipeline} from "./IUnlitRenderPipeline";
+import {IPrimitiveState} from "../primitive/IPrimitiveState";
 
 /**
  * The pipeline factory.
@@ -39,10 +40,13 @@ export interface IRenderPipelineFactory {
      * @param projectionViewBuffer - The projection view buffer.
      * @param modelBuffer - The world buffer.
      * @param materialBuffer - The material buffer.
+     * @param primitiveState - The primitive state.
      * @returns The unlit render pipeline.
      */
     createUnlitRenderPipeline(projectionViewBuffer: IUniformBuffer,
                               modelBuffer: IUniformBuffer,
-                              materialBuffer: IUniformBuffer): IUnlitRenderPipeline;
+                              materialBuffer: IUniformBuffer,
+                              primitiveState?: IPrimitiveState
+                              ): IUnlitRenderPipeline;
 
 }
