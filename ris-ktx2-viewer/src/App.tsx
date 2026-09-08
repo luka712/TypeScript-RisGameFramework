@@ -98,6 +98,7 @@ function App() {
             camera3DRef.current = fw.cameraFactory.createOrbitCamera()
             camera3DRef.current.eye = vec3.fromValues(0, 0, -2);
             camera3DRef.current.sensitivity = 0.5;
+            camera3DRef.current.scrollSpeed = 5;
 
             const geometry = fw.geometryBuilder.quadGeometry(vec2.fromValues(2, 2));
             const mipMaterial = fw.materialFactory.createInspectTextureMipsMaterial();
@@ -115,9 +116,12 @@ function App() {
             quadMeshRef.current = mesh;
         });
 
+        fw.addOnUpdateListener(gt => {
+            camera3DRef.current?.update(gt);
+        });
+
         fw.addOnRenderListener(() => {
 
-            camera3DRef.current?.update(fw.timeManager.time);
 
             const selectedTexture = getSelectedTexture();
             const sampler = getSampler();
@@ -254,10 +258,10 @@ function App() {
                                         </Stack>
                                     )}
                                     {tab === 1 && (
-                                        <Stack direction="column" spacing={2}>
+                                        <Stack direction="column" spacing={2} sx={{marginLeft: 2 }}>
                                             {framework ? (
                                                 <>
-                                                    <GenericPropertiesView properties={gpuProperties}/>
+                                                    <GenericPropertiesView properties={gpuProperties} />
                                                     <GenericPropertiesView properties={gpuFeatures}/>
                                                 </>
                                             ) : (
@@ -273,12 +277,12 @@ function App() {
                                 </Box>
                             </Grid>
                             <Grid size={3}>
-                                <Box sx={{paddingTop: 2, paddingBottom: 2}}>
+                                <Box sx={{paddingTop: 2, paddingBottom: 2, marginRight: 2, marginTop: 2}}>
                                     <PropertiesView/>
                                 </Box>
                             </Grid>
                         </Grid>
-                        <Grid size={12}>
+                        <Grid size={12} sx={{paddingTop: 2, paddingBottom: 2, paddingLeft: 1, paddingRight: 1}}>
                             <FooterView/>
                         </Grid>
                     </Paper>

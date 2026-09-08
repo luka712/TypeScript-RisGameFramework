@@ -5,34 +5,19 @@ interface SamplerFilterSelectProps {
     label: string;
     value: SamplerFilter;
     onValueChange: (value: SamplerFilter) => void;
-    topMost?: boolean;
-    bottomMost?: boolean;
 }
 
 export default function SamplerFilterSelect({
     label,
     value,
-    topMost,
-    bottomMost,
     onValueChange,
 }: SamplerFilterSelectProps) {
-    const topRadius = topMost ? 20 : 0;
-    const bottomRadius = bottomMost ? 20 : 0;
 
     const handleChange = (e: SelectChangeEvent<SamplerFilter>) => {
         onValueChange(e.target.value as SamplerFilter);
     };
 
     return (
-        <Paper
-            elevation={3}
-            sx={{
-                borderTopLeftRadius: topRadius,
-                borderTopRightRadius: topRadius,
-                borderBottomLeftRadius: bottomRadius,
-                borderBottomRightRadius: bottomRadius,
-            }}
-        >
             <Stack
                 direction="column"
                 spacing={0}
@@ -51,6 +36,5 @@ export default function SamplerFilterSelect({
                     <MenuItem value={SamplerFilter.LINEAR}>Linear</MenuItem>
                 </Select>
             </Stack>
-        </Paper>
     );
 }

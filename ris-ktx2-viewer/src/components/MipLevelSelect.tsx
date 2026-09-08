@@ -7,19 +7,13 @@ interface MipLevelSelectProps {
     value: number;
     valueMax: number,
     onValueChange: (value: TextureFormat) => void;
-    topMost?: boolean;
-    bottomMost?: boolean;
 }
 
 export default function MipLevelSelect({
                                                 label,
                                                 value,
-                                                topMost,
-                                                bottomMost,
                                                 onValueChange,
                                             }: MipLevelSelectProps) {
-    const topRadius = topMost ? 20 : 0;
-    const bottomRadius = bottomMost ? 20 : 0;
 
     const mipLevels = useTextureStore((state) => state.mipLevels);
 
@@ -33,15 +27,6 @@ export default function MipLevelSelect({
     };
 
     return (
-        <Paper
-            elevation={3}
-            sx={{
-                borderTopLeftRadius: topRadius,
-                borderTopRightRadius: topRadius,
-                borderBottomLeftRadius: bottomRadius,
-                borderBottomRightRadius: bottomRadius,
-            }}
-        >
             <Stack
                 direction="column"
                 spacing={0}
@@ -59,6 +44,5 @@ export default function MipLevelSelect({
                     {levels}
                 </Select>
             </Stack>
-        </Paper>
     );
 }

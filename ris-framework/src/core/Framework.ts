@@ -8,7 +8,7 @@ import {ContentManager} from "./content/ContentManager.ts";
 import {WebGlRenderer} from "../webgl/WebGlRenderer.ts";
 import {WebGlBuffersFactory} from "../webgl/buffers/WebGlBuffersFactory.ts";
 import {
-    CameraFactory,
+    CameraFactory, GameTime,
     type IBufferFactory, type IGeometryBuilder, type IGraphicsDevice,
     type IMeshFactory, type ISpriteBatch, type ITextureFactory, type RenderingBackend
 } from "ris-framework-api";
@@ -28,6 +28,7 @@ export class Framework implements IFramework {
 
     private readonly _onLoadContentListeners: (() => void)[] = [];
     private readonly _onInitializeListeners: (() => void)[] = [];
+    private readonly _onUpdateListeners: ((gameTime: GameTime) => void)[] = [];
     private readonly _onRenderListeners: (() => void)[] = [];
 
     private readonly _container: DependencyContainer;
@@ -99,6 +100,16 @@ export class Framework implements IFramework {
     /** @inheritdoc */
     public removeOnLoadContentListener(event: () => void): void {
         this._onLoadContentListeners.splice(this._onRenderListeners.indexOf(event), 1);
+    }
+
+    /** @inheritdoc */
+    public addOnUpdateListener(event: (gameTime: GameTime) => void): void {
+        this._onUpdateListeners.push(event);
+    }
+
+    /** @inheritdoc */
+    public removeOnUpdateListener(event: (gameTime: GameTime) => void): void {
+        this._onUpdateListeners.splice(this._onUpdateListeners.indexOf(event), 1);
     }
 
     /** @inheritdoc */
@@ -174,12 +185,18 @@ export class Framework implements IFramework {
             listener();
         }
 
-
         this.renderer.afterInitialize();
 
         this.windowManager.updateEvent(() => {
             // Update logic here
             this.timeManager.frameStart();
+            this.input.update(this.timeManager.time);
+
+            for(const listener of this._onUpdateListeners){
+                listener(this.timeManager.time);
+            }
+
+            this.input.afterUpdate();
         });
         this.windowManager.renderEvent(() => {
             this.renderer.beginRenderPass();

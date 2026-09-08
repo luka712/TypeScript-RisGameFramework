@@ -66,7 +66,6 @@ framework.addOnInitializedListener(() => {
   desc.magFilter = SamplerFilter.NEAREST;
   // desc.label = "Label";
   sampler = framework.graphicsDevice.createSampler(desc);
-  debugger;
 });
 
 framework.addOnRenderListener(() =>

@@ -21,7 +21,7 @@ export class InputManager implements IInputManager {
     private readonly _mousePosition = vec2.create();
     private readonly _previousMousePosition = vec2.create();
     private readonly _mouseDelta = vec2.create();
-    private readonly _scrollWheelPosition: WebGlRenderPass;
+    private readonly _scrollWheelPosition = vec2.create();
     private readonly _mouseButtonDown: { [key: number]: boolean } = {};
     private readonly _mouseButtonReleased: { [key: number]: boolean } = {};
 
@@ -37,8 +37,6 @@ export class InputManager implements IInputManager {
 
     thumbstickDeadZone: number;
 
-    afterUpdate(): void {
-    }
 
     getGamePadState(gamePadIndex: number): GamePadState {
         return undefined;
@@ -63,14 +61,8 @@ export class InputManager implements IInputManager {
     private _handleMouseEvents(canvas: HTMLCanvasElement) {
 
         canvas.addEventListener("mousemove", (e: MouseEvent) => {
-
             this._mousePosition[0] = e.clientX;
             this._mousePosition[1] = e.clientY;
-
-            vec2.sub(this._mouseDelta, this._mousePosition, this._previousMousePosition);
-
-            this._previousMousePosition[0] = e.clientX;
-            this._previousMousePosition[1] = e.clientY;
         });
 
         canvas.addEventListener("mousedown", (e: MouseEvent) => {
@@ -85,9 +77,40 @@ export class InputManager implements IInputManager {
             this._mouseButtonDown[btn] = false;
             this._mouseButtonReleased[btn] = true;
         });
+
+        canvas.addEventListener("wheel", (e: WheelEvent) => {
+
+            let x = 0;
+            let y = 0;
+            if(e.deltaX > 0) {
+                x = 1;
+            }
+            else if(e.deltaX < 0) {
+               x= -1;
+            }
+
+            if(e.deltaY > 0) {
+                y = 1;
+            }
+            else if(e.deltaY < 0) {
+               y= -1;
+            }
+
+            vec2.set(this._scrollWheelPosition, x, y);
+        })
     }
 
-    update(): void {
+    /** @inheritDoc */
+    public update(): void {
+        vec2.sub(this._mouseDelta, this._mousePosition, this._previousMousePosition);
+        vec2.copy(this._previousMousePosition, this._mousePosition);
     }
+
+    /** @inheritDoc */
+    public afterUpdate(): void {
+        vec2.set(this._scrollWheelPosition, 0,0);
+
+    }
+
 
 }

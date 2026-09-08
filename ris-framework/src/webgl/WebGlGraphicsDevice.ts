@@ -123,7 +123,6 @@ export class WebGlGraphicsDevice extends AGraphicsDevice {
 
     /** @inheritdoc */
     public createPrimitiveState(descriptor?: PrimitiveStateDescriptor): IPrimitiveState {
-       debugger;
         descriptor = descriptor ?? new PrimitiveStateDescriptor();
         return new WebGlPrimitiveState(this._gl, descriptor);
     }

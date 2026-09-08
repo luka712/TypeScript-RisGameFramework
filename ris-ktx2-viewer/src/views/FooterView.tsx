@@ -58,7 +58,7 @@ export function FooterView() {
             <Stack direction="row" spacing={2.5} sx={{justifyContent: "flex-end"}}>
                 <FooterStat label="Resolution" value={resolution}/>
                 <FooterStat label="Mip Levels" value={mipLevels}/>
-                <FooterStat label="Memory" value={memory}/>
+                <FooterStat label="GPU Memory" value={memory}/>
                 {ktx2 && <FooterStat label="Ktx2 Format" value={ktx2Format}/>}
             </Stack>
         </Paper>

@@ -2,7 +2,7 @@ import {Container, Divider, Paper} from "@mui/material";
 import FormTextBlock from "../components/FormTextBlock.tsx";
 
 interface PropertiesViewProps {
-    properties: {name: string; value: string}[];
+    properties: { name: string; value: string }[];
 }
 
 /**
@@ -11,14 +11,19 @@ interface PropertiesViewProps {
 export default function GenericPropertiesView({properties}: PropertiesViewProps) {
     if (!properties || properties.length === 0) {
         return (
-            <Paper>
-                <Container/>
-            </Paper>
+            <Container/>
         );
     }
 
+
     return (
-        <Container>
+        <Paper elevation={3}
+               sx={{
+                   borderTopLeftRadius: 20,
+                   borderTopRightRadius: 20,
+                   borderBottomLeftRadius: 20,
+                   borderBottomRightRadius: 20,
+               }}>
             {properties.map((property, index) => (
                 <div key={`${property.name}-${index}`}>
                     {index > 0 && <Divider/>}
@@ -30,6 +35,6 @@ export default function GenericPropertiesView({properties}: PropertiesViewProps)
                     />
                 </div>
             ))}
-        </Container>
+        </Paper>
     );
 }

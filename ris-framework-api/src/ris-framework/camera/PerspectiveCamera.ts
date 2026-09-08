@@ -125,9 +125,7 @@ export class PerspectiveCamera implements ICamera {
      */
     public up = vec3.fromValues(0,1,0);
 
-    /**
-     * The direction of a camera.
-     */
+    /** The direction of a camera. */
     public get direction(): vec3 {
         vec3.sub(this._direction, this.target, this.eye);
         return this._direction;
@@ -181,8 +179,6 @@ export class PerspectiveCamera implements ICamera {
         this._tempVec3[2] = -this.eye[2];
         mat4.lookAt(this.viewMatrix, this._tempVec3, this.target, this.up);
         mat4.multiply(this.projectionViewMatrix, this.projectionMatrix, this.viewMatrix);
-
-        debugger;
     }
 
     /** @inheritDoc */

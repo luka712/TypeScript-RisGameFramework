@@ -1,4 +1,4 @@
-import {Container, Divider, Stack} from "@mui/material";
+import {Container, Divider, Paper, Stack} from "@mui/material";
 import SamplerFilterSelect from "../components/SamplerFilterSelect.tsx";
 import {useSamplerStore} from "../store/SamplerStore.ts";
 import TextureFormatSelect from "../components/TextureFormatSelect.tsx";
@@ -32,10 +32,16 @@ export function PropertiesView() {
     const setView = useAppStore((store) => store.setView);
 
     return (
-        <Container>
+        <Paper elevation={3}
+               sx={{
+                   borderTopLeftRadius: 20,
+                   borderTopRightRadius: 20,
+                   borderBottomLeftRadius: 20,
+                   borderBottomRightRadius: 20,
+               }}>
             <Stack direction="column">
 
-                <StringSelect label="View" value={view} options={viewOptions} onValueChange={setView} topMost />
+                <StringSelect label="View" value={view} options={viewOptions} onValueChange={setView} />
                 <Divider />
                 <SamplerFilterSelect
                     label="Filter"
@@ -47,7 +53,6 @@ export function PropertiesView() {
                     label="Texture Format"
                     value={textureFormat}
                     onValueChange={setTextureFormat}
-                    bottomMost={!canGenerateMips}
                 />
                 {canGenerateMips() && (
                     <>
@@ -61,6 +66,6 @@ export function PropertiesView() {
                 )}
                 <MipLevelSelect label="Mipmap Level" value={mipmapLevel} valueMax={mipmapLevels} onValueChange={setMipmapLevel} bottomMost />
             </Stack>
-        </Container>
+        </Paper>
     );
 }

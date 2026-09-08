@@ -22,7 +22,6 @@ export class WebGlPrimitiveState implements IPrimitiveState {
         this.cullFace = descriptor.cullFace;
         this.frontFace = descriptor.frontFace;
 
-        debugger;
         this._cullingEnabled = this.cullFace != CullMode.NONE;
 
         this._glPrimitiveType = WebGlConverter.convertPrimitiveType(this.topology);

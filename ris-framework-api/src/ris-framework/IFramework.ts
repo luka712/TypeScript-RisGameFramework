@@ -14,6 +14,7 @@ import {IMaterialFactory} from "./material/IMaterialFactory";
 import {ITimeManager} from "./time/ITimeManager";
 import {IInputManager} from "./input/IInputManager";
 import {IWindowManager} from "./window/IWindowManager";
+import {GameTime} from "./time/GameTime";
 
 /**
  * The framework interface.
@@ -107,27 +108,43 @@ export interface IFramework {
      * Content can be loaded here.
      */
     addOnLoadContentListener(event: () => void): void;
+
     /**
      * Called right after the framework is initialized and before the render loop starts.
      * Content can be loaded here.
      */
     removeOnLoadContentListener(event: () => void): void;
+
     /**
      * Called when the framework is initialized.
      */
     addOnInitializedListener(event: () => void): void;
+
     /**
      * Called when the framework is initialized.
      */
     removeOnInitializedListener(event: () => void): void;
+
+    /**
+     * Called when framework is updated.
+     */
+    addOnUpdateListener(event: (gameTime: GameTime) => void): void;
+
+    /**
+     * Called when framework is updated.
+     */
+    removeOnUpdateListener(event: (gameTime: GameTime) => void): void;
+
     /**
      * Called when the framework is rendered.
      */
     addOnRenderListener(event: () => void): void;
+
     /**
      * Called when the framework is rendered.
      */
     removeOnRenderListener(event: () => void): void;
+
     /**
      * Initializes the framework.
      */

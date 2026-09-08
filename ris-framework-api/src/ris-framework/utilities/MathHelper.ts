@@ -96,8 +96,8 @@ export class MathHelper {
      * @param toMax - To maximum.
      * @returns The mapped value.
      */
-    public map(value: number, fromMin: number, fromMax: number, toMin: number, toMax: number): number {
-        throw new Error('Not implemented');
+    public static map(value: number, fromMin: number, fromMax: number, toMin: number, toMax: number): number {
+        return (value - fromMin) / (fromMax - fromMin) * (toMax - toMin) + toMin;
     }
 
     /**
