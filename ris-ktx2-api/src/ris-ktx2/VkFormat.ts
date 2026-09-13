@@ -1,5 +1,5 @@
 /**
- * The  enumeration defines the various pixel formats that can be used in Vulkan textures.
+ * The enumeration defines the various pixel formats that can be used in Vulkan textures.
  */
 export enum VkFormat {
   UNDEFINED = 0,

@@ -14,11 +14,13 @@ export class TextureUtilities {
         TextureFormat.ETC2_RGBA8_UNORM
     ];
     private static readonly _vkFormatTextureFormat: { [key: number]: number } = {
-        [VkFormat.R8G8B8A8_UNORM]: TextureFormat.RGBA_8_UNORM
+        [VkFormat.R8G8B8A8_UNORM]: TextureFormat.RGBA_8_UNORM,
+        [VkFormat.R8G8B8A8_SRGB]: TextureFormat.RGBA_8_UNORM_SRGB,
     }
 
     private static readonly _textureFormatVkFormat: { [key: number]: number } = {
         [TextureFormat.RGBA_8_UNORM]: VkFormat.R8G8B8A8_UNORM,
+        [TextureFormat.RGBA_8_UNORM_SRGB]: VkFormat.R8G8B8A8_SRGB,
         [TextureFormat.DEPTH_24_STENCIL_8]: VkFormat.D24_UNORM_S8_UINT,
         [TextureFormat.BC3_RGBA_UNORM]: VkFormat.BC3_UNORM_BLOCK,
         [TextureFormat.BC7_RGBA_UNORM]: VkFormat.BC7_UNORM_BLOCK,
@@ -55,7 +57,7 @@ export class TextureUtilities {
     }
 
     /**
-     * Gets the number of VRAM reserved for a given texture format of given size.
+     * Gets the number of VRAM reserved for a given texture format of a given size.
      *
      * @param textureFormat The texture format.
      * @param width Texture width.
@@ -86,7 +88,11 @@ export class TextureUtilities {
      * @returns The texture format.
      */
     public static convertVkFormatToTextureFormat(vkFormat: VkFormat): TextureFormat {
-        return this._vkFormatTextureFormat[vkFormat];
+        const format = this._vkFormatTextureFormat[vkFormat];
+        if (!format) {
+            throw new Error(`Not implemented: ${vkFormat}`);
+        }
+        return format;
     }
 
     /**
@@ -95,7 +101,11 @@ export class TextureUtilities {
      * @returns The Ktx Transcode Format.
      */
     public static convertTextureFormatToKtxTranscodeFormat(textureFormat: TextureFormat): KtxTranscodeFormat {
-        return this._mapTextureFormatKtxTranscodeFormat[textureFormat];
+        const format = this._mapTextureFormatKtxTranscodeFormat[textureFormat];
+        if (!format) {
+            throw new Error(`Not implemented: ${textureFormat}`);
+        }
+        return format;
     }
 
 }

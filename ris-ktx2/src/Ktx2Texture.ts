@@ -1,11 +1,13 @@
 import {
     type IKtx2Texture,
     type IKtxBasisParams,
+    KtxErrorCode,
     KtxTranscodeFlags,
     KtxTranscodeFormat,
     TextureFormatInfo,
-    type VkFormat
+    VkFormat
 } from "ris-ktx2-api";
+import {Mapper} from "./Mapper.ts";
 
 /**
  * The KTX2 texture class.
@@ -17,6 +19,7 @@ export class Ktx2Texture implements IKtx2Texture {
 
     // @ts-ignore
     private readonly _ktxTexture: any;
+
     /**
      * The constructor.
      * @param ktxLib - The KTX library.
@@ -31,7 +34,6 @@ export class Ktx2Texture implements IKtx2Texture {
         this.width = ktxTexture.baseWidth;
         this.height = ktxTexture.baseHeight;
         this.dataSize = ktxTexture.dataSize;
-        this.needsTranscoding = ktxTexture.needsTranscoding;
         this.numLevels = ktxTexture.numLevels ?? 1;
         this.vkFormat = ktxTexture.vkFormat;
     }
@@ -52,7 +54,9 @@ export class Ktx2Texture implements IKtx2Texture {
     public readonly dataSize;
 
     /** @inheritdoc */
-    readonly needsTranscoding;
+    public get needsTranscoding() : boolean {
+        return this._ktxTexture.needsTranscoding;
+    }
 
     /** @inheritdoc */
     public readonly numLevels;
@@ -69,7 +73,11 @@ export class Ktx2Texture implements IKtx2Texture {
 
     /** @inheritDoc */
     public compressBasis(basisParams: IKtxBasisParams | number): void {
-        console.log(basisParams);
+        const errorCode = this._ktxTexture.compressBasis(basisParams);
+
+        if (errorCode !== 0) {
+            console.error(`Failed to compress basis: ${errorCode}`);
+        }
     }
 
     getImageOffset(level: number, layer: number, faceSlice: number): number {
@@ -124,20 +132,20 @@ export class Ktx2Texture implements IKtx2Texture {
     }
 
     /** @inheritDoc */
-    public getTextureFormatInfo(format: KtxTranscodeFormat): TextureFormatInfo {
-        if(format == KtxTranscodeFormat.ASTC_4X4_RGBA){
+    public getTextureFormatInfo(format: KtxTranscodeFormat | VkFormat): TextureFormatInfo {
+        if(format == KtxTranscodeFormat.ASTC_4X4_RGBA || format == VkFormat.ASTC_4X4_UNORM_BLOCK) {
             return TextureFormatInfo.astc4x4rgba();
         }
-        else if(format == KtxTranscodeFormat.BC7_RGBA) {
+        else if(format == KtxTranscodeFormat.BC7_RGBA || format == VkFormat.BC7_UNORM_BLOCK) {
             return TextureFormatInfo.bc7();
         }
-        else if(format == KtxTranscodeFormat.BC3_RGBA) {
+        else if(format == KtxTranscodeFormat.BC3_RGBA || format == VkFormat.BC3_UNORM_BLOCK) {
             return TextureFormatInfo.bc3();
         }
-        else if(format == KtxTranscodeFormat.ETC2_RGBA) {
+        else if(format == KtxTranscodeFormat.ETC2_RGBA || format == VkFormat.ETC2_R8G8B8A8_UNORM_BLOCK) {
             return TextureFormatInfo.etc2rgba();
         }
-        else if(format == KtxTranscodeFormat.RGBA32){
+        else if(format == KtxTranscodeFormat.RGBA32 || format == VkFormat.R8G8B8A8_UNORM || format == VkFormat.R8G8B8A8_SRGB) {
             return TextureFormatInfo.rgba32();
         }
         else {
@@ -149,6 +157,21 @@ export class Ktx2Texture implements IKtx2Texture {
     public createCopy(): IKtx2Texture {
         const copy = this._ktxTexture.createCopy();
         return  new Ktx2Texture(this._ktxLib, copy, this.filePath);
+    }
+
+    /** @inheritDoc */
+    public setImageFromMemory(level: number, layer: number, faceSlice: number, imageData: ArrayBufferView): void {
+        const errorCode = this._ktxTexture.setImageFromMemory(level, layer, faceSlice, imageData);
+        const ktxErrorCode = Mapper.mapErrorCodeFromKtxLib(errorCode);
+
+        if (ktxErrorCode == KtxErrorCode.INVALID_OPERATION) {
+           throw new Error(`Failed to set image from memory: KTX INVALID OPERATION`);
+        }
+    }
+
+    /** @inheritDoc */
+    public writeToMemory(): ArrayBufferView {
+        return this._ktxTexture.writeToMemory();
     }
 
 }

@@ -167,6 +167,8 @@ export class WebGlConverter {
             // Same format regardless.
             case TextureFormat.RGBA_8_UNORM:
                 return gl.RGBA8;
+            case TextureFormat.RGBA_8_UNORM_SRGB:
+                return gl.SRGB8_ALPHA8;
             case TextureFormat.DEPTH_32_FLOAT:
                 return gl.DEPTH_COMPONENT32F;
             case TextureFormat.DEPTH_24_STENCIL_8:
@@ -189,6 +191,7 @@ export class WebGlConverter {
     public static convertToPixelFormat(gl: WebGL2RenderingContext, textureFormat: TextureFormat): number {
         switch (textureFormat) {
             case TextureFormat.RGBA_8_UNORM:
+            case TextureFormat.RGBA_8_UNORM_SRGB:
                 return gl.RGBA;
             case TextureFormat.DEPTH_32_FLOAT:
                 return gl.DEPTH_COMPONENT;

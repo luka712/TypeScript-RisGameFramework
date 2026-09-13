@@ -8,3 +8,6 @@ export * from './KtxUastcFlags';
 export * from './VkFormat';
 export * from './IKtx2Texture';
 export * from './TextureFormatInfo';
+export * from './IKtxCreateInfo';
+export * from './KtxCreateStorage.ts';
+export * from './KtxErrorCode.ts';

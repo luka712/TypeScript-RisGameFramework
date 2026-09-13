@@ -71,8 +71,7 @@ export class WebGlTextureFactory implements ITextureFactory {
         else {
             // No transcoding path, but still get info about the texture format.
             textureFormat = TextureUtilities.convertVkFormatToTextureFormat(vkFormat);
-            transcodeFormat = TextureUtilities.convertTextureFormatToKtxTranscodeFormat(textureFormat);
-            texFormatInfo = ktxTexture.getTextureFormatInfo(transcodeFormat);
+            texFormatInfo = ktxTexture.getTextureFormatInfo(vkFormat);
         }
 
         const data: Uint8Array[] = [];

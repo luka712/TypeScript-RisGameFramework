@@ -1,4 +1,4 @@
-import {Box, createTheme, Grid, Paper, Stack, Tab, Tabs, ThemeProvider} from "@mui/material";
+import {Box, Button, createTheme, Grid, Paper, Stack, Tab, Tabs, ThemeProvider} from "@mui/material";
 import './App.css'
 import {useEffect, useMemo, useRef, useState} from "react";
 import DropArea from "./components/DropArea.tsx";
@@ -25,11 +25,8 @@ import {useTextureStore} from "./store/TextureStore.ts";
 import {FooterView} from "./views/FooterView.tsx";
 import {TextureSamplerFilteringPreset} from "../../ris-framework/src/core/rendering/enums.ts";
 import {View2D, View3D} from "./model/View.ts";
-import {UnlitMaterialConfig} from "../../ris-framework-api/dist/ris-framework/material/UnlitMaterialConfig";
+import ConvertDialog from "./dialog/ConvertDialog.tsx";
 
-
-const imageRect = new Rect(0, 0, 0, 0);
-const whiteColor = Color.white();
 
 function App() {
     const theme = useMemo(
@@ -255,6 +252,7 @@ function App() {
                                         <Stack direction="column" spacing={2} sx={{marginLeft: 2}}>
                                             <AddFileButton/>
                                             <TextureList/>
+                                            <ConvertDialog/>
                                         </Stack>
                                     )}
                                     {tab === 1 && (

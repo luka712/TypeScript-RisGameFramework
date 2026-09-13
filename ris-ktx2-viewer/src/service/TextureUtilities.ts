@@ -1,5 +1,5 @@
-import type {IKtx2Texture} from "ris-ktx2-api";
-import {Ktx2Loader} from "ris-ktx2";
+import {type IKtx2Texture, type IKtxCreateInfo, KtxCreateStorage} from "ris-ktx2-api";
+import {Ktx2Factory} from "ris-ktx2";
 import type {IImage} from "../model/IImage.ts";
 
 const IMAGE_MIME_TYPES = new Set([
@@ -9,7 +9,7 @@ const IMAGE_MIME_TYPES = new Set([
     "image/webp",
 ]);
 
-let ktxLoader: Ktx2Loader | null = null;
+let ktxLoader: Ktx2Factory | null = null;
 
 export function isDecodableImage(file: File): boolean {
     return IMAGE_MIME_TYPES.has(file.type);
@@ -55,9 +55,47 @@ export async function decodeImage(file: File): Promise<IImage> {
 
 export async function getKtx2Texture(file: File): Promise<IKtx2Texture> {
     if (!ktxLoader) {
-        ktxLoader = new Ktx2Loader();
+        ktxLoader = new Ktx2Factory();
         await ktxLoader.initializeAsync();
     }
 
     return ktxLoader.loadAsync(file);
+}
+
+export async function createKtx2TextureAsync(desc: IKtxCreateInfo, storage = KtxCreateStorage.ALLOC_STORAGE): Promise<IKtx2Texture> {
+
+    if (!ktxLoader) {
+        ktxLoader = new Ktx2Factory();
+        await ktxLoader.initializeAsync();
+    }
+
+    return ktxLoader.create(desc, storage);
+}
+
+export async function createKtx2TextureFromBufferAsync(buffer: ArrayBufferView<ArrayBufferLike>): Promise<IKtx2Texture> {
+
+    if (!ktxLoader) {
+        ktxLoader = new Ktx2Factory();
+        await ktxLoader.initializeAsync();
+    }
+
+    return ktxLoader.createFromBuffer(buffer);
+}
+
+export function downloadKtx2(
+    data: ArrayBufferView<ArrayBufferLike>,
+    filename = "texture.ktx2"
+) {
+    const blob = new Blob([data as BlobPart], {
+        type: "image/ktx2"
+    });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.click();
+
+    URL.revokeObjectURL(url);
 }

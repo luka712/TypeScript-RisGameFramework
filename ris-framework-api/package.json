@@ -26,6 +26,10 @@
     "typescript",
     "generated"
   ],
+  "dependencies": {
+    "ris-ktx2-api": "file://../ris-ktx2-api",
+    "gl-matrix": "^3.4.2"
+  },
   "devDependencies": {
     "typescript": "^5.0.0"
   }

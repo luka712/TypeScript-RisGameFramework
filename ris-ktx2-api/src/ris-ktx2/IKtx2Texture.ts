@@ -128,13 +128,27 @@ export interface IKtx2Texture {
 
     /**
      * Get a texture format info instances based on KtxTranscodeFormat.
-     * @param format The KtxTranscodeFormat
+     * @param format The KtxTranscodeFormat or VkFormat.
      * @returns The TextureFormatInfo
      */
-    getTextureFormatInfo(format: KtxTranscodeFormat): TextureFormatInfo;
+    getTextureFormatInfo(format: KtxTranscodeFormat | VkFormat): TextureFormatInfo;
 
     /** TODO: */
     createCopy(): IKtx2Texture;
 
+    /**
+     * Sets the texture data from the native KTX texture object.
+     * @param level - The mipmap level.
+     * @param layer - The array layer.
+     * @param faceSlice - The face or slice index.
+     * @param imageData - The texture data as a byte array.
+     */
+    setImageFromMemory(level: number, layer: number, faceSlice: number, imageData: ArrayBufferView): void;
+
+    /**
+     * Writes the texture data to a memory buffer.
+     * @returns The texture data as a byte array.
+     */
+    writeToMemory(): ArrayBufferView;
 
 }

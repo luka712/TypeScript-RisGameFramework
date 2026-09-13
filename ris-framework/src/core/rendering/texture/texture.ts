@@ -32,6 +32,11 @@ export abstract class ATexture2D implements ITexture2D {
     protected constructor(
         descriptor: TextureDescriptor,
     ) {
+
+        if(!descriptor.textureFormat){
+            throw new Error("Texture format is required.");
+        }
+
         this.id = ATexture2D.generateId();
         this.textureFormat = descriptor.textureFormat;
         this.textureUsage = descriptor.textureUsage;

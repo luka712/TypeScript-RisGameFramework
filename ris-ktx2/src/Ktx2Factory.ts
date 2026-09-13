@@ -1,0 +1,88 @@
+import {Ktx2Texture} from "./Ktx2Texture.ts";
+import {createKtxModuleAsync} from "./index.ts";
+import {type IKtx2Texture, VkFormat} from "ris-ktx2-api";
+import type {IKtxCreateInfo} from "../../ris-ktx2-api/src";
+import {KtxCreateStorage} from "../../ris-ktx2-api/src/ris-ktx2/KtxCreateStorage.ts";
+import {Mapper} from "./Mapper.ts";
+
+/**
+ * The Ktx2Factory class is responsible for loading and creating KTX2 textures.
+ */
+export class Ktx2Factory {
+
+    private static _ktxLib?: any;
+
+    /**
+     * Initializes the Ktx2Loader.
+     */
+    public async initializeAsync(){
+        if(!Ktx2Factory._ktxLib){
+            Ktx2Factory._ktxLib = await createKtxModuleAsync();
+        }
+    }
+
+    /**
+     * Loads a KTX2 texture from the specified URL.
+     * @param blob The URL of the KTX2 texture to load.
+     * @returns A promise that resolves to the loaded KTX2 texture.
+     */
+    public async loadAsync(blob: string|File): Promise<IKtx2Texture> {
+
+        let buffer: ArrayBuffer;
+        let filePath: string;
+
+        if(blob instanceof File){
+            filePath = blob.name;
+            buffer = await blob.arrayBuffer();
+        }
+        else {
+            filePath = blob;
+            const response = await fetch(blob);
+            buffer = await response.arrayBuffer();
+        }
+
+        const uint8Array = new Uint8Array(buffer);
+        const ktxTexture = new Ktx2Factory._ktxLib.texture(uint8Array);
+        return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture, filePath);
+    }
+
+    /**
+     * Creates a KTX2 texture.
+     * @param createInfo - The creation info.
+     * @param storage - The storage.
+     * @returns The KTX2 texture.
+     */
+    public create(createInfo: IKtxCreateInfo, storage?: KtxCreateStorage): IKtx2Texture {
+
+        const ktxCreateInfo = new Ktx2Factory._ktxLib.textureCreateInfo();
+
+        // Copy to ktx create info.
+        ktxCreateInfo.baseWidth = createInfo.baseWidth;
+        ktxCreateInfo.baseHeight = createInfo.baseHeight;
+        ktxCreateInfo.vkFormat = Mapper.mapVkFormat(Ktx2Factory._ktxLib, createInfo.vkFormat ?? VkFormat.R8G8B8A8_SRGB);
+        ktxCreateInfo.baseDepth = 1;
+        ktxCreateInfo.numDimensions = 2;
+        ktxCreateInfo.numLevels = 1;
+        ktxCreateInfo.numLayers = 1;
+        ktxCreateInfo.numFaces = 1;
+        ktxCreateInfo.isArray = false;
+        ktxCreateInfo.generateMipmaps = false;
+
+        const ktxStorage = Mapper.mapStorage(Ktx2Factory._ktxLib, storage ?? KtxCreateStorage.ALLOC_STORAGE);
+
+        const ktxTexture = new Ktx2Factory._ktxLib.texture(ktxCreateInfo, ktxStorage);
+        return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture);
+    }
+
+    /**
+     * Creates a KTX2 texture from a buffer.
+     * @param buffer The buffer.
+     * @returns The KTX2 texture.
+     */
+    public createFromBuffer(buffer: ArrayBufferView<ArrayBufferLike>): IKtx2Texture {
+        const ktxTexture = new Ktx2Factory._ktxLib.texture(buffer);
+        return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture);
+    }
+
+
+}

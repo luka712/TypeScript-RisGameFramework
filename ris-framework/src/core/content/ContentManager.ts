@@ -6,7 +6,7 @@ import {
     type IImageLoader, type IFramework, TextureDescriptor, TextureFormat, ContentConfig, TextureUsage
 } from "ris-framework-api";
 import {ImageLoader} from "../loaders/ImageLoader.ts";
-import {Ktx2Loader} from "ris-ktx2";
+import {Ktx2Factory} from "ris-ktx2";
 import type {IKtx2Texture} from "ris-ktx2-api";
 
 /**
@@ -16,7 +16,7 @@ import type {IKtx2Texture} from "ris-ktx2-api";
 export class ContentManager implements IContentManager {
 
     private readonly _imageLoader: IImageLoader;
-    private readonly _ktx2Loader = new Ktx2Loader();
+    private readonly _ktx2Factory = new Ktx2Factory();
     private readonly _ktx2TextureCache: {[key: string]: IKtx2Texture} = {};
 
     /**
@@ -36,7 +36,7 @@ export class ContentManager implements IContentManager {
             return ktx2Texture;
         }
 
-        ktx2Texture = await this._ktx2Loader.loadAsync(path);
+        ktx2Texture = await this._ktx2Factory.loadAsync(path);
         if(contentConfig?.keepDataCached == true){
             this._ktx2TextureCache[path] = ktx2Texture;
         }

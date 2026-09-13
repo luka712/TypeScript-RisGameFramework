@@ -153,6 +153,7 @@ export class TextureFormatInfo {
     public static fromVkFormat(vkFormat: VkFormat): TextureFormatInfo {
         switch (vkFormat) {
             case VkFormat.R8G8B8A8_UNORM:
+            case VkFormat.R8G8B8A8_SRGB:
                 return this.rgba32();
             case VkFormat.D24_UNORM_S8_UINT:
                 return this.depth24Stencil8();
