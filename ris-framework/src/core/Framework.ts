@@ -8,14 +8,18 @@ import {ContentManager} from "./content/ContentManager.ts";
 import {WebGlRenderer} from "../webgl/WebGlRenderer.ts";
 import {WebGlBuffersFactory} from "../webgl/buffers/WebGlBuffersFactory.ts";
 import {
-    CameraFactory, GameTime,
-    type IBufferFactory, type IGeometryBuilder, type IGraphicsDevice,
+    CameraFactory, CpuImageProcessor, GameTime,
+    type IBufferFactory, type IGeometryBuilder, type IGraphicsDevice, type IImageProcessor, type IInputManager,
+    ImageLoader,
     type IMeshFactory, type ISpriteBatch, type ITextureFactory, type RenderingBackend
 } from "ris-framework-api";
 import {WebGlShaderModuleLoader} from "../webgl/shader/WebGlShaderModuleLoader.ts";
 import {TextureSamplerFilteringPreset} from "./rendering/enums.ts";
 import {SpriteBatch} from "./sprite-batch/SpriteBatch.ts";
-import type {ICameraFactory, IContentManager, IFramework, IRenderer, IWindowManager} from "ris-framework-api";
+import type {ICameraFactory, IContentManager, IFramework, IImageLoader,
+    IRenderer,
+    IWindowManager
+} from "ris-framework-api";
 import {WebGlTextureFactory} from "../webgl/texture/WebGlTextureFactory.ts";
 import {WebGlRenderPipelineFactory} from "../webgl/render-pipelines/WebGlRenderPipelineFactory.ts";
 import type {IRenderPipelineFactory} from "ris-framework-api";
@@ -67,11 +71,17 @@ export class Framework implements IFramework {
         this.cameraFactory = new CameraFactory(this);
         this.timeManager = new TimeManager(this);
         this.input = new InputManager(this);
+        this.imageProcessor = new CpuImageProcessor();
+        this.imageLoader = new ImageLoader(this);
     }
+
+    /** @inheritDoc */
+    public readonly imageLoader: IImageLoader;
 
     renderingBackend: RenderingBackend;
 
-
+    /** @inheritDoc */
+    public readonly imageProcessor :IImageProcessor;
 
     /** @inheritDoc */
     public readonly renderer : IRenderer;

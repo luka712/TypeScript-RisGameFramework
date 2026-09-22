@@ -73,10 +73,22 @@ export class Ktx2Texture implements IKtx2Texture {
 
     /** @inheritDoc */
     public compressBasis(basisParams: IKtxBasisParams | number): void {
-        const errorCode = this._ktxTexture.compressBasis(basisParams);
+        const ktxBasisParams = new this._ktxLib.basisParams();
 
-        if (errorCode !== 0) {
-            console.error(`Failed to compress basis: ${errorCode}`);
+        if(typeof basisParams === "number") {
+            ktxBasisParams.quality = basisParams;
+        } else {
+            ktxBasisParams.uastc = basisParams.uastc == true;
+            ktxBasisParams.compressionLevel = basisParams.compressionLevel ?? 2;
+            ktxBasisParams.uastcRDO = basisParams.uastcRDO ?? false;
+            ktxBasisParams.uastcRDOQuality = basisParams.uastcRDOQualityScalar ?? 1;
+        }
+
+        const errorCode = this._ktxTexture.compressBasis(ktxBasisParams);
+        const ktxErrorCode = Mapper.mapErrorCodeFromKtxLib(errorCode);
+
+        if (ktxErrorCode !== KtxErrorCode.SUCCESS) {
+            throw new Error(`Failed to compress basis: ${ktxErrorCode}`);
         }
     }
 

@@ -1,12 +1,19 @@
 import {Grid, Typography} from "@mui/material";
 import TextField from "@mui/material/TextField";
+import * as React from "react";
 
 export interface HorizontalLabelTextFieldProps {
     label: string;
     text: string;
+    onValueChange: (value: string) => void;
 }
 
-export function HorizontalLabelTextField({label, text}: HorizontalLabelTextFieldProps) {
+export function HorizontalLabelTextField({label, text, onValueChange}: HorizontalLabelTextFieldProps) {
+
+    const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        onValueChange(event.target.value);
+    }
+
     return (
         <Grid direction="row" container sx={{
             justifyContent: "center",
@@ -19,7 +26,7 @@ export function HorizontalLabelTextField({label, text}: HorizontalLabelTextField
                 </Typography>
             </Grid>
             <Grid size={8}>
-                <TextField defaultValue={text}/>
+                <TextField defaultValue={text} onChange={onChange} fullWidth={true} />
             </Grid>
         </Grid>
     )

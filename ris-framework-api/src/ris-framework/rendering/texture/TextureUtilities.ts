@@ -16,6 +16,10 @@ export class TextureUtilities {
     private static readonly _vkFormatTextureFormat: { [key: number]: number } = {
         [VkFormat.R8G8B8A8_UNORM]: TextureFormat.RGBA_8_UNORM,
         [VkFormat.R8G8B8A8_SRGB]: TextureFormat.RGBA_8_UNORM_SRGB,
+        [VkFormat.BC7_UNORM_BLOCK]: TextureFormat.BC7_RGBA_UNORM,
+        [VkFormat.ASTC_4X4_UNORM_BLOCK]: TextureFormat.ASTC_4X4_RGBA,
+        [VkFormat.BC3_UNORM_BLOCK]: TextureFormat.BC3_RGBA_UNORM,
+        [VkFormat.ETC2_R8G8B8A8_UNORM_BLOCK]: TextureFormat.ETC2_RGBA8_UNORM,
     }
 
     private static readonly _textureFormatVkFormat: { [key: number]: number } = {

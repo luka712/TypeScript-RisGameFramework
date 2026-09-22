@@ -13,41 +13,39 @@ export interface IKtxBasisParams {
      * Callers must explicitly set this value.
      * Currently, this is 2.
      */
-    compressionLevel: number;
+    compressionLevel?: number;
 
     /**
      * Gets or sets the quality level for compression.
      * QualityLevel must be in the range [1, 255].
-     *     Lower values give better compression and faster processing but lower quality,
-     *     while higher values give less compression, higher quality, and slower processing.
-     *     This parameter automatically determines values for maxEndpoints, maxSelectors, endpointRDOThreshold,
-     *     and selectorRDOThreshold for the target quality level.
-     *     Setting these parameters overrides the values determined by QualityLevel,
-     *     which defaults to 128 if neither it nor both of maxEndpoints and maxSelectors have been set.
+     * Lower values give better compression and faster processing but lower quality,
+     * while higher values give less compression, higher quality, and slower processing.
+     * This parameter automatically determines values for maxEndpoints, maxSelectors, endpointRDOThreshold,
+     * and selectorRDOThreshold for the target quality level.
+     * Setting these parameters overrides the values determined by QualityLevel,
+     * which defaults to 128 if neither it nor both of maxEndpoints and maxSelectors have been set.
      * This controls the visual quality target of ETC1S encoding.
      */
-    qualityLevel: number;
+    qualityLevel?: number;
 
-    /**
-     * Specifies whether to use UASTC encoding.
-     */
-    uastc: boolean;
+    /** True to use UASTC base, false to use ETC1S base. */
+    uastc?: boolean;
 
     /**
      * Specifies UASTC encoding options.
      */
-    uastcFlags: KtxUastcFlags;
+    uastcFlags?: KtxUastcFlags;
 
     /**
      * Tunes codec parameters for better quality on normal maps (no selector RDO, no endpoint RDO) and sets the texture's DFD appropriately.
      * Only valid for linear textures.
      */
-    normalMap: boolean;
+    normalMap?: boolean;
 
     /**
      * Number of threads used for compression. Default is 1.
      */
-    threadCount: number;
+    threadCount?: number;
 
     /**
      * A swizzle to apply before encoding.
@@ -55,12 +53,12 @@ export interface IKtxBasisParams {
      * If both this and preSwizzle are specified, ktxTexture_CompressBasisEx will raise KTX_INVALID_OPERATION.
      * Usable with both ETC1S and UASTC.
      */
-    inputSwizzle: string[];
+    inputSwizzle?: string[];
 
     /**
      * Enable Rate Distortion Optimization (RDO) post-processing.
      */
-    uastcRDO: boolean;
+    uastcRDO?: boolean;
 
     /**
      * UASTC RDO quality scalar (lambda).
@@ -69,10 +67,8 @@ export interface IKtxBasisParams {
      * The full range is [.001,50.0].
      * Default is 1.0.
      */
-    uastcRDOQualityScalar: number;
+    uastcRDOQualityScalar?: number;
 
-    /**
-     * The verbose flag controls the amount of information printed to console.
-     */
-    verbose: boolean;
+    /** The verbose flag controls the amount of information printed to console. */
+    verbose?: boolean;
 }

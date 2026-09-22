@@ -6,7 +6,7 @@ import {
 } from "ris-framework-api";
 import {create} from "zustand";
 import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
-import {decodeImage, getKtx2Texture, isDecodableImage, isKtx2File} from "../service/TextureUtilities.ts";
+import {decodeImageAsync, getKtx2Texture, isDecodableImage, isKtx2File} from "../service/TextureUtilities.ts";
 import {VkFormat} from "ris-ktx2-api";
 
 type TextureSelectedListener = (tex: ITexture2DContainer | null) => void;
@@ -27,7 +27,7 @@ interface TextureStore {
     getSelectedTexture: () => ITexture2DContainer | null;
     setSelectedTexture: (texture: ITexture2DContainer | null) => void;
     subscribeTextureSelected: (listener: TextureSelectedListener) => () => void;
-    addTexture: (file: File) => Promise<void>;
+    addTexture: (file: File | ITexture2DContainer) => Promise<void>;
     removeTexture: (texContainer: ITexture2DContainer) => void;
     setTextureFormat: (value: TextureFormat) => void;
     setMipmapLevel: (value: number) => void;
@@ -76,9 +76,9 @@ function recreateTexture(
         container.texture?.dispose();
 
         texture = framework.textureFactory.create(
-            image.width,
-            image.height,
-            image.pixels,
+            image.baseWidth,
+            image.baseHeight,
+            image.getData(0),
             4,
             container.name,
             DEFAULT_USAGE,
@@ -150,52 +150,62 @@ export const useTextureStore = create<TextureStore>((set, get) => {
         },
 
         addTexture: async (file) => {
-            if (get().textures.some((t) => t.name === file.name)) {
-                console.warn(`Texture already added: ${file.name}`);
-                return;
+
+            if(file instanceof File) {
+
+                if (get().textures.some((t) => t.name === file.name)) {
+                    console.warn(`Texture already added: ${file.name}`);
+                    return;
+                }
+
+                const framework = get().framework;
+                if (!framework) {
+                    throw new Error("Framework has not been initialized");
+                }
+
+                let container: ITexture2DContainer;
+
+                if (isDecodableImage(file)) {
+                    const image = await decodeImageAsync(framework, file);
+                    const texture = framework.textureFactory.create(
+                        image.baseWidth,
+                        image.baseHeight,
+                        image.getData(0)!,
+                        image.channels,
+                        file.name,
+                    );
+
+                    container = {
+                        name: file.name,
+                        texture,
+                        image,
+                        ktxContainer: null,
+                    };
+                } else if (isKtx2File(file)) {
+                    const ktx = await getKtx2Texture(file);
+                    const texture = framework.textureFactory.createFromKtx2(ktx.createCopy());
+
+                    container = {
+                        name: file.name,
+                        texture,
+                        ktxContainer: ktx,
+                        image: null,
+                    };
+                } else {
+                    throw new Error(`Unsupported file type: ${file.name}`);
+                }
+
+                set((state) => ({
+                    textures: [...state.textures, container],
+                }));
+                applySelection(container);
             }
-
-            const framework = get().framework;
-            if (!framework) {
-                throw new Error("Framework has not been initialized");
+            else {
+                set((state) => ({
+                    textures: [...state.textures, file],
+                }));
+                applySelection(file);
             }
-
-            let container: ITexture2DContainer;
-
-            if (isDecodableImage(file)) {
-                const image = await decodeImage(file);
-                const texture = framework.textureFactory.create(
-                    image.width,
-                    image.height,
-                    image.pixels,
-                    4,
-                    file.name,
-                );
-
-                container = {
-                    name: file.name,
-                    texture,
-                    image,
-                    ktxContainer: null,
-                };
-            } else if (isKtx2File(file)) {
-                const ktx = await getKtx2Texture(file);
-                const texture = framework.textureFactory.createFromKtx2(ktx.createCopy());
-
-                container = {
-                    name: file.name,
-                    texture,
-                    ktxContainer: ktx,
-                    image: null,
-                };
-            } else {
-                throw new Error(`Unsupported file type: ${file.name}`);
-            }
-
-            set((state) => ({
-                textures: [...state.textures, container],
-            }));
-            applySelection(container);
         },
 
         setTextureFormat: (value) => {

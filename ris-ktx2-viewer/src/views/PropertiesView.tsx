@@ -3,11 +3,11 @@ import SamplerFilterSelect from "../components/SamplerFilterSelect.tsx";
 import {useSamplerStore} from "../store/SamplerStore.ts";
 import TextureFormatSelect from "../components/TextureFormatSelect.tsx";
 import {useTextureStore} from "../store/TextureStore.ts";
-import {GenerateMipmapsSelect} from "../components/GenerateMipmapsSelect.tsx";
+import {CheckboxField} from "../components/CheckboxField.tsx";
 import MipLevelSelect from "../components/MipLevelSelect.tsx";
 import {View2D, View3D} from "../model/View.ts";
 import {useAppStore} from "../store/AppStore.ts";
-import StringSelect from "../components/StringSelect.tsx";
+import LabelStringSelect from "../components/LabelStringSelect.tsx";
 
 /**
  * Editable sampler / texture properties for the selected texture.
@@ -41,7 +41,7 @@ export function PropertiesView() {
                }}>
             <Stack direction="column">
 
-                <StringSelect label="View" value={view} options={viewOptions} onValueChange={setView} />
+                <LabelStringSelect label="View" value={view} options={viewOptions} onValueChange={setView} />
                 <Divider />
                 <SamplerFilterSelect
                     label="Filter"
@@ -57,7 +57,7 @@ export function PropertiesView() {
                 {canGenerateMips() && (
                     <>
                         <Divider/>
-                        <GenerateMipmapsSelect
+                        <CheckboxField
                             label="Generate Mipmaps"
                             value={generateMipmaps}
                             onValueChange={setGenerateMipmaps}

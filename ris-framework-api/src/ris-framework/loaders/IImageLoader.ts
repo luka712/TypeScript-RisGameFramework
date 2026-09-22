@@ -1,4 +1,4 @@
-import {ImageData} from "../data/ImageData";
+import {RawImageData} from "../image/RawImageData";
 
 /**
  * The image loader interface.
@@ -11,15 +11,7 @@ export interface IImageLoader {
      * @param cache - Whether to cache the image in a persistent cache.
      * @returns The .
      */
-    load(path: string, cache?: boolean): ImageData;
-
-    /**
-     * Loads an image from a file.
-     * @param path - The file path.
-     * @param cache - Whether to cache the image in a persistent cache.
-     * @returns The .
-     */
-    loadAsync(path: string, cache?: boolean): Promise<ImageData>;
+    loadAsync(path: string, cache?: boolean): Promise<RawImageData>;
 
     /**
      * Disposes of the temporary cache.

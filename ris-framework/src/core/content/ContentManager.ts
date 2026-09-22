@@ -3,11 +3,11 @@ import {
     type IContentManager,
     type IShaderModuleLoader,
     type ITexture2D,
-    type IImageLoader, type IFramework, TextureDescriptor, TextureFormat, ContentConfig, TextureUsage
+    type IFramework, TextureDescriptor, TextureFormat, ContentConfig, TextureUsage
 } from "ris-framework-api";
-import {ImageLoader} from "../loaders/ImageLoader.ts";
 import {Ktx2Factory} from "ris-ktx2";
 import type {IKtx2Texture} from "ris-ktx2-api";
+
 
 /**
  * The content manager.
@@ -15,7 +15,6 @@ import type {IKtx2Texture} from "ris-ktx2-api";
  */
 export class ContentManager implements IContentManager {
 
-    private readonly _imageLoader: IImageLoader;
     private readonly _ktx2Factory = new Ktx2Factory();
     private readonly _ktx2TextureCache: {[key: string]: IKtx2Texture} = {};
 
@@ -24,8 +23,6 @@ export class ContentManager implements IContentManager {
      * @param shaderModuleLoader The shader module loader.
      */
     public constructor(private readonly _framework: IFramework, public readonly shaderModuleLoader: IShaderModuleLoader) {
-
-        this._imageLoader = new ImageLoader(_framework);
     }
 
     /** @inheritDoc */
@@ -67,9 +64,10 @@ export class ContentManager implements IContentManager {
         }
 
         // TODO: pass texture descriptor
-        const data = await this._imageLoader.loadAsync(path, contentConfig?.keepDataCached);
+        const imageLoader = this._framework.imageLoader;
+        const data = await imageLoader.loadAsync(path, contentConfig?.keepDataCached);
         return this._framework.textureFactory.create(
-            data.width, data.height,
+            data.baseWidth, data.baseHeight,
             data.getData(0) as Uint8Array,
             data.channels,
             undefined,

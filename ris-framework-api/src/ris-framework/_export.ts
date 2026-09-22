@@ -1,7 +1,7 @@
 export * from "./IFramework";
 export * from "./rendering/texture/_export-texture";
 export * from "./rendering/buffers/_export-buffers";
-export * from "./data/_export-data";
+export * from "./data/_export";
 export * from "./geometry/_export-geometry";
 export * from "./rendering/_export-rendering";
 export * from "./rendering/render-pipelines/_export-render-pipelines";
@@ -22,3 +22,4 @@ export * from "./utilities/_export"
 export * from "./meshes/_export";
 export * from "./material/_export";
 export * from "./input/_export";
+export * from "./image/_export";

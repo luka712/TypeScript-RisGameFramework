@@ -15,6 +15,7 @@ import {ITimeManager} from "./time/ITimeManager";
 import {IInputManager} from "./input/IInputManager";
 import {IWindowManager} from "./window/IWindowManager";
 import {GameTime} from "./time/GameTime";
+import {IImageProcessor} from "./image/IImageProcessor";
 
 /**
  * The framework interface.
@@ -95,13 +96,14 @@ export interface IFramework {
      */
     readonly timeManager: ITimeManager;
 
-    /**
-     * The input manager.
-     */
+    /** The input manager. */
     readonly input: IInputManager;
 
     /** The window manager. */
     readonly windowManager: IWindowManager;
+
+    /** The image processor. */
+    readonly imageProcessor: IImageProcessor;
 
     /**
      * Called right after the framework is initialized and before the render loop starts.

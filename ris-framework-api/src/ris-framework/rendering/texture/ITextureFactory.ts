@@ -39,7 +39,7 @@ export interface ITextureFactory {
      * @returns The texture.
      */
     create(width: number, height: number,
-           data?: Uint8Array | HTMLImageElement,
+           data?: number[] | HTMLImageElement | ArrayBufferView,
            channels?: number,
            label?: string,
            usage?: TextureUsage,

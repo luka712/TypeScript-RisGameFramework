@@ -7,7 +7,7 @@ interface StringSelectProps {
     onValueChange: (value: string) => void;
 }
 
-export default function StringSelect({
+export default function LabelStringSelect({
                                          label,
                                          value,
                                          onValueChange,

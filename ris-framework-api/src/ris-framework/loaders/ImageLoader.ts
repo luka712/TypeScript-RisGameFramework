@@ -1,9 +1,7 @@
-import {
-    type IFramework,
-    type IImageLoader,
-    TextureFormat,
-    ImageData,
-} from "ris-framework-api";
+import {IImageLoader} from "./IImageLoader";
+import {IFramework} from "../IFramework";
+import {TextureFormat} from "../rendering/texture/TextureFormat";
+import {RawImageData} from "../image/RawImageData";
 
 /**
  * The image loader.
@@ -14,16 +12,16 @@ import {
 export class ImageLoader implements IImageLoader {
 
     /**
-     * Temporary cache is released when the engine clears it.
+     * A temporary cache is released when the engine clears it.
      * It exists only for the duration of a loading/initialization operation.
      */
-    private readonly _tempCache: Record<string, ImageData> = {};
+    private readonly _tempCache: Record<string, RawImageData> = {};
 
     /**
      * Persistent cache is released only when the application
      * is closed or the cache is manually cleared.
      */
-    private readonly _permanentCache: Record<string, ImageData> = {};
+    private readonly _permanentCache: Record<string, RawImageData> = {};
 
     /**
      * The constructor.
@@ -40,12 +38,12 @@ export class ImageLoader implements IImageLoader {
     private async _loadImage(
         path: string,
         preferredTextureFormat: TextureFormat,
-    ): Promise<ImageData> {
+    ): Promise<RawImageData> {
 
         return new Promise((resolve, reject) => {
             const image = new Image();
             image.onload = () => {
-                resolve(new ImageData(image, image.width, image.height, 4));
+                resolve(new RawImageData([image], image.width, image.height, 4));
             };
             image.onerror = (e) => {
                 console.error("failed to load", image.src, e);
@@ -55,28 +53,11 @@ export class ImageLoader implements IImageLoader {
         });
     }
 
-    /**
-     * Loads an image synchronously.
-     *
-     * This is not supported in the browser because fetch() is asynchronous.
-     */
-    public load(
-        path: string,
-        cache: boolean = false,
-    ): ImageData {
-        throw new Error(
-            "ImageLoader.Load() is not supported in the browser. " +
-            "Use LoadAsync() instead.",
-        );
-    }
-
-    /**
-     * Loads an image asynchronously.
-     */
+    /** @inheritDoc */
     public async loadAsync(
         path: string,
         cache: boolean = false,
-    ): Promise<ImageData> {
+    ): Promise<RawImageData> {
 
         const selectedCache = cache
             ? this._permanentCache
@@ -98,11 +79,7 @@ export class ImageLoader implements IImageLoader {
         return imageData;
     }
 
-
-
-    /**
-     * Called by the engine to dispose of the temporary cache.
-     */
+    /** @inheritDoc */
     public disposeOfTemporaryCache(): void {
         for (const imageData of Object.values(this._tempCache)) {
             imageData.dispose();
