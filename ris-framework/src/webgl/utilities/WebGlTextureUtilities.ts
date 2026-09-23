@@ -42,8 +42,10 @@ export class WebGlTextureUtilities {
         const internalFormat = WebGlConverter.convertInternalFormat(gl, textureFormat);
         const format = WebGlConverter.convertToPixelFormat(gl, textureFormat);
 
-        let mipLevels = 1;
-        if (useMipMaps) {
+        let mipLevels = data?.length ?? 1;
+        // We can generate only if mip levels are not provided.
+        const generateMipMaps = useMipMaps && mipLevels <= 1;
+        if (generateMipMaps) {
             mipLevels = Math.floor(Math.log2(Math.max(width, height))) + 1;
         }
 
@@ -53,13 +55,15 @@ export class WebGlTextureUtilities {
             for (let i = 0; i < mipLevels; i++) {
 
                 const mipLevelData = data[i];
+                const levelWidth = width >> i;
+                const levelHeight = height >> i;
 
                 if (mipLevelData instanceof HTMLImageElement) {
-                    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, mipLevelData);
+                    gl.texSubImage2D(gl.TEXTURE_2D, i, 0, 0, levelWidth, levelHeight, format, gl.UNSIGNED_BYTE, mipLevelData);
                 } else if (mipLevelData instanceof Uint8Array) {
-                    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, mipLevelData);
+                    gl.texSubImage2D(gl.TEXTURE_2D, i, 0, 0, levelWidth, levelHeight, format, gl.UNSIGNED_BYTE, mipLevelData);
                 } else if (mipLevelData) {
-                    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, width, height, format, gl.UNSIGNED_BYTE, mipLevelData);
+                    gl.texSubImage2D(gl.TEXTURE_2D, i, 0, 0, levelWidth, levelHeight, format, gl.UNSIGNED_BYTE, mipLevelData);
                 }
                 else if(!mipLevelData) {
                     // If not must be empty array, so we can safely ignore it.
@@ -71,7 +75,7 @@ export class WebGlTextureUtilities {
         }
 
         // Generate mipmaps.
-        if (mipLevels > 1) {
+        if (generateMipMaps) {
             gl.generateMipmap(gl.TEXTURE_2D);
         }
 

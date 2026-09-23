@@ -1,7 +1,6 @@
 import {Ktx2Texture} from "./Ktx2Texture.ts";
 import {createKtxModuleAsync} from "./index.ts";
-import {type IKtx2Texture, VkFormat} from "ris-ktx2-api";
-import type {IKtxCreateInfo} from "../../ris-ktx2-api/src";
+import {type IKtx2Texture, VkFormat, type IKtxTextureCreateInfo} from "ris-ktx2-api";
 import {KtxCreateStorage} from "../../ris-ktx2-api/src/ris-ktx2/KtxCreateStorage.ts";
 import {Mapper} from "./Mapper.ts";
 
@@ -52,7 +51,7 @@ export class Ktx2Factory {
      * @param storage - The storage.
      * @returns The KTX2 texture.
      */
-    public create(createInfo: IKtxCreateInfo, storage?: KtxCreateStorage): IKtx2Texture {
+    public create(createInfo: IKtxTextureCreateInfo, storage?: KtxCreateStorage): IKtx2Texture {
 
         const ktxCreateInfo = new Ktx2Factory._ktxLib.textureCreateInfo();
 
@@ -62,7 +61,7 @@ export class Ktx2Factory {
         ktxCreateInfo.vkFormat = Mapper.mapVkFormat(Ktx2Factory._ktxLib, createInfo.vkFormat ?? VkFormat.R8G8B8A8_SRGB);
         ktxCreateInfo.baseDepth = 1;
         ktxCreateInfo.numDimensions = 2;
-        ktxCreateInfo.numLevels = 1;
+        ktxCreateInfo.numLevels = createInfo.numLevels ?? 1;
         ktxCreateInfo.numLayers = 1;
         ktxCreateInfo.numFaces = 1;
         ktxCreateInfo.isArray = false;

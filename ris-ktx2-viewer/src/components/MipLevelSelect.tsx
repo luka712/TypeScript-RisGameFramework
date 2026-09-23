@@ -1,4 +1,4 @@
-import {MenuItem, Paper, Select, type SelectChangeEvent, Stack, Typography} from "@mui/material";
+import {MenuItem, Select, type SelectChangeEvent, Stack, Typography} from "@mui/material";
 import {TextureFormat} from "ris-framework-api";
 import {useTextureStore} from "../store/TextureStore.ts";
 
@@ -6,19 +6,19 @@ interface MipLevelSelectProps {
     label: string;
     value: number;
     valueMax: number,
-    onValueChange: (value: TextureFormat) => void;
+    onValueChange: (value: number) => void;
 }
 
 export default function MipLevelSelect({
-                                                label,
-                                                value,
-                                                onValueChange,
-                                            }: MipLevelSelectProps) {
+                                           label,
+                                           value,
+                                           onValueChange,
+                                       }: MipLevelSelectProps) {
 
     const mipLevels = useTextureStore((state) => state.mipLevels);
 
     const levels = [];
-    for(let i = 0; i < mipLevels; i++) {
+    for (let i = 0; i < mipLevels; i++) {
         levels.push(<MenuItem value={i}>{i}</MenuItem>);
     }
 
@@ -27,22 +27,22 @@ export default function MipLevelSelect({
     };
 
     return (
-            <Stack
-                direction="column"
-                spacing={0}
-                sx={{paddingLeft: 2, paddingRight: 2, paddingTop: 1, paddingBottom: 1}}
+        <Stack
+            direction="column"
+            spacing={0}
+            sx={{paddingLeft: 2, paddingRight: 2, paddingTop: 1, paddingBottom: 1}}
+        >
+            <Typography component="span" sx={{opacity: 0.5}}>
+                {label}
+            </Typography>
+            <Select
+                value={value}
+                label={label}
+                sx={{marginTop: 1, marginBottom: 1, height: "40px"}}
+                onChange={handleChange}
             >
-                <Typography component="span" sx={{opacity: 0.5}}>
-                    {label}
-                </Typography>
-                <Select
-                    value={value}
-                    label={label}
-                    sx={{marginTop: 1, marginBottom: 1, height: "40px"}}
-                    onChange={handleChange}
-                >
-                    {levels}
-                </Select>
-            </Stack>
+                {levels}
+            </Select>
+        </Stack>
     );
 }

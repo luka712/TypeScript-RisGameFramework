@@ -24,6 +24,25 @@ export class CpuImageProcessor implements IImageProcessor {
     }
 
     /** @inheritdoc */
+    public getBytesFromHtmlImage(image: HTMLImageElement): Uint8ClampedArray<ArrayBuffer> {
+        const canvas = document.createElement("canvas");
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(image, 0, 0);
+
+        const imageData = ctx.getImageData(
+            0,
+            0,
+            image.naturalWidth,
+            image.naturalHeight
+        );
+
+        return imageData.data;
+    }
+
+    /** @inheritdoc */
     public generateMipmaps(image: RawImageData, levels = -1): RawImageData {
 
         const data = image.getData(0);

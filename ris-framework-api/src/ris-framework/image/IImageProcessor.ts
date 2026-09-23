@@ -18,4 +18,11 @@ export interface IImageProcessor {
      * @returns The new image data with mipmaps.
      */
     generateMipmaps(image: RawImageData, levels?: number): RawImageData;
+
+    /**
+     * Get the bytes from an HTML image element.
+     * @param image The image to get the bytes from.
+     * @returns The bytes of the image.
+     */
+    getBytesFromHtmlImage(image: HTMLImageElement): Uint8ClampedArray<ArrayBuffer>;
 }

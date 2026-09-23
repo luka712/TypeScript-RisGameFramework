@@ -69,7 +69,11 @@ export class WebGlTexture2D extends ATexture2D {
 
         let width = this.width;
         let height = this.height;
-        this._mipLevels = this._generateMipMaps ? TextureUtilities.mipLevels(width, height) : 1;
+
+        // If we can generate mipmaps, we need to calculate the number of mip levels.
+        if(this._generateMipMaps) {
+            this._mipLevels = TextureUtilities.mipLevels(width, height);
+        }
         this._size = 0;
 
         for (let i = 0; i < this.mipLevels; i++) {

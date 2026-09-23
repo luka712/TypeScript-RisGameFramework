@@ -1,6 +1,8 @@
 export class ConvertParameters {
     public fileName = "";
     public encoding = "";
-    public compressionLevel = "";
     public generateMipmaps = false;
+    public compression = "";
+    public compressionLevelZLib = 0;
+    public compressionLevelZstd = 0;
 }

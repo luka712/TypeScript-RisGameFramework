@@ -34,8 +34,19 @@ export class Ktx2Texture implements IKtx2Texture {
         this.width = ktxTexture.baseWidth;
         this.height = ktxTexture.baseHeight;
         this.dataSize = ktxTexture.dataSize;
-        this.numLevels = ktxTexture.numLevels ?? 1;
         this.vkFormat = ktxTexture.vkFormat;
+
+        debugger;
+        // Ktx texture does not expose levels info, so we query until null.
+        let level = 0;
+        while (true) {
+            const data = this.getImage(level);
+            if (!data) {
+                break;
+            }
+            level++;
+        }
+        this.numLevels = level;
     }
 
     /** @inheritDoc */
@@ -186,4 +197,23 @@ export class Ktx2Texture implements IKtx2Texture {
         return this._ktxTexture.writeToMemory();
     }
 
+    /** @inheritDoc */
+    public deflateZlib(compressionLevel: number): void {
+        const errorCode = this._ktxTexture.deflateZLIB(compressionLevel);
+        const ktxErrorCode = Mapper.mapErrorCodeFromKtxLib(errorCode);
+
+        if (ktxErrorCode != KtxErrorCode.SUCCESS) {
+            throw new Error(`Failed to deflate Zstd: ${ktxErrorCode}`);
+        }
+    }
+
+    /** @inheritDoc */
+    public deflateZstd(compressionLevel: number): void {
+         const errorCode = this._ktxTexture.deflateZstd(compressionLevel);
+         const ktxErrorCode = Mapper.mapErrorCodeFromKtxLib(errorCode);
+
+         if (ktxErrorCode != KtxErrorCode.SUCCESS) {
+             throw new Error(`Failed to deflate Zstd: ${ktxErrorCode}`);
+         }
+    }
 }

@@ -1,4 +1,4 @@
-import {Box, Button, createTheme, Grid, Paper, Stack, Tab, Tabs, ThemeProvider} from "@mui/material";
+import {Box, createTheme, Grid, Paper, Stack, Tab, Tabs, ThemeProvider} from "@mui/material";
 import './App.css'
 import {useEffect, useMemo, useRef, useState} from "react";
 import DropArea from "./components/DropArea.tsx";
@@ -13,7 +13,6 @@ import {
     InspectTextureMipsMaterial,
     OrbitCamera,
     PrimitiveStateDescriptor,
-    Rect,
     UnlitMaterial, UnlitMaterialDescriptor
 } from "ris-framework-api";
 import {Framework} from "ris-framework";
@@ -26,6 +25,7 @@ import {FooterView} from "./views/FooterView.tsx";
 import {TextureSamplerFilteringPreset} from "../../ris-framework/src/core/rendering/enums.ts";
 import {View2D, View3D} from "./model/View.ts";
 import ConvertDialog from "./dialog/ConvertDialog.tsx";
+import {useConvertStore} from "./store/ConvertStore.ts";
 
 
 function App() {
@@ -44,11 +44,12 @@ function App() {
     const setFrameworkAppStore = useAppStore((state) => state.setFramework);
     const setFrameworkSamplerStore = useSamplerStore((state) => state.setFramework);
     const setFrameworkTextureStore = useTextureStore((state) => state.setFramework);
+    const setFrameworkConvertStore = useConvertStore((state) => state.setFramework);
     const subscribeTextureSelected = useTextureStore((state) => state.subscribeTextureSelected);
     const getSelectedTexture = useTextureStore((state) => state.getSelectedTexture);
     const getSampler = useSamplerStore((state) => state.getSampler);
-    const getMipLevel = useTextureStore((state) => state.getMipLevel);
     const getView = useAppStore((state) => state.getView);
+    const getSelectedMipLevel = useTextureStore((state) => state.getMipLevel);
 
     const [framework, setFramework] = useState<IFramework | null>(null);
     const [tab, setTab] = useState(0);
@@ -122,7 +123,6 @@ function App() {
 
             const selectedTexture = getSelectedTexture();
             const sampler = getSampler();
-            const mipLevel = getMipLevel();
 
             if (selectedTexture?.texture) {
 
@@ -164,7 +164,7 @@ function App() {
                     if (mipMaterial) {
                         mipMaterial.texture = tex;
                         mipMaterial.textureSampler = sampler;
-                        mipMaterial.mipLevel = mipLevel;
+                        mipMaterial.mipLevel = getSelectedMipLevel();
 
                         const mesh = quadMeshRef.current!;
                         mipMaterial.beforeRender();
@@ -194,12 +194,14 @@ function App() {
         setFrameworkAppStore(fw);
         setFrameworkSamplerStore(fw);
         setFrameworkTextureStore(fw);
+        setFrameworkConvertStore(fw);
     }, [
         getSampler,
         getSelectedTexture,
         setFrameworkAppStore,
         setFrameworkSamplerStore,
         setFrameworkTextureStore,
+        setFrameworkConvertStore,
     ]);
 
     const gpuProperties = useMemo(

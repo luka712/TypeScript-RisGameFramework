@@ -151,4 +151,26 @@ export interface IKtx2Texture {
      */
     writeToMemory(): ArrayBufferView;
 
+    /**
+     * Deflates the data in a KTX2 texture using ZLIB.
+     *
+     * The texture's level index, data size, DFD, data pointer, and
+     * supercompression scheme are updated after successful compression.
+     *
+     * @param compressionLevel Compression level from 1 to 9.
+     * Lower values provide faster compression.
+     */
+    deflateZlib(compressionLevel: number): void;
+
+    /**
+     * Deflates the data in a KTX2 texture using Zstandard.
+     *
+     * The texture's level index, data size, DFD, data pointer, and
+     * supercompression scheme are updated after successful compression.
+     *
+     * @param compressionLevel Compression level from 1 to 22.
+     * Lower values provide faster compression. Values above 20 should
+     * be used with caution as they require more memory.
+     */
+    deflateZstd(compressionLevel: number): void;
 }

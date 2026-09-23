@@ -1,7 +1,7 @@
 import type {VkFormat} from "./VkFormat.ts";
 
 /** The creation info for KTX2 texture. */
-export interface IKtxCreateInfo {
+export interface IKtxTextureCreateInfo {
 
     /** The base width of the texture. */
     baseWidth: number;
@@ -11,4 +11,7 @@ export interface IKtxCreateInfo {
 
     /** The Vulkan format of the texture. */
     vkFormat?: VkFormat;
+
+    /** The number of mipmap levels. By default, it is 1. */
+    numLevels?: number;
 }

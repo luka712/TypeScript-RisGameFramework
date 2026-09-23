@@ -18,12 +18,12 @@ interface TextureStore {
     resolution: string;
     size: string;
     mipLevel: number,
+    getMipLevel: () => number,
     mipLevels: number;
     textures: ITexture2DContainer[];
     selectedTexture: ITexture2DContainer | null;
 
     setFramework: (framework: IFramework) => void;
-    getMipLevel: () => number;
     getSelectedTexture: () => ITexture2DContainer | null;
     setSelectedTexture: (texture: ITexture2DContainer | null) => void;
     subscribeTextureSelected: (listener: TextureSelectedListener) => () => void;
@@ -117,13 +117,12 @@ export const useTextureStore = create<TextureStore>((set, get) => {
         resolution: "0x0",
         size: "0 MiB",
         mipLevel: 0,
+        getMipLevel: () => get().mipLevel,
         mipLevels: 1,
         textures: [],
         selectedTexture: null,
 
         setFramework: (framework) => set({framework}),
-
-        getMipLevel: () => get().mipLevel,
 
         getSelectedTexture: () => get().selectedTexture,
 
@@ -220,9 +219,8 @@ export const useTextureStore = create<TextureStore>((set, get) => {
         },
 
         setMipmapLevel: (value) => {
+            debugger;
             get().mipLevel = value;
-
-            // TODO: set uniform buffer
         },
 
         setGenerateMipmaps: (value) => {

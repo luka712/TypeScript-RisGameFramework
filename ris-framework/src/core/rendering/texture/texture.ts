@@ -19,7 +19,7 @@ export abstract class ATexture2D implements ITexture2D {
     protected _state: State = State.CREATED;
     protected _size = 0;
     protected _generateMipMaps: boolean = false;
-    protected _mipLevels = 0;
+    protected _mipLevels: number;
     protected _data?: Uint8Array[];
     protected _blockSize: vec2;
 
@@ -33,7 +33,7 @@ export abstract class ATexture2D implements ITexture2D {
         descriptor: TextureDescriptor,
     ) {
 
-        if(!descriptor.textureFormat){
+        if (!descriptor.textureFormat) {
             throw new Error("Texture format is required.");
         }
 
@@ -43,10 +43,11 @@ export abstract class ATexture2D implements ITexture2D {
         this.textureViewFormat = descriptor.textureFormat;
         this.width = descriptor.width;
         this.height = descriptor.height;
-        this._generateMipMaps = descriptor.generateMipmaps;
         this._data = descriptor.data;
+        this._mipLevels = this._data?.length ?? 1;
+        this._generateMipMaps = descriptor.generateMipmaps && this._mipLevels <= 1;
         this.label = descriptor.label;
-        this._blockSize = descriptor.blockSize ?? vec2.fromValues(1,1);
+        this._blockSize = descriptor.blockSize ?? vec2.fromValues(1, 1);
 
         if (this.width == 0 || this.height == 0) {
             throw new Error("Width or height cannot be zero.");

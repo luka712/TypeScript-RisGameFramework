@@ -30,7 +30,6 @@ export function FooterView() {
     }
 
     const resolution = useTextureStore((store) => store.resolution);
-    const mipLevels = useTextureStore((store) => store.mipLevels);
     const memory = useTextureStore((store) => store.size);
     const ktx2Format = useTextureStore((store) => {
         const ktx2 = store.selectedTexture?.ktxContainer;
@@ -42,7 +41,12 @@ export function FooterView() {
         }
         return  null;
     });
-    const ktx2 = useTextureStore((store) => store.selectedTexture?.ktxContainer);
+
+    const selectedTexture = useTextureStore((store) => store.selectedTexture);
+
+    const ktx2 = selectedTexture?.ktxContainer;
+    debugger;
+    const mipLevels = selectedTexture?.texture?.mipLevels ?? 0;
 
     return (
         <Paper

@@ -27,6 +27,12 @@ import {
 import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
 import {CheckboxField} from "../components/CheckboxField.tsx";
 import {SliderField} from "../components/SliderField.tsx";
+import {ConvertParameters} from "../model/ConvertParameters.ts";
+import {
+    KTX_COMPRESSION_NONE,
+    KTX_COMPRESSION_ZLIB,
+    KTX_COMPRESSION_ZSTANDARD
+} from "../model/Ktx2CompressionConstants.ts";
 
 
 export default function ConvertDialog() {
@@ -39,9 +45,9 @@ export default function ConvertDialog() {
     }
 
     const compressionOptions = [
-        "NONE",
-        "ZStandard",
-        "ZLib"
+        KTX_COMPRESSION_NONE,
+        KTX_COMPRESSION_ZSTANDARD,
+        KTX_COMPRESSION_ZLIB
     ];
 
     const [open, setOpen] = React.useState(false);
@@ -49,7 +55,7 @@ export default function ConvertDialog() {
     const [converting, setConverting] = React.useState(false);
     const [encoding, setEncoding] = React.useState(KTX_ENCODING_BASIS_UNIVERSAL_UASTC);
     const [compression, setCompression] = React.useState(compressionOptions[1]);
-    const [compressionLevelZStandard, setCompressionLevelZStandard] = React.useState(19);
+    const [compressionLevelZstd, setCompressionLevelZstd] = React.useState(19);
     const [compressionLevelZLib, setCompressionLevelZLib] = React.useState(6);
     const [compressionQuality, setCompressionQuality] = React.useState(KTX_MEDIUM_QUALITY);
     const [generateMipmaps, setGenerateMipmaps] = React.useState(false);
@@ -91,7 +97,16 @@ export default function ConvertDialog() {
 
     const handleConvert = async () => {
         setConverting(true);
-        const result = await convertToKtx2Async(filename, encoding, compressionQuality);
+
+        const convertParams = new ConvertParameters();
+        convertParams.fileName = filename;
+        convertParams.encoding = encoding;
+        convertParams.generateMipmaps = generateMipmaps;
+        convertParams.compression = compression;
+        convertParams.compressionLevelZstd = compressionLevelZstd;
+        convertParams.compressionLevelZLib = compressionLevelZLib;
+
+        const result = await convertToKtx2Async(convertParams);
         if (result.success) {
 
             const texture = framework!.textureFactory.createFromKtx2(result.ktx!);
@@ -144,11 +159,11 @@ export default function ConvertDialog() {
                             {/* ZStandard */}
                             {compression === compressionOptions[1] &&
                                 <SliderField label={"Compression Level"}
-                                             value={compressionLevelZStandard}
+                                             value={compressionLevelZstd}
                                              min={1}
                                              max={22}
                                              rowDirection={true}
-                                             onValueChange={setCompressionLevelZStandard}/>
+                                             onValueChange={setCompressionLevelZstd}/>
                             }
                             {/* ZLIB */}
                             {compression === compressionOptions[2] &&

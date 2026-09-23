@@ -1,4 +1,4 @@
-import {Container, Divider, Paper, Stack} from "@mui/material";
+import {Divider, Paper, Stack} from "@mui/material";
 import SamplerFilterSelect from "../components/SamplerFilterSelect.tsx";
 import {useSamplerStore} from "../store/SamplerStore.ts";
 import TextureFormatSelect from "../components/TextureFormatSelect.tsx";
@@ -8,12 +8,15 @@ import MipLevelSelect from "../components/MipLevelSelect.tsx";
 import {View2D, View3D} from "../model/View.ts";
 import {useAppStore} from "../store/AppStore.ts";
 import LabelStringSelect from "../components/LabelStringSelect.tsx";
+import * as React from "react";
 
 /**
  * Editable sampler / texture properties for the selected texture.
  */
 export function PropertiesView() {
     const selectedTexture = useTextureStore((store) => store.selectedTexture);
+
+    const [mipLevelState, setMipLevelState] = React.useState<number>(useTextureStore(store => store.mipLevel));
 
     const setFilter = useSamplerStore((store) => store.setFilter);
     const setTextureFormat = useTextureStore((store) => store.setTextureFormat);
@@ -24,12 +27,16 @@ export function PropertiesView() {
     const textureFormat = useTextureStore((store) => store.textureFormat);
     const generateMipmaps = useTextureStore((store) => store.generateMipmaps);
     const canGenerateMips = useTextureStore((store) => store.canGenerateMipmaps);
-    const mipmapLevel = useTextureStore(store => store.mipLevel);
     const mipmapLevels = useTextureStore(store => store.mipLevels);
 
     const viewOptions = [View2D, View3D];
     const view = useAppStore(store => store.view);
     const setView = useAppStore((store) => store.setView);
+
+    const handleMipmapLevelChange = (value: number) => {
+        setMipmapLevel(value);
+        setMipLevelState(value);
+    }
 
     return (
         <Paper elevation={3}
@@ -41,8 +48,8 @@ export function PropertiesView() {
                }}>
             <Stack direction="column">
 
-                <LabelStringSelect label="View" value={view} options={viewOptions} onValueChange={setView} />
-                <Divider />
+                <LabelStringSelect label="View" value={view} options={viewOptions} onValueChange={setView}/>
+                <Divider/>
                 <SamplerFilterSelect
                     label="Filter"
                     value={filter}
@@ -64,7 +71,13 @@ export function PropertiesView() {
                         />
                     </>
                 )}
-                <MipLevelSelect label="Mipmap Level" value={mipmapLevel} valueMax={mipmapLevels} onValueChange={setMipmapLevel} bottomMost />
+                {view == viewOptions[0] && (
+                    <>
+                        <Divider/>
+                        <MipLevelSelect label="Mipmap Level" value={mipLevelState} valueMax={mipmapLevels}
+                                        onValueChange={handleMipmapLevelChange}/>
+                    </>
+                )}
             </Stack>
         </Paper>
     );
