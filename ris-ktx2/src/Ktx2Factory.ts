@@ -42,7 +42,7 @@ export class Ktx2Factory {
 
         const uint8Array = new Uint8Array(buffer);
         const ktxTexture = new Ktx2Factory._ktxLib.texture(uint8Array);
-        return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture, filePath);
+        return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture,  uint8Array, filePath);
     }
 
     /**
@@ -70,7 +70,7 @@ export class Ktx2Factory {
         const ktxStorage = Mapper.mapStorage(Ktx2Factory._ktxLib, storage ?? KtxCreateStorage.ALLOC_STORAGE);
 
         const ktxTexture = new Ktx2Factory._ktxLib.texture(ktxCreateInfo, ktxStorage);
-        return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture);
+        return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture, ktxCreateInfo);
     }
 
     /**
@@ -80,7 +80,7 @@ export class Ktx2Factory {
      */
     public createFromBuffer(buffer: ArrayBufferView<ArrayBufferLike>): IKtx2Texture {
         const ktxTexture = new Ktx2Factory._ktxLib.texture(buffer);
-        return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture);
+        return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture, buffer);
     }
 
 

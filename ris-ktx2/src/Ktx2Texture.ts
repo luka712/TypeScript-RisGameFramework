@@ -1,6 +1,6 @@
 import {
     type IKtx2Texture,
-    type IKtxBasisParams,
+    type IKtxBasisParams, type IKtxTextureCreateInfo,
     KtxErrorCode,
     KtxTranscodeFlags,
     KtxTranscodeFormat,
@@ -8,6 +8,9 @@ import {
     VkFormat
 } from "ris-ktx2-api";
 import {Mapper} from "./Mapper.ts";
+
+/** The index of number levels in binary header */
+const NUM_LEVELS_INDEX = 11;
 
 /**
  * The KTX2 texture class.
@@ -20,13 +23,19 @@ export class Ktx2Texture implements IKtx2Texture {
     // @ts-ignore
     private readonly _ktxTexture: any;
 
+    private _numLevels = 0;
+
     /**
      * The constructor.
      * @param ktxLib - The KTX library.
      * @param ktxTexture - The underlying KTX texture.
+     * @param data - The KTX binary, self or create info. Required to pull the meta data.
      * @param filePath - The file path of the texture.
      */
-    constructor(ktxLib: any, ktxTexture: any, filePath?: string) {
+    constructor(ktxLib: any,
+                ktxTexture: any,
+                data:  ArrayBufferView<ArrayBufferLike> | IKtxTextureCreateInfo | Ktx2Texture,
+                filePath?: string) {
 
         this._ktxLib = ktxLib;
         this._ktxTexture = ktxTexture;
@@ -37,16 +46,26 @@ export class Ktx2Texture implements IKtx2Texture {
         this.vkFormat = ktxTexture.vkFormat;
 
         debugger;
-        // Ktx texture does not expose levels info, so we query until null.
-        let level = 0;
-        while (true) {
-            const data = this.getImage(level);
-            if (!data) {
-                break;
-            }
-            level++;
+        if(data instanceof Ktx2Texture){
+            // Just copy properties.
+            this._numLevels = data.numLevels;
         }
-        this.numLevels = level;
+        else if(data instanceof Uint8Array) {
+            // Get properties from binary header.
+            this._assignBufferProperties(data);
+        }else  {
+            // Assign properties from create info.
+            this._assignCreateInfoProperties(data as IKtxTextureCreateInfo);
+        }
+    }
+
+    private _assignBufferProperties(buffer: Uint8Array) {
+        const uintBuffer = new Uint32Array(buffer);
+        this._numLevels = uintBuffer[NUM_LEVELS_INDEX];
+    }
+
+    private _assignCreateInfoProperties( createInfo: IKtxTextureCreateInfo) {
+        this._numLevels = createInfo.numLevels ?? 0;
     }
 
     /** @inheritDoc */
@@ -70,8 +89,9 @@ export class Ktx2Texture implements IKtx2Texture {
     }
 
     /** @inheritdoc */
-    public readonly numLevels;
-
+    public get numLevels() {
+        return this._numLevels;
+    }
 
     compressAstc(quality: number): void {
         console.log(quality);
@@ -89,15 +109,27 @@ export class Ktx2Texture implements IKtx2Texture {
         if(typeof basisParams === "number") {
             ktxBasisParams.quality = basisParams;
         } else {
-            debugger;
-            ktxBasisParams.uastc = basisParams.uastc == true;
-            ktxBasisParams.compressionLevel = basisParams.compressionLevel ?? 2;
-            ktxBasisParams.uastcRDO = basisParams.uastcRDO ?? false;
-            ktxBasisParams.uastcRDOQualityScalar = basisParams.uastcRDOQualityScalar ?? 1;
+
+            ktxBasisParams.verbose = basisParams.verbose == true;
+            if(basisParams.uastc == true){
+                ktxBasisParams.uastc = true;
+                ktxBasisParams.compressionLevel = basisParams.compressionLevel ?? 2;
+                ktxBasisParams.uastcRDO = basisParams.uastcRDO ?? false;
+                ktxBasisParams.uastcRDOQualityScalar = basisParams.uastcRDOQualityScalar ?? 1;
+            }
+            // ECT1S
+            else {
+                ktxBasisParams.uastc = false;
+                ktxBasisParams.noSSE = true; // True to forbid use of the SSE instruction set. Ignored if CPU does not support SSE.
+                ktxBasisParams.qualityLevel = basisParams.qualityLevel ?? 128;
+                ktxBasisParams.compressionLevel = basisParams.compressionLevel ?? 2;
+            }
         }
 
         const errorCode = this._ktxTexture.compressBasis(ktxBasisParams);
         const ktxErrorCode = Mapper.mapErrorCodeFromKtxLib(errorCode);
+
+        debugger;
 
         if (ktxErrorCode !== KtxErrorCode.SUCCESS) {
             throw new Error(`Failed to compress basis: ${ktxErrorCode}`);
@@ -180,7 +212,7 @@ export class Ktx2Texture implements IKtx2Texture {
     /** @inheritDoc */
     public createCopy(): IKtx2Texture {
         const copy = this._ktxTexture.createCopy();
-        return  new Ktx2Texture(this._ktxLib, copy, this.filePath);
+        return  new Ktx2Texture(this._ktxLib, copy, this, this.filePath);
     }
 
     /** @inheritDoc */

@@ -68,6 +68,7 @@ export default function ConvertDialog() {
     const [compressionLevelZstd, setCompressionLevelZstd] = React.useState(19);
     const [compressionLevelZLib, setCompressionLevelZLib] = React.useState(6);
     const [uastcQuality, setUastcQuality] = React.useState(KTX_MEDIUM_QUALITY);
+    const [etc1sQuality, setEtc1sQuality] = React.useState(KTX_MEDIUM_QUALITY);
     const [generateMipmaps, setGenerateMipmaps] = React.useState(false);
     const [rdoQuality, setRdoQuality] = React.useState(RDO_BALANCED);
 
@@ -115,6 +116,7 @@ export default function ConvertDialog() {
         convertParams.fileName = filename;
         convertParams.encoding = encoding;
         convertParams.uastcQuality = uastcQuality;
+        convertParams.etc1sQuality = etc1sQuality;
         convertParams.rdoQuality = rdoQuality;
         convertParams.generateMipmaps = generateMipmaps;
         convertParams.compression = compression;
@@ -182,13 +184,27 @@ export default function ConvertDialog() {
                                          onValueChange={setUastcQuality} />
                         }
 
-                        <SelectField label={"Compression"}
+                        {/* ETC1S */}
+                        {encoding == KTX_ENCODING_BASIS_UNIVERSAL_ETC1S &&
+                            <SelectField label={"ETC1S Quality"}
+                                         value={etc1sQuality}
+                                         options={qualityOptions}
+                                         onValueChange={setEtc1sQuality} />
+                        }
+
+
+
+                        {/* ETC1S does not support ZSTD or ZLIB compression  */}
+                        {encoding !== KTX_ENCODING_BASIS_UNIVERSAL_ETC1S &&
+                            <SelectField label={"Compression"}
                                      value={compression}
                                      options={compressionOptions}
                                      onValueChange={setCompression}/>
+                        }
+
 
                         {/* ZStandard */}
-                        {compression === compressionOptions[1] &&
+                        {encoding !== KTX_ENCODING_BASIS_UNIVERSAL_ETC1S && compression === compressionOptions[1] &&
                             <SliderField label={"Compression Level"}
                                          value={compressionLevelZstd}
                                          min={1}
@@ -197,7 +213,7 @@ export default function ConvertDialog() {
                                          onValueChange={setCompressionLevelZstd}/>
                         }
                         {/* ZLIB */}
-                        {compression === compressionOptions[2] &&
+                        {encoding !== KTX_ENCODING_BASIS_UNIVERSAL_ETC1S && compression === compressionOptions[2] &&
                             <SliderField label={"Compression Level"}
                                          value={compressionLevelZLib}
                                          min={1}
