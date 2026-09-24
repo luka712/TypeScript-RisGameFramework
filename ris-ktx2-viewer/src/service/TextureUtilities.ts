@@ -1,4 +1,4 @@
-import {type IKtx2Texture, type IKtxCreateInfo, KtxCreateStorage} from "ris-ktx2-api";
+import {type IKtx2Texture, type IKtxTextureCreateInfo, KtxCreateStorage} from "ris-ktx2-api";
 import {Ktx2Factory} from "ris-ktx2";
 import {type IFramework, RawImageData} from "ris-framework-api";
 
@@ -38,7 +38,7 @@ export async function getKtx2Texture(file: File): Promise<IKtx2Texture> {
     return ktxLoader.loadAsync(file);
 }
 
-export async function createKtx2TextureAsync(desc: IKtxCreateInfo, storage = KtxCreateStorage.ALLOC_STORAGE): Promise<IKtx2Texture> {
+export async function createKtx2TextureAsync(desc: IKtxTextureCreateInfo, storage = KtxCreateStorage.ALLOC_STORAGE): Promise<IKtx2Texture> {
 
     if (!ktxLoader) {
         ktxLoader = new Ktx2Factory();

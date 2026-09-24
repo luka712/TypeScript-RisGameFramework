@@ -1,4 +1,4 @@
-import {MenuItem, Paper, Select, type SelectChangeEvent, Stack, Typography} from "@mui/material";
+import {MenuItem, Select, type SelectChangeEvent, Stack, Typography} from "@mui/material";
 
 interface StringSelectProps {
     label: string;

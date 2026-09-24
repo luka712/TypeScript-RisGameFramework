@@ -14,8 +14,6 @@ import * as React from "react";
  * Editable sampler / texture properties for the selected texture.
  */
 export function PropertiesView() {
-    const selectedTexture = useTextureStore((store) => store.selectedTexture);
-
     const [mipLevelState, setMipLevelState] = React.useState<number>(useTextureStore(store => store.mipLevel));
 
     const setFilter = useSamplerStore((store) => store.setFilter);

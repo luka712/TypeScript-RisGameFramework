@@ -7,12 +7,13 @@ import {
     KTX_ENCODING_BASIS_UNIVERSAL_UASTC
 } from "../model/Ktx2EncodingConstants.ts";
 import type {IKtxBasisParams} from "../../../ris-ktx2-api/src";
-import {getCompressionLevel} from "../model/CompressionQualityConstants.ts";
 import {changeFileExtension} from "../service/formatter.ts";
 import {KTX2_FILE_EXTENSION} from "../model/FileExtensionConstants.ts";
 import {ConvertParameters} from "../model/ConvertParameters.ts";
 import type {IFramework} from "ris-framework-api";
 import {KTX_COMPRESSION_ZLIB, KTX_COMPRESSION_ZSTANDARD} from "../model/Ktx2CompressionConstants.ts";
+import {getCompressionLevel} from "../model/CompressionQualityConstants.ts";
+import {getUastcRDOQualityScalar} from "../model/RDOCompressionConstants.ts";
 
 interface ConvertResult {
     success: boolean,
@@ -46,69 +47,80 @@ export const useConvertStore = create<ConvertStore>((set, get) => ({
         }
 
         const selectedTexture = get().selectedTexture;
-        if (!selectedTexture) {
+        if (!selectedTexture || !selectedTexture.image) {
+            // This should never happen.
             throw new Error("No texture selected");
         }
 
-        if (!selectedTexture.image) {
-            throw new Error("No image selected");
-        }
+        // Work on a local image reference; never mutate the live selection.
+        const sourceImage = selectedTexture.image;
+        let image = sourceImage;
+        let mipmapsImage: typeof sourceImage | null = null;
 
-        selectedTexture.image = fw.imageProcessor.generateMipmaps(selectedTexture.image);
-
-        const fileName = changeFileExtension(convertParameters.fileName, KTX2_FILE_EXTENSION);
-
-        const desc: IKtxTextureCreateInfo = {
-            baseWidth: selectedTexture.image.baseWidth,
-            baseHeight: selectedTexture.image.baseHeight,
-            vkFormat: VkFormat.R8G8B8A8_UNORM,
-            numLevels: selectedTexture.image.numLevels,
-        };
-        const tex = await createKtx2TextureAsync(desc, KtxCreateStorage.ALLOC_STORAGE);
-
-        for (let i = 0; i < desc.numLevels!; i++) {
-            let data = selectedTexture.image.getData(i);
-            if (data instanceof HTMLImageElement) {
-                data = fw.imageProcessor.getBytesFromHtmlImage(data);
-            } else {
-                throw new Error("Unsupported image type");
+        try {
+            if (convertParameters.generateMipmaps) {
+                mipmapsImage = await fw.imageProcessor.generateMipmapsAsync(sourceImage);
+                image = mipmapsImage;
             }
-            tex.setImageFromMemory(i, 0, 0, data as unknown as ArrayBufferView);
 
-        }
+            const fileName = changeFileExtension(convertParameters.fileName, KTX2_FILE_EXTENSION);
 
-        // If universal basis
-        const encoding = convertParameters.encoding;
-        const uastc = encoding == KTX_ENCODING_BASIS_UNIVERSAL_UASTC;
-        if (uastc || encoding === KTX_ENCODING_BASIS_UNIVERSAL_ETC1S) {
-            const basisParams: IKtxBasisParams = {
-                uastc,
-                // compressionLevel: getCompressionLevel(convertParameters.compressionLevel)
+            const desc: IKtxTextureCreateInfo = {
+                baseWidth: image.baseWidth,
+                baseHeight: image.baseHeight,
+                vkFormat: VkFormat.R8G8B8A8_UNORM,
+                numLevels: image.numLevels,
             };
-            tex.compressBasis(basisParams);
-        }
+            const tex = await createKtx2TextureAsync(desc, KtxCreateStorage.ALLOC_STORAGE);
 
-        // We need to create a copy of texture because the original might not be in the correct storage state.
-        // Copy must be created before deflate operation.
-        const ktxCopy = tex.createCopy();
+            for (let i = 0; i < desc.numLevels!; i++) {
+                let data = image.getData(i);
+                if (data instanceof HTMLImageElement) {
+                    data = fw.imageProcessor.getBytesFromHtmlImage(data);
+                } else {
+                    throw new Error("Unsupported image type");
+                }
+                tex.setImageFromMemory(i, 0, 0, data as unknown as ArrayBufferView);
 
-        if(convertParameters.compression == KTX_COMPRESSION_ZSTANDARD) {
-            tex.deflateZstd(convertParameters.compressionLevelZstd);
-        }
-        else if(convertParameters.compression == KTX_COMPRESSION_ZLIB) {
-            tex.deflateZlib(convertParameters.compressionLevelZLib);
-        }
+            }
 
-        // Get memory from the ktx file.
-        const memory = tex.writeToMemory();
+            // If universal basis
+            const encoding = convertParameters.encoding;
+            const uastc = encoding == KTX_ENCODING_BASIS_UNIVERSAL_UASTC;
+            if (uastc || encoding === KTX_ENCODING_BASIS_UNIVERSAL_ETC1S) {
+                const basisParams: IKtxBasisParams = {
+                    uastc,
+                    compressionLevel: getCompressionLevel(convertParameters.uastcQuality),
+                    uastcRDO: true,
+                    uastcRDOQualityScalar: getUastcRDOQualityScalar(convertParameters.rdoQuality)
+                };
+                tex.compressBasis(basisParams);
+            }
 
-        // Download ktx to user PC.
-        downloadKtx2(memory, fileName);
+            // We need to create a copy of texture because the original might not be in the correct storage state.
+            // Copy must be created before deflate operation.
+            const ktxCopy = tex.createCopy();
 
-        return {
-            success: true,
-            ktx: ktxCopy,
-            name: fileName,
+            if (convertParameters.compression == KTX_COMPRESSION_ZSTANDARD) {
+                tex.deflateZstd(convertParameters.compressionLevelZstd);
+            } else if (convertParameters.compression == KTX_COMPRESSION_ZLIB) {
+                tex.deflateZlib(convertParameters.compressionLevelZLib);
+            }
+
+            // Get memory from the ktx file.
+            const memory = tex.writeToMemory();
+
+            // Download ktx to user PC.
+            downloadKtx2(memory, fileName);
+
+            return {
+                success: true,
+                ktx: ktxCopy,
+                name: fileName,
+            }
+        } finally {
+            // Dispose only the temporary mipmap image, never the selection's image.
+            mipmapsImage?.dispose();
         }
     }
 }));

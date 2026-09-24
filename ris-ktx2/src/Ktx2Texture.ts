@@ -89,10 +89,11 @@ export class Ktx2Texture implements IKtx2Texture {
         if(typeof basisParams === "number") {
             ktxBasisParams.quality = basisParams;
         } else {
+            debugger;
             ktxBasisParams.uastc = basisParams.uastc == true;
             ktxBasisParams.compressionLevel = basisParams.compressionLevel ?? 2;
             ktxBasisParams.uastcRDO = basisParams.uastcRDO ?? false;
-            ktxBasisParams.uastcRDOQuality = basisParams.uastcRDOQualityScalar ?? 1;
+            ktxBasisParams.uastcRDOQualityScalar = basisParams.uastcRDOQualityScalar ?? 1;
         }
 
         const errorCode = this._ktxTexture.compressBasis(ktxBasisParams);

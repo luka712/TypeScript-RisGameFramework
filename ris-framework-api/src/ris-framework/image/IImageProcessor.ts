@@ -9,7 +9,7 @@ export interface IImageProcessor {
      * @param vec2 The new size.
      * @returns The resized image.
      */
-    resize(image: RawImageData, vec2: vec2): RawImageData;
+    resizeAsync(image: RawImageData, vec2: vec2): Promise<RawImageData>;
 
     /**
      * Generate mipmaps levels for the image.
@@ -17,7 +17,7 @@ export interface IImageProcessor {
      * @param levels The number of mip levels to generate. -1 for automatic.
      * @returns The new image data with mipmaps.
      */
-    generateMipmaps(image: RawImageData, levels?: number): RawImageData;
+    generateMipmapsAsync(image: RawImageData, levels?: number): Promise<RawImageData>;
 
     /**
      * Get the bytes from an HTML image element.

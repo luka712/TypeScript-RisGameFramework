@@ -1,7 +1,7 @@
 import {create} from "zustand";
 import type {IFramework} from "ris-framework-api";
 import type {vec2} from "gl-matrix";
-import {View2D, View3D} from "../model/View.ts";
+import {View3D} from "../model/View.ts";
 
 interface AppStore {
     framework: IFramework | null;

@@ -1,4 +1,4 @@
-import {Container, Divider, Paper} from "@mui/material";
+import {Divider, Paper} from "@mui/material";
 import FormTextBlock from "../components/FormTextBlock.tsx";
 
 interface PropertiesViewProps {
@@ -10,9 +10,7 @@ interface PropertiesViewProps {
  */
 export default function GenericPropertiesView({properties}: PropertiesViewProps) {
     if (!properties || properties.length === 0) {
-        return (
-            <Container/>
-        );
+        return null;
     }
 
 
@@ -30,8 +28,6 @@ export default function GenericPropertiesView({properties}: PropertiesViewProps)
                     <FormTextBlock
                         label={property.name}
                         text={property.value}
-                        topMost={index === 0}
-                        bottomMost={index === properties.length - 1}
                     />
                 </div>
             ))}

@@ -219,8 +219,7 @@ export const useTextureStore = create<TextureStore>((set, get) => {
         },
 
         setMipmapLevel: (value) => {
-            debugger;
-            get().mipLevel = value;
+            set({mipLevel: value});
         },
 
         setGenerateMipmaps: (value) => {

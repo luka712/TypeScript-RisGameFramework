@@ -8,7 +8,7 @@ import {vec2} from "gl-matrix";
 export class CpuImageProcessor implements IImageProcessor {
 
     /** @inheritdoc */
-    public resize(image: RawImageData, vec2: vec2): RawImageData {
+    public async resizeAsync(image: RawImageData, vec2: vec2): Promise<RawImageData> {
         const data = image.getData(0);
 
         if (data === undefined) {
@@ -16,7 +16,7 @@ export class CpuImageProcessor implements IImageProcessor {
         }
 
         if (data instanceof HTMLImageElement) {
-            const htmlImage = this._resizeHTMLImage(data, vec2);
+            const htmlImage = await this._resizeHTMLImageAsync(data, vec2);
             return new RawImageData([htmlImage], htmlImage.width, htmlImage.height, image.channels);
         } else {
             throw new Error("Not implemented.");
@@ -43,7 +43,7 @@ export class CpuImageProcessor implements IImageProcessor {
     }
 
     /** @inheritdoc */
-    public generateMipmaps(image: RawImageData, levels = -1): RawImageData {
+    public async generateMipmapsAsync(image: RawImageData, levels = -1): Promise<RawImageData> {
 
         const data = image.getData(0);
         const resultData = [data];
@@ -62,7 +62,7 @@ export class CpuImageProcessor implements IImageProcessor {
                 resize[1] = h;
 
                 if (data instanceof HTMLImageElement) {
-                    const htmlImage = this._resizeHTMLImage(data, resize);
+                    const htmlImage = await this._resizeHTMLImageAsync(data, resize);
                     resultData.push(htmlImage);
                 } else {
                     throw new Error("Not implemented.");
@@ -78,7 +78,7 @@ export class CpuImageProcessor implements IImageProcessor {
                 resize[1] = h;
 
                 if (data instanceof HTMLImageElement) {
-                    const htmlImage = this._resizeHTMLImage(data, resize);
+                    const htmlImage = await this._resizeHTMLImageAsync(data, resize);
                     resultData.push(htmlImage);
                 } else {
                     throw new Error("Not implemented.");
@@ -89,7 +89,7 @@ export class CpuImageProcessor implements IImageProcessor {
         return new RawImageData(resultData, image.baseWidth, image.baseHeight, image.channels);
     }
 
-    private _resizeHTMLImage(image: HTMLImageElement, vec2: vec2): HTMLImageElement {
+    private async _resizeHTMLImageAsync(image: HTMLImageElement, vec2: vec2): Promise<HTMLImageElement> {
 
         const w = Math.floor(vec2[0]);
         const h = Math.floor(vec2[1]);
@@ -110,6 +110,15 @@ export class CpuImageProcessor implements IImageProcessor {
         resizedImage.height = h;
         resizedImage.src = canvas.toDataURL("image/png");
 
-        return resizedImage;
+        const promise = new Promise<HTMLImageElement>((resolve, reject) => {
+            resizedImage.onload = () => {
+                resolve(resizedImage);
+            };
+            resizedImage.onerror = () => {
+                reject(new Error("Failed to load resized image."));
+            };
+        });
+
+        return promise;
     }
 }

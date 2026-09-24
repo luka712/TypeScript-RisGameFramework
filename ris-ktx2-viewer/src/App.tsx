@@ -40,6 +40,8 @@ function App() {
     const unlitMaterialRef = useRef<UnlitMaterial | null>(null);
     const quadMeshRef = useRef<IMesh | null>(null);
     const camera3DRef = useRef<OrbitCamera | null>(null);
+    const modelMatrixRef = useRef(mat4.create());
+    const previousTexSizeRef = useRef({width: 0, height: 0});
 
     const setFrameworkAppStore = useAppStore((state) => state.setFramework);
     const setFrameworkSamplerStore = useSamplerStore((state) => state.setFramework);
@@ -73,10 +75,6 @@ function App() {
             }
         });
     }, [subscribeTextureSelected]);
-
-    const modelMatrix = mat4.create();
-    let previousTexWidth = 0;
-    let previousTexHeight = 0;
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -131,8 +129,9 @@ function App() {
                 // Clamp to edge
                 const width = tex.width;
                 const height = tex.height;
+                const previous = previousTexSizeRef.current;
 
-                if (previousTexWidth != width || previousTexHeight != height) {
+                if (previous.width != width || previous.height != height) {
                     const aspectRatio = width / height;
                     let widthScale = 1.0;
                     let heightScale = 1.0;
@@ -143,17 +142,18 @@ function App() {
                         widthScale *= aspectRatio;
                     }
 
-                    previousTexWidth = width;
-                    previousTexHeight = height;
+                    previous.width = width;
+                    previous.height = height;
 
-                    mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(widthScale, heightScale, 1));
+                    // Reset scale each time (do not accumulate).
+                    mat4.fromScaling(modelMatrixRef.current, vec3.fromValues(widthScale, heightScale, 1));
                     const mipMaterial = mipMaterialRef.current;
                     if (mipMaterial) {
-                        mipMaterial.modelMatrix = modelMatrix;
+                        mipMaterial.modelMatrix = modelMatrixRef.current;
                     }
                     const unlitMaterial = unlitMaterialRef.current;
                     if (unlitMaterial) {
-                        unlitMaterial.modelMatrix = modelMatrix;
+                        unlitMaterial.modelMatrix = modelMatrixRef.current;
                     }
                 }
 
@@ -195,6 +195,18 @@ function App() {
         setFrameworkSamplerStore(fw);
         setFrameworkTextureStore(fw);
         setFrameworkConvertStore(fw);
+
+        return () => {
+            // Framework has no dispose API; dispose owned GPU objects we created.
+            mipMaterialRef.current?.dispose();
+            unlitMaterialRef.current?.dispose();
+            quadMeshRef.current?.dispose();
+            mipMaterialRef.current = null;
+            unlitMaterialRef.current = null;
+            quadMeshRef.current = null;
+            camera3DRef.current = null;
+            frameworkRef.current = null;
+        };
     }, [
         getSampler,
         getSelectedTexture,
@@ -234,31 +246,56 @@ function App() {
 
     return (
         <ThemeProvider theme={theme}>
-            <div className="app">
-                <Stack direction="column" spacing={2}>
+            <div className="app"  style={{
+                height: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+            }}>
+                <Stack    direction="column"
+                          spacing={2}
+                          sx={{
+                              flex: 1,
+                              minHeight: 0,
+                          }}>
                     <DropArea/>
-                    <Paper>
-                        <Grid container spacing={2}>
-                            <Grid size={3}>
+                    <Paper
+                        sx={{
+                            flex: 1,
+                            minHeight: 0,
+                            overflowY: {xs: 'auto', md: 'hidden'},
+                            overflowX: 'hidden',
+                        }}
+                    >
+                        <Grid
+                            container
+                            spacing={2}
+                            sx={{
+                                height: {xs: 'auto', md: '100%'},
+                                minHeight: {md: '100%'},
+                            }}
+                        >
+                            <Grid size={{xs: 12, sm: 4, md: 3}}>
                                 <Box>
                                     <Tabs
                                         value={tab}
                                         sx={{paddingTop: 2, paddingBottom: 2}}
                                         onChange={(_event, newValue: number) => setTab(newValue)}
+                                        variant="scrollable"
+                                        allowScrollButtonsMobile
                                     >
                                         <Tab label="Files"/>
                                         <Tab label="GPU Info"/>
                                     </Tabs>
 
                                     {tab === 0 && (
-                                        <Stack direction="column" spacing={2} sx={{marginLeft: 2}}>
+                                        <Stack direction="column" spacing={2} sx={{marginLeft: 2, marginRight: 2}}>
                                             <AddFileButton/>
                                             <TextureList/>
                                             <ConvertDialog/>
                                         </Stack>
                                     )}
                                     {tab === 1 && (
-                                        <Stack direction="column" spacing={2} sx={{marginLeft: 2 }}>
+                                        <Stack direction="column" spacing={2} sx={{marginLeft: 2, marginRight: 2}}>
                                             {framework ? (
                                                 <>
                                                     <GenericPropertiesView properties={gpuProperties} />
@@ -271,19 +308,33 @@ function App() {
                                     )}
                                 </Box>
                             </Grid>
-                            <Grid size={6}>
-                                <Box>
-                                    <canvas ref={canvasRef} width={1920} height={1080}/>
+                            <Grid size={{xs: 12, sm: 8, md: 6}}>
+                                <Box
+                                    sx={{
+                                        width: '100%',
+                                        aspectRatio: '16 / 9',
+                                        maxHeight: {xs: '35vh', sm: '45vh', md: '70vh'},
+                                        mx: 'auto',
+                                        overflow: 'hidden',
+                                        bgcolor: 'common.black',
+                                    }}
+                                >
+                                    <canvas
+                                        ref={canvasRef}
+                                        width={1920}
+                                        height={1080}
+                                        style={{width: '100%', height: '100%', objectFit: 'contain', display: 'block'}}
+                                    />
                                 </Box>
                             </Grid>
-                            <Grid size={3}>
-                                <Box sx={{paddingTop: 2, paddingBottom: 2, marginRight: 2, marginTop: 2}}>
+                            <Grid size={{xs: 12, sm: 12, md: 3}}>
+                                <Box sx={{paddingTop: 2, paddingBottom: 2, marginRight: 2, marginLeft: 2, marginTop: 2}}>
                                     <PropertiesView/>
                                 </Box>
                             </Grid>
-                        </Grid>
-                        <Grid size={12} sx={{paddingTop: 2, paddingBottom: 2, paddingLeft: 1, paddingRight: 1}}>
-                            <FooterView/>
+                            <Grid size={12}  sx={{         mt: 'auto', paddingTop: 2, paddingBottom: 2, px: {xs: 1, sm: 1}}}>
+                                <FooterView />
+                            </Grid>
                         </Grid>
                     </Paper>
                 </Stack>
