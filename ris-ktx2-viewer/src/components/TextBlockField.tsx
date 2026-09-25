@@ -5,7 +5,7 @@ interface FormTextBlockProps {
     text: string;
 }
 
-export default function FormTextBlock({label, text}: FormTextBlockProps) {
+export default function TextBlockField({label, text}: FormTextBlockProps) {
 
 
     return (

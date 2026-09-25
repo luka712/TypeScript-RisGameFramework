@@ -26,6 +26,8 @@ import {TextureSamplerFilteringPreset} from "../../ris-framework/src/core/render
 import {View2D, View3D} from "./model/View.ts";
 import ConvertDialog from "./dialog/ConvertDialog.tsx";
 import {useConvertStore} from "./store/ConvertStore.ts";
+import {SpaceBar} from "@mui/icons-material";
+import {AboutView} from "./views/AboutView.tsx";
 
 
 function App() {
@@ -246,18 +248,17 @@ function App() {
 
     return (
         <ThemeProvider theme={theme}>
-            <div className="app"  style={{
+            <div className="app" style={{
                 height: '100vh',
                 display: 'flex',
                 flexDirection: 'column',
             }}>
-                <Stack    direction="column"
-                          spacing={2}
-                          sx={{
-                              flex: 1,
-                              minHeight: 0,
-                          }}>
-                    <DropArea/>
+                <Stack direction="column"
+                       spacing={2}
+                       sx={{
+                           flex: 1,
+                           minHeight: 0,
+                       }}>
                     <Paper
                         sx={{
                             flex: 1,
@@ -285,6 +286,7 @@ function App() {
                                     >
                                         <Tab label="Files"/>
                                         <Tab label="GPU Info"/>
+                                        <Tab label="About"/>
                                     </Tabs>
 
                                     {tab === 0 && (
@@ -298,7 +300,7 @@ function App() {
                                         <Stack direction="column" spacing={2} sx={{marginLeft: 2, marginRight: 2}}>
                                             {framework ? (
                                                 <>
-                                                    <GenericPropertiesView properties={gpuProperties} />
+                                                    <GenericPropertiesView properties={gpuProperties}/>
                                                     <GenericPropertiesView properties={gpuFeatures}/>
                                                 </>
                                             ) : (
@@ -306,17 +308,21 @@ function App() {
                                             )}
                                         </Stack>
                                     )}
+                                    {tab === 2 && (
+                                        <AboutView/>
+                                    )}
                                 </Box>
                             </Grid>
                             <Grid size={{xs: 12, sm: 8, md: 6}}>
                                 <Box
                                     sx={{
+                                        paddingTop: 4,
                                         width: '100%',
                                         aspectRatio: '16 / 9',
                                         maxHeight: {xs: '35vh', sm: '45vh', md: '70vh'},
                                         mx: 'auto',
                                         overflow: 'hidden',
-                                        bgcolor: 'common.black',
+                                        bgcolor: 'transparent',
                                     }}
                                 >
                                     <canvas
@@ -328,12 +334,13 @@ function App() {
                                 </Box>
                             </Grid>
                             <Grid size={{xs: 12, sm: 12, md: 3}}>
-                                <Box sx={{paddingTop: 2, paddingBottom: 2, marginRight: 2, marginLeft: 2, marginTop: 2}}>
+                                <Box
+                                    sx={{paddingTop: 2, paddingBottom: 2, marginRight: 2, marginLeft: 2, marginTop: 2}}>
                                     <PropertiesView/>
                                 </Box>
                             </Grid>
-                            <Grid size={12}  sx={{         mt: 'auto', paddingTop: 2, paddingBottom: 2, px: {xs: 1, sm: 1}}}>
-                                <FooterView />
+                            <Grid size={12} sx={{mt: 'auto', paddingTop: 2, paddingBottom: 2, px: {xs: 1, sm: 1}}}>
+                                <FooterView/>
                             </Grid>
                         </Grid>
                     </Paper>

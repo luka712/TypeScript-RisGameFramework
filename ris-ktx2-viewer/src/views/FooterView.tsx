@@ -53,7 +53,7 @@ export function FooterView() {
         <Paper
             elevation={3}
             sx={{
-                borderRadius: 10,
+                borderRadius: 5,
                 px: {xs: 1, sm: 2},
                 py: 2,
             }}

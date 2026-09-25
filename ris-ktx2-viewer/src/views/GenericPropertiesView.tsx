@@ -1,5 +1,5 @@
 import {Divider, Paper} from "@mui/material";
-import FormTextBlock from "../components/FormTextBlock.tsx";
+import TextBlockField from "../components/TextBlockField.tsx";
 
 interface PropertiesViewProps {
     properties: { name: string; value: string }[];
@@ -25,7 +25,7 @@ export default function GenericPropertiesView({properties}: PropertiesViewProps)
             {properties.map((property, index) => (
                 <div key={`${property.name}-${index}`}>
                     {index > 0 && <Divider/>}
-                    <FormTextBlock
+                    <TextBlockField
                         label={property.name}
                         text={property.value}
                     />
