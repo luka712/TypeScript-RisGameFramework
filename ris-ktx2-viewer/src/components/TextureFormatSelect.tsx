@@ -1,4 +1,4 @@
-import {MenuItem, Select, type SelectChangeEvent, Stack, Typography} from "@mui/material";
+import {MenuItem, Select, type SelectChangeEvent, Stack, Tooltip, Typography} from "@mui/material";
 import {TextureFormat} from "ris-framework-api";
 import {useTextureStore} from "../store/TextureStore.ts";
 import {VkFormat} from "ris-ktx2-api";
@@ -30,9 +30,12 @@ export default function TextureFormatSelect({
             spacing={0}
             sx={{paddingLeft: 2, paddingRight: 2, paddingTop: 1, paddingBottom: 1}}
         >
-            <Typography component="span" sx={{opacity: 0.5}}>
-                {label}
-            </Typography>
+            <Tooltip
+                title="Specifies the GPU texture format used to display the texture. Compressed formats reduce memory usage, at the expense of quality.">
+                <Typography component="span" sx={{opacity: 0.5}}>
+                    {label}
+                </Typography>
+            </Tooltip>
             <Select
                 value={value}
                 label={label}

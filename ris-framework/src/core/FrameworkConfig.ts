@@ -1,12 +1,16 @@
 import { TextureSamplerFilteringPreset } from "./rendering/enums.ts";
 import {vec2} from "gl-matrix";
+import {IFrameworkConfig} from "ris-framework-api";
 
 /**
  * The options for configuring the Framework.
  */
-export class FrameworkConfig {
+export class FrameworkConfig  implements IFrameworkConfig {
 
     constructor() {}
+
+    /** @inheritDoc */
+    useKtx2 = false;
 
     /** 
      * The HTMLCanvasElement to use for rendering. 

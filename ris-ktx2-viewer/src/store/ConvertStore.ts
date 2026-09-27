@@ -1,7 +1,7 @@
 import {create} from "zustand";
 import {type IKtx2Texture, type IKtxTextureCreateInfo, KtxCreateStorage, VkFormat} from "ris-ktx2-api";
 import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
-import {createKtx2TextureAsync, downloadKtx2} from "../service/TextureUtilities.ts";
+import {downloadKtx2} from "../service/TextureUtilities.ts";
 import {
     KTX_ENCODING_BASIS_UNIVERSAL_ETC1S,
     KTX_ENCODING_BASIS_UNIVERSAL_UASTC, KTX_ENCODING_RGBA
@@ -65,7 +65,6 @@ export const useConvertStore = create<ConvertStore>((set, get) => ({
                 mipmapsImage = await fw.imageProcessor.generateMipmapsAsync(sourceImage);
                 image = mipmapsImage;
             }
-
             const fileName = changeFileExtension(convertParameters.fileName, KTX2_FILE_EXTENSION);
 
             const desc: IKtxTextureCreateInfo = {
@@ -74,7 +73,7 @@ export const useConvertStore = create<ConvertStore>((set, get) => ({
                 vkFormat: VkFormat.R8G8B8A8_UNORM,
                 numLevels: image.numLevels,
             };
-            const tex = await createKtx2TextureAsync(desc, KtxCreateStorage.ALLOC_STORAGE);
+            const tex = fw.ktx2Factory!.create(desc, KtxCreateStorage.ALLOC_STORAGE);
 
             for (let i = 0; i < desc.numLevels!; i++) {
                 let data = image.getData(i);
@@ -123,6 +122,9 @@ export const useConvertStore = create<ConvertStore>((set, get) => ({
 
             // Download ktx to user PC.
             downloadKtx2(memory, fileName);
+
+            // Delete original texture.
+            tex.delete();
 
             return {
                 success: true,

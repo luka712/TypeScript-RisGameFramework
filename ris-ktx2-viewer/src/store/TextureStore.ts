@@ -6,7 +6,7 @@ import {
 } from "ris-framework-api";
 import {create} from "zustand";
 import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
-import {decodeImageAsync, getKtx2Texture, isDecodableImage, isKtx2File} from "../service/TextureUtilities.ts";
+import {decodeImageAsync, isDecodableImage, isKtx2File} from "../service/TextureUtilities.ts";
 import {VkFormat} from "ris-ktx2-api";
 
 type TextureSelectedListener = (tex: ITexture2DContainer | null) => void;
@@ -66,11 +66,14 @@ function recreateTexture(
 
     if(ktx2) {
         container.texture?.dispose();
+        container.ktxContainer?.delete();
         const desc = new TextureDescriptor();
         desc.textureFormat = textureFormat;
         desc.generateMipmaps = generateMipmaps;
-        // Always use copy, in order to be able to change texture format.
-        texture = framework.textureFactory.createFromKtx2(ktx2.createCopy(), desc);
+        // Always use copy in order to be able to change texture format.
+        const copy = ktx2.createCopy();
+        texture = framework.textureFactory.createFromKtx2(copy, desc);
+        copy.delete();
     }
     else if (image) {
         container.texture?.dispose();
@@ -150,6 +153,13 @@ export const useTextureStore = create<TextureStore>((set, get) => {
 
         addTexture: async (file) => {
 
+            const fw = get().framework;
+
+            if(!fw) {
+                // This should never happen
+                throw new Error("Framework has not been initialized");
+            }
+
             if(file instanceof File) {
 
                 if (get().textures.some((t) => t.name === file.name)) {
@@ -181,8 +191,10 @@ export const useTextureStore = create<TextureStore>((set, get) => {
                         ktxContainer: null,
                     };
                 } else if (isKtx2File(file)) {
-                    const ktx = await getKtx2Texture(file);
-                    const texture = framework.textureFactory.createFromKtx2(ktx.createCopy());
+                    const ktx = await fw.ktx2Factory!.loadAsync(file);
+                    const copy = ktx.createCopy();
+                    const texture = framework.textureFactory.createFromKtx2(copy);
+                    copy.delete();
 
                     container = {
                         name: file.name,

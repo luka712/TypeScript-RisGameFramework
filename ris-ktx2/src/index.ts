@@ -1,8 +1,8 @@
 // src/index.ts
 import wasmUrl from '../libktx.wasm?url';
 
-export * from "./Ktx2Factory.ts"
-export * from "./Ktx2Texture.ts";
+export * from "./Ktx2Factory"
+export * from "./Ktx2Texture";
 
 export async function createKtxModuleAsync(options: any = {}) {
 

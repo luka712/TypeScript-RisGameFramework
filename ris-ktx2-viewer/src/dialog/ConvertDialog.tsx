@@ -34,6 +34,15 @@ import {
 } from "../model/Ktx2CompressionConstants.ts";
 import {RDO_BALANCED, RDO_QUALITY_OPTIONS} from "../model/RDOCompressionConstants.ts";
 
+const ENCODE_UASTC_TOOLTIP =
+    "Encode the texture using UASTC, providing high-quality GPU texture compression.";
+
+const ENCODE_ETC1S_TOOLTIP =
+    "Encode the texture using ETC1S, providing smaller files at the cost of image quality.";
+
+const ENCODE_NO_ENCODING_TOOLTIP =
+    "Store the texture as uncompressed raw RGBA data without texture encoding.";
+
 
 export default function ConvertDialog() {
 
@@ -92,6 +101,13 @@ export default function ConvertDialog() {
         KTX_ENCODING_BASIS_UNIVERSAL_UASTC,
         KTX_ENCODING_BASIS_UNIVERSAL_ETC1S
     ];
+
+    let encodeTooltip = ENCODE_UASTC_TOOLTIP;
+    if (encoding === KTX_ENCODING_BASIS_UNIVERSAL_ETC1S) {
+        encodeTooltip = ENCODE_ETC1S_TOOLTIP;
+    } else if (encoding === KTX_ENCODING_RGBA) {
+        encodeTooltip = ENCODE_NO_ENCODING_TOOLTIP;
+    }
 
     const handleClickOpen = () => {
         setConvertError(null);
@@ -168,7 +184,12 @@ export default function ConvertDialog() {
 
                         <SelectField label="Encode"
                                      value={encoding}
-                                     options={encodingOptions} onValueChange={setEncoding}/>
+                                     options={encodingOptions} onValueChange={setEncoding}
+                                     isHorizontal={true}
+                                     labelTooltip="Encode the texture with the specified codec before saving it."
+                                     valueTooltip={encodeTooltip}
+
+                        />
 
                         <CheckboxField label="Generate Mipmaps"
                                        value={generateMipmaps}
@@ -181,7 +202,9 @@ export default function ConvertDialog() {
                             <SelectField label={"UASTC Quality"}
                                          value={uastcQuality}
                                          options={qualityOptions}
-                                         onValueChange={setUastcQuality} />
+                                         onValueChange={setUastcQuality}
+                                         isHorizontal={true}
+                            />
                         }
 
                         {/* ETC1S */}
@@ -189,17 +212,20 @@ export default function ConvertDialog() {
                             <SelectField label={"ETC1S Quality"}
                                          value={etc1sQuality}
                                          options={qualityOptions}
-                                         onValueChange={setEtc1sQuality} />
+                                         onValueChange={setEtc1sQuality}
+                                         isHorizontal={true}
+                            />
                         }
-
 
 
                         {/* ETC1S does not support ZSTD or ZLIB compression  */}
                         {encoding !== KTX_ENCODING_BASIS_UNIVERSAL_ETC1S &&
                             <SelectField label={"Compression"}
-                                     value={compression}
-                                     options={compressionOptions}
-                                     onValueChange={setCompression}/>
+                                         value={compression}
+                                         options={compressionOptions}
+                                         onValueChange={setCompression}
+                                         isHorizontal={true}
+                            />
                         }
 
 
@@ -227,7 +253,9 @@ export default function ConvertDialog() {
                             <SelectField label={"RDO Quality"}
                                          options={RDO_QUALITY_OPTIONS}
                                          value={rdoQuality}
-                                         onValueChange={setRdoQuality}/>
+                                         onValueChange={setRdoQuality}
+                                         isHorizontal={true}
+                            />
                         }
 
                         {convertError && (

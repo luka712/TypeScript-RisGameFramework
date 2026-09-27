@@ -2,6 +2,7 @@
 
 // RisKtx2
 export * from './IKtxBasisParams';
+export * from './IKtx2Factory';
 export * from './KtxTranscodeFlags';
 export * from './KtxTranscodeFormat';
 export * from './KtxUastcFlags';

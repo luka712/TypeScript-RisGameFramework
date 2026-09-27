@@ -82,21 +82,21 @@ export class InputManager implements IInputManager {
 
             let x = 0;
             let y = 0;
-            if(e.deltaX > 0) {
+            if (e.deltaX > 0) {
                 x = 1;
-            }
-            else if(e.deltaX < 0) {
-               x= -1;
+            } else if (e.deltaX < 0) {
+                x = -1;
             }
 
-            if(e.deltaY > 0) {
+            if (e.deltaY > 0) {
                 y = 1;
-            }
-            else if(e.deltaY < 0) {
-               y= -1;
+            } else if (e.deltaY < 0) {
+                y = -1;
             }
 
             vec2.set(this._scrollWheelPosition, x, y);
+
+            e.preventDefault();
         })
     }
 
@@ -108,7 +108,7 @@ export class InputManager implements IInputManager {
 
     /** @inheritDoc */
     public afterUpdate(): void {
-        vec2.set(this._scrollWheelPosition, 0,0);
+        vec2.set(this._scrollWheelPosition, 0, 0);
 
     }
 

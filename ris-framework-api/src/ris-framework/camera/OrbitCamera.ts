@@ -169,7 +169,7 @@ export class OrbitCamera implements ICamera {
     private _handleOrbitMouseMovement(mouseState: MouseState, deltaTime: number): void {
         const dt = deltaTime * this.sensitivity;
         this._yaw -= mouseState.dX * dt;
-        this._pitch -= mouseState.dY * dt;
+        this._pitch += mouseState.dY * dt;
 
         // Clamp between [1.0, 179.0] degrees.
         this._pitch = MathHelper.clamp(this._pitch, -this.POSITIVE_179_DEG, this.POSITIVE_179_DEG);

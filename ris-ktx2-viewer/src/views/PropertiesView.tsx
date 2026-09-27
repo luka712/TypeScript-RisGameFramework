@@ -1,5 +1,5 @@
 import {Divider, Paper, Stack} from "@mui/material";
-import SamplerFilterSelect from "../components/SamplerFilterSelect.tsx";
+import SamplerFilterField from "../components/SamplerFilterField.tsx";
 import {useSamplerStore} from "../store/SamplerStore.ts";
 import TextureFormatSelect from "../components/TextureFormatSelect.tsx";
 import {useTextureStore} from "../store/TextureStore.ts";
@@ -7,8 +7,8 @@ import {CheckboxField} from "../components/CheckboxField.tsx";
 import MipLevelSelect from "../components/MipLevelSelect.tsx";
 import {View2D, View3D} from "../model/View.ts";
 import {useAppStore} from "../store/AppStore.ts";
-import LabelStringSelect from "../components/LabelStringSelect.tsx";
 import * as React from "react";
+import SelectField from "../components/SelectField.tsx";
 
 /**
  * Editable sampler / texture properties for the selected texture.
@@ -46,9 +46,10 @@ export function PropertiesView() {
                }}>
             <Stack direction="column">
 
-                <LabelStringSelect label="View" value={view} options={viewOptions} onValueChange={setView}/>
+                <SelectField labelTooltip="Switches between flat 2D inspection and an orbit-camera 3D preview."
+                                   label="View" value={view} options={viewOptions} onValueChange={setView}/>
                 <Divider/>
-                <SamplerFilterSelect
+                <SamplerFilterField
                     label="Filter"
                     value={filter}
                     onValueChange={setFilter}
@@ -66,6 +67,7 @@ export function PropertiesView() {
                             label="Generate Mipmaps"
                             value={generateMipmaps}
                             onValueChange={setGenerateMipmaps}
+                            tooltip="Generates smaller versions of the texture for use when the texture is displayed at reduced sizes. Mipmaps can improve visual quality and reduce texture sampling artifacts."
                         />
                     </>
                 )}

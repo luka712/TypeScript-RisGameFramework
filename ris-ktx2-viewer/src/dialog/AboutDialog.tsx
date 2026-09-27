@@ -52,7 +52,7 @@ export default function AboutDialog() {
     return (
         <>
             <Button variant="outlined" onClick={handleOpen}>
-                About
+                See more
             </Button>
 
             <Dialog
@@ -69,7 +69,7 @@ export default function AboutDialog() {
                 <DialogContent dividers>
                     <Stack spacing={3}>
                         <Box>
-                            <Typography variant="body1" paragraph>
+                            <Typography variant="body1" gutterBottom>
                                 A free, browser-based{' '}
                                 <strong>KTX2 viewer and converter</strong> for
                                 working with GPU texture assets.

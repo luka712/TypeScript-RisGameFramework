@@ -3,6 +3,7 @@ import {KtxTranscodeFlags} from "./KtxTranscodeFlags";
 import {KtxTranscodeFormat} from "./KtxTranscodeFormat";
 import {VkFormat} from "./VkFormat";
 import type {TextureFormatInfo} from "./TextureFormatInfo.ts";
+import type {KtxErrorCode} from "./KtxErrorCode.ts";
 
 /**
  * The KtxTexture class represents a texture loaded from a KTX file.
@@ -50,40 +51,19 @@ export interface IKtx2Texture {
     readonly vkFormat: VkFormat;
 
     /**
-     * Gets the size of the image data for a specific mip level.
-     * @param mipLevel - The mip level.
-     * @returns The size of the image.
-     */
-    getImageSize(mipLevel: number): number;
-
-    /**
-     * Gets the row pitch (the number of bytes between the start of one row of pixel data and the start of the next row) for a specific mip level.
-     * @param mipLevel - The mip level.
-     * @returns The size of a row pitch.
-     */
-    getRowPitch(mipLevel: number): number;
-
-    /**
      * Transcode the basis texture to the specified transcoding format.
      * @param transcodeFormat - The transcoding format.
      * @param transcodeFlags - The transcode flags.
+     * @returns The error code.
      */
-    transcodeBasis(transcodeFormat: KtxTranscodeFormat, transcodeFlags: KtxTranscodeFlags): void;
-
-    /**
-     * Gets the offset of the image data for a specific level, layer, and face/slice of the texture.
-     * @param level - The mip level of the image.
-     * @param layer - The array layer level of the image.
-     * @param faceSlice - The cube map face or depth slice of the image.
-     * @returns The offset.
-     */
-    getImageOffset(level: number, layer: number, faceSlice: number): number;
+    transcodeBasis(transcodeFormat: KtxTranscodeFormat, transcodeFlags: KtxTranscodeFlags): KtxErrorCode;
 
     /**
      * Compresses the texture using the specified basis parameters.
      * @param basisParams - The basis parameters.
+     * @returns The error code.
      */
-    compressBasis(basisParams: IKtxBasisParams): void;
+    compressBasis(basisParams: IKtxBasisParams): KtxErrorCode;
 
     /**
      * Compresses a KTX2 texture using Basis Universal supercompression.
@@ -100,11 +80,12 @@ export interface IKtx2Texture {
      * Based on KTX-Software / libktx API:
      *      https://github.khronos.org/KTX-Software/libktx/group__writer.html#ga405c44d6daf8ddf83dc805810bf4f989
      * @param quality - Compression quality value in the range 1–255.
-     If 0 is provided, a default value of 128 is used by the underlying implementation.
-     Lower values produce faster compression and smaller files with lower quality.
-     Higher values produce better quality but slower compression and larger output.
+     * If 0 is provided, a default value of 128 is used by the underlying implementation.
+     * Lower values produce faster compression and smaller files with lower quality.
+     * Higher values produce better quality but slower compression and larger output.
+     * @returns The error code.
      */
-    compressBasis(quality: number): void;
+    compressBasis(quality: number): KtxErrorCode;
 
     /**
      * Encode and compress a ktx texture with uncompressed images to astc.
@@ -112,10 +93,11 @@ export interface IKtx2Texture {
      * The encoded images replace the original images and the texture's fields including the DFD are modified to reflect the new state.
      * Such textures can be directly uploaded to a GPU via a graphics API.
      * @param quality - Compression quality, a value from 0 to 100.
-     Higher=higher quality/slower speed.
-     Lower=lower quality/faster speed.
+     * Higher=higher quality/slower speed.
+     * Lower=lower quality/faster speed.
+     * @returns The error code.
      */
-    compressAstc(quality: number): void;
+    compressAstc(quality: number): KtxErrorCode;
 
     /**
      * Gets the texture data from the native KTX texture object.
@@ -133,7 +115,11 @@ export interface IKtx2Texture {
      */
     getTextureFormatInfo(format: KtxTranscodeFormat | VkFormat): TextureFormatInfo;
 
-    /** TODO: */
+
+    /**
+     * Creates a copy of the texture.
+     * @returns The copied texture.
+     */
     createCopy(): IKtx2Texture;
 
     /**
@@ -142,8 +128,9 @@ export interface IKtx2Texture {
      * @param layer - The array layer.
      * @param faceSlice - The face or slice index.
      * @param imageData - The texture data as a byte array.
+     * @returns The error code.
      */
-    setImageFromMemory(level: number, layer: number, faceSlice: number, imageData: ArrayBufferView): void;
+    setImageFromMemory(level: number, layer: number, faceSlice: number, imageData: ArrayBufferView): KtxErrorCode;
 
     /**
      * Writes the texture data to a memory buffer.
@@ -159,8 +146,10 @@ export interface IKtx2Texture {
      *
      * @param compressionLevel Compression level from 1 to 9.
      * Lower values provide faster compression.
+     * @returns The error code.
      */
-    deflateZlib(compressionLevel: number): void;
+
+    deflateZlib(compressionLevel: number): KtxErrorCode;
 
     /**
      * Deflates the data in a KTX2 texture using Zstandard.
@@ -171,6 +160,10 @@ export interface IKtx2Texture {
      * @param compressionLevel Compression level from 1 to 22.
      * Lower values provide faster compression. Values above 20 should
      * be used with caution as they require more memory.
+     * @returns The error code.
      */
-    deflateZstd(compressionLevel: number): void;
+    deflateZstd(compressionLevel: number): KtxErrorCode;
+
+    /** Deletes the KTX2 texture object and releases its resources. */
+    delete() : void;
 }

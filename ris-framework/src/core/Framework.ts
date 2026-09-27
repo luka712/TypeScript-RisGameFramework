@@ -27,6 +27,8 @@ import {MeshFactory, type IMaterialFactory, MaterialFactory} from "ris-framework
 import type {ITimeManager} from "../../../ris-framework-api/src/ris-framework/time/ITimeManager.ts";
 import {TimeManager} from "../../../ris-framework-api/src/ris-framework/time/TimeManager.ts";
 import {InputManager} from "./input/InputManager.ts";
+import {Ktx2Factory} from "ris-ktx2";
+import type {IKtx2Factory} from "../../../ris-ktx2-api";
 
 export class Framework implements IFramework {
 
@@ -73,6 +75,10 @@ export class Framework implements IFramework {
         this.input = new InputManager(this);
         this.imageProcessor = new CpuImageProcessor();
         this.imageLoader = new ImageLoader(this);
+
+        if(options.useKtx2){
+            this.ktx2Factory = new Ktx2Factory(this);
+        }
     }
 
     /** @inheritDoc */
@@ -91,6 +97,9 @@ export class Framework implements IFramework {
 
     /** @inheritDoc */
     public cameraFactory: ICameraFactory;
+
+    /** @inheritDoc */
+    public ktx2Factory?: IKtx2Factory;
 
     /** @inheritDoc */
     public addOnInitializedListener(event: () => void): void {
@@ -180,6 +189,7 @@ export class Framework implements IFramework {
     /** @inheritdoc */
     public initialize(): void {
 
+        this.ktx2Factory?.initializeAsync();
         this.renderer.initialize();
         this.spriteBatch.initialize();
         this.input.initialize();
@@ -220,5 +230,12 @@ export class Framework implements IFramework {
             this.renderer.endRenderPass();
         });
         this.windowManager.runEventLoop();
+    }
+
+    /** @inheritDoc */
+    public dispose() {
+       //  this.windowManager.dispose();
+
+        // TODO: dispose of other resources
     }
 }

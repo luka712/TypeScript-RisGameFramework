@@ -1,7 +1,7 @@
 import {create} from "zustand";
 import type {IFramework} from "ris-framework-api";
 import type {vec2} from "gl-matrix";
-import {View3D} from "../model/View.ts";
+import {View2D} from "../model/View.ts";
 
 interface AppStore {
     framework: IFramework | null;
@@ -15,7 +15,7 @@ interface AppStore {
 export const useAppStore = create<AppStore>((set, get) => ({
     framework: null,
 
-    view: View3D,
+    view: View2D,
 
     getView: () => get().view,
 

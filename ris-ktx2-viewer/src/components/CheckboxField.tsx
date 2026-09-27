@@ -1,4 +1,4 @@
-import {Checkbox, Grid, Stack, Typography} from "@mui/material";
+import {Checkbox, Grid, Stack, Tooltip, Typography} from "@mui/material";
 import * as React from "react";
 
 /** The checkbox field properties */
@@ -13,12 +13,15 @@ interface CheckboxFieldProps {
 
     /** Whether the checkbox should be displayed in a row or column */
     rowDirection?: boolean;
+
+    /** The tooltip to display when hovering over the checkbox */
+    tooltip?: string;
 }
 
 /**
  * The checkbox field which can be displayed in a row or column layout.
  */
-export function CheckboxField({ label, value, onValueChange, rowDirection}: CheckboxFieldProps) {
+export function CheckboxField({label, value, onValueChange, rowDirection, tooltip}: CheckboxFieldProps) {
 
     const handleChange = (_: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
         onValueChange(checked);
@@ -29,11 +32,13 @@ export function CheckboxField({ label, value, onValueChange, rowDirection}: Chec
             justifyContent: "center",
             alignItems: "center",
         }}
-              spacing={0}>
+                     spacing={0}>
             <Grid size={4}>
-                <Typography sx={{opacity: 0.75}}>
-                    {label}
-                </Typography>
+                <Tooltip title={tooltip}>
+                    <Typography sx={{opacity: 0.75}}>
+                        {label}
+                    </Typography>
+                </Tooltip>
             </Grid>
             <Grid size={8}>
                 <Checkbox checked={value} onChange={handleChange}
@@ -45,9 +50,11 @@ export function CheckboxField({ label, value, onValueChange, rowDirection}: Chec
             direction="column"
             spacing={0}
             sx={{paddingLeft: 2, paddingRight: 2, paddingTop: 1, paddingBottom: 1}}>
-            <Typography component="span" sx={{opacity: 0.5}}>
-                {label}
-            </Typography>
+            <Tooltip title={tooltip}>
+                <Typography component="span" sx={{opacity: 0.5}}>
+                    {label}
+                </Typography>
+            </Tooltip>
             <Checkbox checked={value} onChange={handleChange} sx={{alignSelf: "start"}}/>
         </Stack>
     }

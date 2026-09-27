@@ -1,30 +1,25 @@
-import {Ktx2Texture} from "./Ktx2Texture.ts";
-import {createKtxModuleAsync} from "./index.ts";
-import {type IKtx2Texture, VkFormat, type IKtxTextureCreateInfo} from "ris-ktx2-api";
-import {KtxCreateStorage} from "../../ris-ktx2-api/src/ris-ktx2/KtxCreateStorage.ts";
-import {Mapper} from "./Mapper.ts";
+import {Ktx2Texture} from "./Ktx2Texture";
+import {createKtxModuleAsync} from "./index";
+import {type IKtx2Texture, VkFormat, type IKtxTextureCreateInfo, type IKtx2Factory} from "ris-ktx2-api";
+import {KtxCreateStorage} from "../../ris-ktx2-api/src/ris-ktx2/KtxCreateStorage";
+import {Mapper} from "./Mapper";
 
 /**
  * The Ktx2Factory class is responsible for loading and creating KTX2 textures.
+ * Only single instance of the factory can be created.
  */
-export class Ktx2Factory {
+export class Ktx2Factory implements IKtx2Factory {
 
     private static _ktxLib?: any;
 
-    /**
-     * Initializes the Ktx2Loader.
-     */
+    /** @inheritDoc */
     public async initializeAsync(){
         if(!Ktx2Factory._ktxLib){
             Ktx2Factory._ktxLib = await createKtxModuleAsync();
         }
     }
 
-    /**
-     * Loads a KTX2 texture from the specified URL.
-     * @param blob The URL of the KTX2 texture to load.
-     * @returns A promise that resolves to the loaded KTX2 texture.
-     */
+    /** @inheritDoc */
     public async loadAsync(blob: string|File): Promise<IKtx2Texture> {
 
         let buffer: ArrayBuffer;
@@ -45,14 +40,8 @@ export class Ktx2Factory {
         return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture,  uint8Array, filePath);
     }
 
-    /**
-     * Creates a KTX2 texture.
-     * @param createInfo - The creation info.
-     * @param storage - The storage.
-     * @returns The KTX2 texture.
-     */
+    /** @inheritDoc */
     public create(createInfo: IKtxTextureCreateInfo, storage?: KtxCreateStorage): IKtx2Texture {
-
         const ktxCreateInfo = new Ktx2Factory._ktxLib.textureCreateInfo();
 
         // Copy to ktx create info.
@@ -73,15 +62,9 @@ export class Ktx2Factory {
         return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture, ktxCreateInfo);
     }
 
-    /**
-     * Creates a KTX2 texture from a buffer.
-     * @param buffer The buffer.
-     * @returns The KTX2 texture.
-     */
+    /** @inheritDoc */
     public createFromBuffer(buffer: ArrayBufferView<ArrayBufferLike>): IKtx2Texture {
         const ktxTexture = new Ktx2Factory._ktxLib.texture(buffer);
         return new Ktx2Texture(Ktx2Factory._ktxLib, ktxTexture, buffer);
     }
-
-
 }

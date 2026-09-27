@@ -1,4 +1,5 @@
 export * from "./IFramework";
+export * from "./IFrameworkConfig";
 export * from "./rendering/texture/_export-texture";
 export * from "./rendering/buffers/_export-buffers";
 export * from "./data/_export";

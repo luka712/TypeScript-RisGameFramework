@@ -16,11 +16,11 @@ import {IInputManager} from "./input/IInputManager";
 import {IWindowManager} from "./window/IWindowManager";
 import {GameTime} from "./time/GameTime";
 import {IImageProcessor} from "./image/IImageProcessor";
+import {IKtx2Factory} from "ris-ktx2-api";
+import {IDisposable} from "./core/IDisposable";
 
-/**
- * The framework interface.
- */
-export interface IFramework {
+/** The framework interface. */
+export interface IFramework extends IDisposable {
 
     /**
      * The image loader.
@@ -65,11 +65,11 @@ export interface IFramework {
      */
     readonly geometryBuilder: IGeometryBuilder;
 
-    /**
-     * The texture factory.
-     * Responsible for creating textures.
-     */
+    /** The texture factory. */
     readonly textureFactory: ITextureFactory;
+
+    /** The KTX2 factory. Initialized only if KTX2 is requested or loaded. */
+    readonly ktx2Factory?: IKtx2Factory;
 
     /**
      * The camera factory.
@@ -147,9 +147,7 @@ export interface IFramework {
      */
     removeOnRenderListener(event: () => void): void;
 
-    /**
-     * Initializes the framework.
-     */
+    /** Initializes the framework. */
     initialize(): void;
 
 }
