@@ -1,6 +1,6 @@
-// Auto-generated barrel file - exports all types
-
-// RisKtx2
+/**
+ * KTX2 surface implemented by the `ris-ktx2` package.
+ */
 export * from './IKtxBasisParams';
 export * from './IKtx2Factory';
 export * from './KtxTranscodeFlags';

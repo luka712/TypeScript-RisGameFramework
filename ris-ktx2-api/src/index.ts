@@ -1,4 +1,6 @@
-// Auto-generated barrel file - exports all types
-
-// RisKtx2
+/**
+ * Public entry point for `ris-ktx2-api`.
+ *
+ * Re-exports the KTX2 interfaces, enumerations, and {@link TextureFormatInfo}.
+ */
 export * from './ris-ktx2/_export.ts';

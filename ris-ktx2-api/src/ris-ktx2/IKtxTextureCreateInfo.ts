@@ -1,17 +1,27 @@
 import type {VkFormat} from "./VkFormat.ts";
 
-/** The creation info for KTX2 texture. */
+/**
+ * Parameters for creating an empty 2D KTX2 texture.
+ */
 export interface IKtxTextureCreateInfo {
 
-    /** The base width of the texture. */
+    /** Base width of the texture, in pixels. */
     baseWidth: number;
 
-    /** The base height of the texture. */
+    /** Base height of the texture, in pixels. */
     baseHeight: number;
 
-    /** The Vulkan format of the texture. */
+    /**
+     * Vulkan format of the image data.
+     *
+     * When omitted, the `ris-ktx2` implementation uses {@link VkFormat.R8G8B8A8_SRGB}.
+     */
     vkFormat?: VkFormat;
 
-    /** The number of mipmap levels. By default, it is 1. */
+    /**
+     * Number of mipmap levels.
+     *
+     * @defaultValue 1
+     */
     numLevels?: number;
 }

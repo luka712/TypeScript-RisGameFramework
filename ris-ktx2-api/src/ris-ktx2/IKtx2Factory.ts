@@ -2,31 +2,42 @@ import {KtxCreateStorage} from "./KtxCreateStorage.ts";
 import type {IKtx2Texture} from "./IKtx2Texture.ts";
 import type {IKtxTextureCreateInfo} from "./IKtxTextureCreateInfo.ts";
 
-/** The Ktx2Factory class is responsible for loading and creating KTX2 textures. */
+/**
+ * Creates and loads KTX2 textures.
+ *
+ * `ris-ktx2` provides the implementation. Call {@link IKtx2Factory.initializeAsync}
+ * before {@link IKtx2Factory.loadAsync}, {@link IKtx2Factory.create}, or
+ * {@link IKtx2Factory.createFromBuffer}.
+ */
 export interface IKtx2Factory {
 
-    /** Initializes the factory. */
+    /**
+     * Initializes the factory and loads the native KTX library.
+     */
     initializeAsync(): Promise<void>;
 
     /**
-     * Loads a KTX2 texture from the specified URL.
-     * @param blob The URL of the KTX2 texture to load.
-     * @returns A promise that resolves to the loaded KTX2 texture.
+     * Loads a KTX or KTX2 texture.
+     *
+     * @param blob - A `File` to read, or a URL string to fetch.
+     * @returns The loaded texture.
      */
     loadAsync(blob: string | File): Promise<IKtx2Texture>;
 
     /**
-     * Creates a KTX2 texture.
-     * @param createInfo - The creation info.
-     * @param storage - The storage.
-     * @returns The KTX2 texture.
+     * Creates a KTX2 texture from {@link IKtxTextureCreateInfo}.
+     *
+     * @param createInfo - Width, height, format, and mip count.
+     * @param storage - Whether to allocate image storage. Optional.
+     * @returns The new texture.
      */
     create(createInfo: IKtxTextureCreateInfo, storage?: KtxCreateStorage): IKtx2Texture;
 
     /**
-     * Creates a KTX2 texture from a buffer.
-     * @param buffer The buffer.
-     * @returns The KTX2 texture.
+     * Creates a texture from an in-memory KTX or KTX2 file.
+     *
+     * @param buffer - File bytes.
+     * @returns The loaded texture.
      */
     createFromBuffer(buffer: ArrayBufferView<ArrayBufferLike>): IKtx2Texture;
 }

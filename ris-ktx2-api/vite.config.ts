@@ -5,14 +5,15 @@ export default defineConfig({
     build: {
         lib: {
             entry: 'src/index.ts',
-            name: 'KtxRead',
-            fileName: (format) => `index.${format === 'es' ? 'js' : 'cjs'}`,
+            formats: ['es'],
+            fileName: () => 'index.js',
         },
-        rollupOptions: {
-            output: {
-                globals: {},
-            },
-        },
+        emptyOutDir: true,
     },
-    plugins: [dts()], // Generates .d.ts
+    plugins: [
+        dts({
+            bundleTypes: true,
+            exclude: ['tests/**'],
+        }),
+    ],
 });
