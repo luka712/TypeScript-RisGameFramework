@@ -1,36 +1,29 @@
-import {
-    type IFramework,
-    type ITexture2D, TextureDescriptor,
-    TextureFormat,
-    TextureUsage,
-} from "ris-framework-api";
+import {type IFramework, type ITexture2D, TextureDescriptor, TextureFormat, TextureUsage,} from "ris-framework-api";
 import {create} from "zustand";
 import type {ITexture2DContainer} from "../model/ITexture2DContainer.ts";
 import {decodeImageAsync, isDecodableImage, isKtx2File} from "../service/TextureUtilities.ts";
 import {VkFormat} from "ris-ktx2-api";
+import {useViewerStore} from "./ViewerStore.ts";
 
-type TextureSelectedListener = (tex: ITexture2DContainer | null) => void;
-
+/**
+ * Loaded textures, the current selection and its derived metrics / GPU format settings.
+ * The framework comes from ViewerStore.
+ */
 interface TextureStore {
-    framework: IFramework | null;
+    textures: ITexture2DContainer[];
+    selectedTexture: ITexture2DContainer | null;
+
+    // Derived from the selected texture.
     textureFormat: TextureFormat;
     generateMipmaps: boolean;
     resolution: string;
     size: string;
-    mipLevel: number,
-    getMipLevel: () => number,
     mipLevels: number;
-    textures: ITexture2DContainer[];
-    selectedTexture: ITexture2DContainer | null;
 
-    setFramework: (framework: IFramework) => void;
-    getSelectedTexture: () => ITexture2DContainer | null;
     setSelectedTexture: (texture: ITexture2DContainer | null) => void;
-    subscribeTextureSelected: (listener: TextureSelectedListener) => () => void;
     addTexture: (file: File | ITexture2DContainer) => Promise<void>;
     removeTexture: (texContainer: ITexture2DContainer) => void;
     setTextureFormat: (value: TextureFormat) => void;
-    setMipmapLevel: (value: number) => void;
     setGenerateMipmaps: (value: boolean) => void;
     canGenerateMipmaps: () => boolean;
 }
@@ -67,7 +60,6 @@ function recreateTexture(
     if(ktx2) {
         container.texture?.dispose();
         const desc = new TextureDescriptor();
-        debugger;
         desc.textureFormat = textureFormat;
         desc.generateMipmaps = generateMipmaps;
         // Always use copy to be able to change texture format.
@@ -94,15 +86,9 @@ function recreateTexture(
     return texture;
 }
 
+const getFramework = () => useViewerStore.getState().framework;
+
 export const useTextureStore = create<TextureStore>((set, get) => {
-    const listeners = new Set<TextureSelectedListener>();
-
-    const notifySelected = (tex: ITexture2DContainer | null) => {
-        for (const listener of listeners) {
-            listener(tex);
-        }
-    };
-
     const applySelection = (tex: ITexture2DContainer | null) => {
         set({
             selectedTexture: tex,
@@ -110,33 +96,19 @@ export const useTextureStore = create<TextureStore>((set, get) => {
             textureFormat: tex?.texture?.textureFormat ?? get().textureFormat,
             generateMipmaps: (tex?.texture?.mipLevels ?? 1) > 1,
         });
-        notifySelected(tex);
     };
 
     return {
-        framework: null,
+        textures: [],
+        selectedTexture: null,
+
         textureFormat: TextureFormat.RGBA_8_UNORM,
         generateMipmaps: false,
         resolution: "0x0",
         size: "0 MiB",
-        mipLevel: 0,
-        getMipLevel: () => get().mipLevel,
         mipLevels: 1,
-        textures: [],
-        selectedTexture: null,
-
-        setFramework: (framework) => set({framework}),
-
-        getSelectedTexture: () => get().selectedTexture,
 
         setSelectedTexture: (tex) => applySelection(tex),
-
-        subscribeTextureSelected: (listener) => {
-            listeners.add(listener);
-            return () => {
-                listeners.delete(listener);
-            };
-        },
 
         removeTexture: (texture) => {
             const {textures, selectedTexture} = get();
@@ -153,9 +125,9 @@ export const useTextureStore = create<TextureStore>((set, get) => {
 
         addTexture: async (file) => {
 
-            const fw = get().framework;
+            const framework = getFramework();
 
-            if(!fw) {
+            if(!framework) {
                 // This should never happen
                 throw new Error("Framework has not been initialized");
             }
@@ -165,11 +137,6 @@ export const useTextureStore = create<TextureStore>((set, get) => {
                 if (get().textures.some((t) => t.name === file.name)) {
                     console.warn(`Texture already added: ${file.name}`);
                     return;
-                }
-
-                const framework = get().framework;
-                if (!framework) {
-                    throw new Error("Framework has not been initialized");
                 }
 
                 let container: ITexture2DContainer;
@@ -191,7 +158,7 @@ export const useTextureStore = create<TextureStore>((set, get) => {
                         ktxContainer: null,
                     };
                 } else if (isKtx2File(file)) {
-                    const ktx = await fw.ktx2Factory!.loadAsync(file);
+                    const ktx = await framework.ktx2Factory!.loadAsync(file);
                     const copy = ktx.createCopy();
                     const texture = framework.textureFactory.createFromKtx2(copy);
                     copy.delete();
@@ -208,19 +175,23 @@ export const useTextureStore = create<TextureStore>((set, get) => {
 
                 set((state) => ({
                     textures: [...state.textures, container],
+                    mipLevels: container.texture?.mipLevels ?? 1,
                 }));
                 applySelection(container);
             }
             else {
                 set((state) => ({
                     textures: [...state.textures, file],
+                    mipLevels: file.texture?.mipLevels ?? 1,
+                    format: file.texture?.textureFormat ?? TextureFormat.RGBA_8_UNORM,
                 }));
                 applySelection(file);
             }
         },
 
         setTextureFormat: (value) => {
-            const {framework, selectedTexture, generateMipmaps} = get();
+            const framework = getFramework();
+            const {selectedTexture, generateMipmaps} = get();
             if (!framework || !selectedTexture) {
                 return;
             }
@@ -230,12 +201,9 @@ export const useTextureStore = create<TextureStore>((set, get) => {
             applySelection(selectedTexture);
         },
 
-        setMipmapLevel: (value) => {
-            set({mipLevel: value});
-        },
-
         setGenerateMipmaps: (value) => {
-            const {framework, selectedTexture, textureFormat} = get();
+            const framework = getFramework();
+            const {selectedTexture, textureFormat} = get();
             if (!framework || !selectedTexture) {
                 return;
             }
