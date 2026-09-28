@@ -28,7 +28,6 @@ export class WebGlTextureFactory implements ITextureFactory {
         const vkFormat = ktxTexture.vkFormat;
 
         // Ktx2 will have different cases, for now we consider simple 2d case.
-        debugger;
         const numLevels = ktxTexture.numLevels;
         let transcodeFormat = KtxTranscodeFormat.NO_SELECTION;
         let textureFormat = descriptor.textureFormat;

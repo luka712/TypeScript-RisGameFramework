@@ -66,11 +66,11 @@ function recreateTexture(
 
     if(ktx2) {
         container.texture?.dispose();
-        container.ktxContainer?.delete();
         const desc = new TextureDescriptor();
+        debugger;
         desc.textureFormat = textureFormat;
         desc.generateMipmaps = generateMipmaps;
-        // Always use copy in order to be able to change texture format.
+        // Always use copy to be able to change texture format.
         const copy = ktx2.createCopy();
         texture = framework.textureFactory.createFromKtx2(copy, desc);
         copy.delete();

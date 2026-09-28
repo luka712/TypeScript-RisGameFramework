@@ -6,7 +6,18 @@ import {BufferUsage, MipMapSamplerFilter, SamplerAddressMode, SamplerFilter, Tex
 
 export class WebGlConverter {
 
+    // https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Constants
+
+    /** BC3 */
+    private static GL_COMPRESSED_RGBA_S3TC_DXT5_EXT = 0x83F3;
+
+    /** BC7 */
     private static GL_COMPRESSED_RGBA_BPTC_UNORM = 0x8E8C;
+
+
+    /** ETC2 */
+    private static GL_COMPRESSED_RGBA8_ETC2_EAC = 0x9278;
+
     private static GL_COMPRESSED_RGBA_ASTC_4x4_KHR = 0x93B0;
 
     /**
@@ -173,10 +184,15 @@ export class WebGlConverter {
                 return gl.DEPTH_COMPONENT32F;
             case TextureFormat.DEPTH_24_STENCIL_8:
                 return gl.DEPTH24_STENCIL8;
+            case TextureFormat.BC3_RGBA_UNORM:
+                return WebGlConverter.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+            case TextureFormat.ETC2_RGBA8_UNORM:
+                return WebGlConverter.GL_COMPRESSED_RGBA8_ETC2_EAC;
             case TextureFormat.BC7_RGBA_UNORM:
                 return WebGlConverter.GL_COMPRESSED_RGBA_BPTC_UNORM;
             case TextureFormat.ASTC_4X4_RGBA:
                 return WebGlConverter.GL_COMPRESSED_RGBA_ASTC_4x4_KHR;
+
             default:
                 throw new Error("NotImplementedException");
         }

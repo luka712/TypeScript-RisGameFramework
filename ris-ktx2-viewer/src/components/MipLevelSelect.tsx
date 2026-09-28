@@ -1,4 +1,4 @@
-import {MenuItem, Select, type SelectChangeEvent, Stack, Typography} from "@mui/material";
+import {MenuItem, Select, type SelectChangeEvent, Stack, Tooltip, Typography} from "@mui/material";
 import {TextureFormat} from "ris-framework-api";
 import {useTextureStore} from "../store/TextureStore.ts";
 
@@ -32,9 +32,13 @@ export default function MipLevelSelect({
             spacing={0}
             sx={{paddingLeft: 2, paddingRight: 2, paddingTop: 1, paddingBottom: 1}}
         >
-            <Typography component="span" sx={{opacity: 0.5}}>
-                {label}
-            </Typography>
+            <Tooltip
+                title="Selects which mipmap level of the texture to display. Level 0 is the full-resolution texture; higher levels contain progressively smaller versions."
+            >
+                <Typography component="span" sx={{opacity: 0.5}}>
+                    {label}
+                </Typography>
+            </Tooltip>
             <Select
                 value={value}
                 label={label}

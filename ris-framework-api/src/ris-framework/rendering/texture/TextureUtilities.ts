@@ -29,7 +29,7 @@ export class TextureUtilities {
         [TextureFormat.BC3_RGBA_UNORM]: VkFormat.BC3_UNORM_BLOCK,
         [TextureFormat.BC7_RGBA_UNORM]: VkFormat.BC7_UNORM_BLOCK,
         [TextureFormat.ASTC_4X4_RGBA]: VkFormat.ASTC_4X4_UNORM_BLOCK,
-        [TextureFormat.ETC2_RGBA8_UNORM] : VkFormat.ETC2_R8G8B8_UNORM_BLOCK,
+        [TextureFormat.ETC2_RGBA8_UNORM] : VkFormat.ETC2_R8G8B8A8_UNORM_BLOCK,
     };
 
     private static readonly _mapTextureFormatKtxTranscodeFormat: { [key: number]: number } = {
@@ -43,7 +43,7 @@ export class TextureUtilities {
     /**
      * Checks if the given texture format is a compressed texture format.
      * @param format - The texture format to check.
-     * @returns true if texture format is a compressed texture format.
+     * @returns true if a texture format is a compressed texture format.
      */
     public static isCompressedTextureFormat(format: TextureFormat): boolean {
         return this._compressedTextureFormats.indexOf(format) !== -1;
@@ -61,7 +61,7 @@ export class TextureUtilities {
     }
 
     /**
-     * Gets the number of VRAM reserved for a given texture format of a given size.
+     * Gets the number of         [TextureFormat.ETC2_RGBA8_UNORM] : VkFormat.ETC2_R8G8B8_UNORM_BLOCK,VRAM reserved for a given texture format of a given size.
      *
      * @param textureFormat The texture format.
      * @param width Texture width.

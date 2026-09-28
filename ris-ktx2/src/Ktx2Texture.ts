@@ -63,7 +63,6 @@ export class Ktx2Texture implements IKtx2Texture {
             buffer.byteOffset,
             buffer.byteLength
         );
-        debugger;
         this._numLevels = view.getUint32(NUM_LEVELS_OFFSET, true);
     }
 

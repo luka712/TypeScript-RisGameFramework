@@ -1,7 +1,7 @@
 import {Divider, Paper, Stack} from "@mui/material";
 import SamplerFilterField from "../components/SamplerFilterField.tsx";
 import {useSamplerStore} from "../store/SamplerStore.ts";
-import TextureFormatSelect from "../components/TextureFormatSelect.tsx";
+import TextureFormatField from "../components/TextureFormatField.tsx";
 import {useTextureStore} from "../store/TextureStore.ts";
 import {CheckboxField} from "../components/CheckboxField.tsx";
 import MipLevelSelect from "../components/MipLevelSelect.tsx";
@@ -36,6 +36,7 @@ export function PropertiesView() {
         setMipLevelState(value);
     }
 
+
     return (
         <Paper elevation={3}
                sx={{
@@ -55,7 +56,7 @@ export function PropertiesView() {
                     onValueChange={setFilter}
                 />
                 <Divider/>
-                <TextureFormatSelect
+                <TextureFormatField
                     label="Texture Format"
                     value={textureFormat}
                     onValueChange={setTextureFormat}
@@ -71,7 +72,7 @@ export function PropertiesView() {
                         />
                     </>
                 )}
-                {view == viewOptions[0] && (
+                {view == viewOptions[0] && mipmapLevels > 1 && (
                     <>
                         <Divider/>
                         <MipLevelSelect label="Mipmap Level" value={mipLevelState} valueMax={mipmapLevels}

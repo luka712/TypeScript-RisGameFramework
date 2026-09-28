@@ -23,6 +23,7 @@ function formatVkFormat(vk: VkFormat): string {
         [VkFormat.R8G8B8A8_UNORM]: "R8G8B8A8_UNORM",
         [VkFormat.ASTC_4X4_UNORM_BLOCK]: "ASTC_4X4_UNORM_BLOCK",
         [VkFormat.BC7_UNORM_BLOCK]: "BC7_UNORM_BLOCK",
+
     };
     return known[vk] ?? VkFormat[vk] ?? `Unknown (${vk})`;
 }

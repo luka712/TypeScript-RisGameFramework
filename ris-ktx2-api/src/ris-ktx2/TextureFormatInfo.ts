@@ -141,8 +141,8 @@ export class TextureFormatInfo {
     }
 
     /** The DEPTH 24 S8 format info **/
-    public static depth24Stencil8()  {
-        return new TextureFormatInfo(1,1,1,4);
+    public static depth24Stencil8() {
+        return new TextureFormatInfo(1, 1, 1, 4);
     }
 
     /**
@@ -157,14 +157,16 @@ export class TextureFormatInfo {
                 return this.rgba32();
             case VkFormat.D24_UNORM_S8_UINT:
                 return this.depth24Stencil8();
-           /* case VkFormat.D32_SFLOAT:
-                return this.depth32float(); */
+            /* case VkFormat.D32_SFLOAT:
+                 return this.depth32float(); */
             case VkFormat.ASTC_4X4_UNORM_BLOCK:
                 return this.astc4x4rgba();
             case VkFormat.BC7_UNORM_BLOCK:
                 return this.bc7();
             case VkFormat.BC3_UNORM_BLOCK:
                 return this.bc3();
+            case VkFormat.ETC2_R8G8B8A8_UNORM_BLOCK:
+                return this.etc2rgba();
             default:
                 throw new Error(`Not implemented: ${vkFormat}`);
         }
